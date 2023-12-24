@@ -1,0 +1,72 @@
+{
+    "news": [
+        {
+            "title": "КАКОЙ ТО ЗАГОЛОВОК",
+            "text": "help me, I'm being held hostage, this is the only option to talk",
+            "img": "0.png"
+        },
+        {
+            "title": "КАКОЙ ТО ЗАГОЛОВОК",
+            "text": "help me, I'm being held hostage, this is the only option to talk",
+            "img": "1.png"
+        },
+        {
+            "title": "КАКОЙ ТО ЗАГОЛОВОК",
+            "text": "help me, I'm being held hostage, this is the only option to talk",
+            "img": "2.png"
+        },
+        {
+            "title": "КАКОЙ ТО ЗАГОЛОВОК",
+            "text": "help me, I'm being held hostage, this is the only option to talk",
+            "img": "3.png"
+        },
+		{
+            "title": "КАКОЙ ТО ЗАГОЛОВОК",
+            "text": "help me, I'm being held hostage, this is the only option to talk",
+            "img": "4.png"
+        },
+        {
+            "title": "КАКОЙ ТО ЗАГОЛОВОК",
+            "text": "help me, I'm being held hostage, this is the only option to talk",
+            "img": "5.png"
+        },
+        {
+            "title": "КАКОЙ ТО ЗАГОЛОВОК",
+            "text": "help me, I'm being held hostage, this is the only option to talk",
+            "img": "6.png"
+        },
+        {
+            "title": "КАКОЙ ТО ЗАГОЛОВОК",
+            "text": "help me, I'm being held hostage, this is the only option to talk",
+            "img": "7.png"
+        },
+		{
+            "title": "КАКОЙ ТО ЗАГОЛОВОК",
+            "text": "help me, I'm being held hostage, this is the only option to talk",
+            "img": "8.png"
+        },
+        {
+            "title": "КАКОЙ ТО ЗАГОЛОВОК",
+            "text": "help me, I'm being held hostage, this is the only option to talk",
+            "img": "9.png"
+        },
+        {
+            "title": "КАКОЙ ТО ЗАГОЛОВОК",
+            "text": "help me, I'm being held hostage, this is the only option to talk",
+            "img": "0.png"
+        },        
+		{
+            "title": "КАКОЙ ТО ЗАГОЛОВОК",
+            "text": "help me, I'm being held hostage, this is the only option to talk",
+            "img": "1.png"
+        }
+
+    ],
+    "newsVideo":[{"url":"https://youtu.be/ib9hK46L6H0", "name": "Выпуск от 07.07.2023", "png": "2.png"}, {"url":"https://youtu.be/qegpRBC7aLg", "name": "Выпуск от 04.04.2023", "png": "1.png"},{"url":"https://youtu.be/eq_78xANfPA", "name": "Выпуск от 23.01.2023", "png": "0.png"}],
+    "mainNews": {
+        "title": "КАКОЙ ТО ЗАГОЛОВОК",
+        "text": "help me, I'm being held hostage, this is the only option to talkКирл пропал, пропал самый главный хуесоКирл пропал, пропал самый главный хуесо",
+        "img": "0.png"
+    }
+}
+
