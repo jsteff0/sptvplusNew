@@ -23,7 +23,7 @@ export default function Home() {
         <div className="w-[466px] h-[466px] fixed bg-[#FAD201] blur-[933px] float-right bottom-10 right-4 opacity-10 z-20"></div>
         <main className="flex-auto mt-[55px] pb-[55px] flex flex-col justify-center align-middle gap-[100px] z-10 bg-[#101010]">
           <section className="h-screen w-screen flex flex-col tablet:items-start items-center">
-            <video className="tablet:block hidden relative object-cover z-0 min-h-screen min-w-full" src="/videos/trailer_sptv.mp4" autoPlay muted loop playsInline></video>
+            <video className="tablet:block hidden relative object-cover z-0 min-h-screen min-w-full" src="/videos/index.mp4" autoPlay muted loop playsInline></video>
             <span className="text-white absolute z-10 font-['Montserrat'] laptop:text-[65px] tablet:text-[37px] text-[26px] font-bold tablet:ml-24 mt-32 ">Новая эра<br /> киноиндустрии<br /> на СП</span>
           </section>
           <section className=" flex flex-row laptop:flex-row tablet:flex-col items-start tablet:items-center justify-center gap-6">

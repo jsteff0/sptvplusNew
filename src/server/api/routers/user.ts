@@ -12,9 +12,11 @@ export const userRouter = createTRPCRouter({
 		});
 
 		if ((userRes?.subscription === "MULTI" || userRes?.subscription === "fMULTI" || userRes?.subscription === "MAX" || userRes?.subscription === "fMAX" || userRes?.subscription === "ONE") && userRes?.expirydate && userRes.addedPlayers) {
+			
 			const date1 = new Date()
 			const date2 = userRes.expirydate
-			if (Math.floor(Math.abs(date2.getTime() - date1.getTime()) / 1000 / 60 / 60 / 24) <= 0) {
+			
+			if (date2.getTime() < date1.getTime()) {
 				if (userRes.subscription === "fMAX" || userRes.subscription === "fMULTI" || userRes.subscription === "MAX" || userRes.subscription === "MULTI") {
 					const whoAddedInfo = await ctx.db.user.findFirst({
 						where: { nickname: userRes.subscriptionOwner },
@@ -71,7 +73,8 @@ export const userRouter = createTRPCRouter({
 						}
 					}
 				} else if (userRes.subscription === "ONE") {
-					if (userRes?.balance && userRes.nickname) {
+					if ((userRes.balance || userRes.balance === 0) && userRes.nickname) {
+						
 						if (userRes.balance >= 16) {
 							await ctx.db.user.update({
 								where: { nickname: userRes.nickname },

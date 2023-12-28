@@ -12,6 +12,7 @@ import { PrismaClient } from '@prisma/client'
 import { randomUUID } from "crypto";
 import Hls, { TimelineController } from "hls.js";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 
 interface filmmakers {
@@ -29,6 +30,7 @@ interface filmmakers {
 	price: number;
 	more: string;
 	code: string;
+	youtube: string | null;
 }
 export default function Home(props: {
 	content: filmmakers, isBeforePremier: boolean, encodedCode: string, timeKey: string, watched: string[]
@@ -37,6 +39,9 @@ export default function Home(props: {
 	const { data: session } = useSession();
 	const { data } = api.user.me.useQuery();
 	const router = useRouter().query.id;
+	useEffect(() => {
+		Render({ idFilm: props.encodedCode + "::" + props.timeKey + "::" + (data ? data?.volume : 0.5) + "::" + (data ? data?.nickname : "DrDro20") })
+	})
 	if (!data?.nickname || !session?.user.name) {
 		return (
 			<div className="flex justify-center items-center align-middle h-screen w-screen">
@@ -98,6 +103,9 @@ export default function Home(props: {
 							const min = Math.floor(e.currentTarget.currentTime / 60) - hr * 60;
 							const sec = Math.floor(e.currentTarget.currentTime) - (min + (hr * 60)) * 60;
 							timeBar.innerHTML = `${hr}:${min < 10 ? `0${min}` : min}:${sec < 10 ? `0${sec}` : sec}`
+							if (sec % 15 === 0) {
+								savingUpData(data.nickname as string, typeof router === "string" ? router : "").catch((err) => console.log(err));
+							}
 						}}
 						onClick={async (e) => {
 							const image = document.getElementById("playbuttons") as HTMLImageElement;
@@ -257,54 +265,73 @@ export default function Home(props: {
 							</div>
 						</div>
 					</section>
+					{!props.content.youtube && !props.isBeforePremier && ((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0) >= props.content.subscription || data.acquired.includes(props.content.id) && props.content.timing.length > 1 ?
+						<section id="chooseSeriaWind" className="fixed inset-0 overflow-y-auto z-30 hidden">
+							<div className="flex min-h-full items-center justify-center p-4 text-center">
+								<div className="fixed inset-0 bg-black bg-opacity-25"></div>
+								<div className="w-full max-w-[200px] transform overflow-hidden rounded-2xl bg-[#272727] p-6 text-left align-middle shadow-xl transition-all z-22">
+									<b className=" text-white text-[14px] font-['Montserrat']">Выбрать серию</b><br />
+									<section className="flex bg-[#303030] h-[220px] flex-col items-center overflow-y-scroll no-scroll-line rounded-xl m-4">
+										{props.content.timing.map((item: number, i) => {
+											return (
+												<>
+													<button onClick={() => startwatching(props.content.code, "EPS" + (i + 1), data.nickname as string)} className={`text-white flex-none p-2 m-[10px] first:mt-[12px] last:mb-[12px] hover:bg-[#393939] hover:cursor-pointer`}>
+														<b className="text-[18px]">{i + 1} эпизод</b>
+														<br />
+														<span className="text-[12px]">{`${Math.floor(item / 60)} минут${Math.floor(item / 60) % 10 === 1 && Math.floor(item / 60) !== 11 ? "a" : (Math.floor(item / 60) % 10 === 2 && Math.floor(item / 60) !== 12) || (Math.floor(item / 60) % 10 === 3 && Math.floor(item / 60) !== 13) || (Math.floor(item / 60) % 10 === 4 && Math.floor(item / 60) !== 14) ? "ы" : ""}`}</span>
+														<br />
+														{props.watched.includes((i + 1).toString()) ? <i className="text-[12px] ">Просмотренно</i> : <></>}
+													</button>
+												</>
+											)
+										})}
+									</section>
+									<div className="mt-4 flex justify-end gap-3">
+										<button onClick={() => switchWind("chooseSeriaWind")} className="px-4 py-2 bg-[#373737] rounded-[15px]"><span className="text-[#FFE400] font-bold">Отмена</span></button>
+									</div>
+								</div>
+							</div>
+						</section>
+						:
+						null
+					}
+
 					<main className="flex align-middle justify-center flex-auto">
 						<section
-							className="z-10 laptop:bg-gradient-to-r bg-[#000000df] from-[#000000e8] from-[35%] to-transparent absolute h-screen w-full left-0 flex laptop:justify-normal justify-center">
-							<div className="laptop:max-w-[40%] max-w-screen h-screen px-10 py-20 flex flex-col items-center">
-								<img src={`/preview/${props.content.imgID}_m.png`} className="" alt="" />
+							className="z-10  laptop:bg-gradient-to-r bg-[#000000df] from-[#000000e8] from-[35%] to-transparent absolute h-screen w-full left-0 flex laptop:justify-normal justify-center">
+							<div className="laptop:max-w-[40%] max-w-screen px-10 py-20 flex flex-col items-center">
+								<img src={`/preview/${props.content.imgID}_m.png`} className="laptop:w-auto tablet:w-[50%] w-auto" alt="" />
 								<div className="font-medium smltp:text-[13px] text-[9px] text-[rgb(173,173,173)] flex smltp:gap-[8px] gap-[4px] justify-center font-['Montserrat']">
-									<span className={`${props.content.mark >= 3.5 ? props.content.mark >= 7 ? "text-[#00760C]" : "text-[#766300]" : props.content.mark >= 0 && props.content.mark <= 10 ? "text-[#761500]" : "text-"}`}>{(props.content.mark.toString().includes('.')) ? props.content.mark : `${props.content.mark}.0`}</span>
+									<span className={`${props.content.mark >= 2.5 ? props.content.mark >= 3.9 ? "text-[#00760C]" : "text-[#766300]" : "text-[#761500]"}`}>{(props.content.mark.toString().includes('.')) ? props.content.mark : `${props.content.mark}.0`}</span>
 									<span>{props.content.watched >= 1000000 ? `${(props.content.watched / 1000000).toFixed(1)}M` : props.content.watched > 1000 ? `${(props.content.watched / 1000).toFixed(1)}K` : props.content.watched}</span>
 									<span>{datePremiere.getFullYear()}</span>
 									<span>{props.content.types.map((item: string) => {
 										return <><span className="">{props.content.types[props.content.types.length - 1] === item ? item : `${item}, `}</span></>
 									})}</span>
-									<span>{props.content.timing.length > 1 ? `${props.content.timing.length} сери${(props.content.timing.length % 10 === 2 || props.content.timing.length % 10 === 3 || props.content.timing.length % 10 === 4) && (props.content.timing.length !== 12 && props.content.timing.length !== 13 && props.content.timing.length !== 14) ? "и " : "й"}` : `${Math.floor(props.content.timing[0] ? props.content.timing[0] : 60 / 60)} минут${props.content.timing[0] ? props.content.timing[0] : 60 % 10 === 1 && props.content.timing[0] !== 10 ? "a " : (props.content.timing[0] ? props.content.timing[0] : 60 % 10 === 2 || props.content.timing[0] ? props.content.timing[0] : 60 % 10 === 3 ||props.content.timing[0] ? props.content.timing[0] : 60 % 10 === 4) && (props.content.timing[0] !== 12 && props.content.timing[0] !== 13 && props.content.timing[0] !== 14) ? "ы " : " "}`}</span>
+									<span>{props.content.timing.length > 1 ? `${props.content.timing.length} сери${(props.content.timing.length % 10 === 2 || props.content.timing.length % 10 === 3 || props.content.timing.length % 10 === 4) && (props.content.timing.length !== 12 && props.content.timing.length !== 13 && props.content.timing.length !== 14) ? "и " : "й"}` : `${Math.floor(props.content.timing[0] ? props.content.timing[0] / 60 : 0.1)} минут${props.content.timing[0] && (props.content.timing[0] / 60) % 10 === 1 && props.content.timing[0] !== 10 ? "a " : props.content.timing[0] && (((props.content.timing[0] / 60) % 10 === 2 && props.content.timing[0] !== 12) || ((props.content.timing[0] / 60) % 10 === 3 && props.content.timing[0] !== 13) || ((props.content.timing[0] / 60) % 10 === 4 && props.content.timing[0] !== 14)) ? "ы " : " "}`}</span>
 									<span>{props.content.studio}</span>
 								</div>
 								<div className="flex justify-center font-normal text-white text-[20px] p-10 font-['Montserrat']">{props.content.describe}</div>
 								<div className="flex gap-2 font-['Montserrat']">
-									{!props.isBeforePremier ?
-										((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0) >= props.content.subscription || data.acquired.includes(props.content.id)
-											?
-											props.content.timing.length > 1
+									{!props.content.youtube ?
+										!props.isBeforePremier ?
+											((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0) >= props.content.subscription || data.acquired.includes(props.content.id)
 												?
-												<>
-													<input type="checkbox" id="chooseSeria" className="hidden peer" />
-													<label htmlFor="chooseSeria" className="peer-checked:hidden block flex-none px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold">Выбрать эпизод</label>
-													<section className="peer-checked:flex hidden bg-[#303030] w-full h-[220px] flex-col overflow-y-scroll no-scroll-line rounded ">
-														<label htmlFor="chooseSeria" className=""><Image width={10} height={10} src="/buttons/exitBtn.svg" className="mt-2 ml-2" alt="" /></label>
-														{props.content.timing.map((item: number, i) => {
-															return (
-																<>
-																	<button onClick={() => startwatching(props.content.code, "EPS" + (i + 1), data.nickname as string)} className={`text-white flex-none p-2 m-[10px] first:mt-[12px] last:mb-[12px] hover:bg-[#393939] hover:cursor-pointer`}>
-																		<b className="text-[18px]">{i + 1} эпизод</b>
-																		<br />
-																		<span className="text-[12px]">{`${Math.floor(item / 60)} минут${Math.floor(item / 60) % 10 === 1 && Math.floor(item / 60) !== 11 ? "a" : (Math.floor(item / 60) % 10 === 2 && Math.floor(item / 60) !== 12) || (Math.floor(item / 60) % 10 === 3 && Math.floor(item / 60) !== 13) || (Math.floor(item / 60) % 10 === 4 && Math.floor(item / 60) !== 14) ? "ы" : ""}`}</span>
-																		<br />
-																		{props.watched.includes((i+1).toString()) ? <i className="text-[12px] ">Просмотренно</i> : <></>}
-																	</button>
-																</>
-															)
-														})}
-													</section>
-												</>
+												props.content.timing.length > 1
+													?
+													<button onClick={() => switchWind("chooseSeriaWind")} className="peer-checked:hidden block flex-none px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold">Выбрать эпизод</button>
+													:
+													<button onClick={() => startwatching(props.content.code, "FLM", data.nickname as string)} className="px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold flex items-center gap-2">Начать просмотр</button>
 												:
-												<button onClick={() => startwatching(props.content.code, "FLM", data.nickname as string)} className="px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold flex items-center gap-2">Начать просмотр</button>
+												<div className="flex flex-col items-center gap-1">
+													<Link href={"/subs"} className="px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold">Оформить подписку</Link>
+													<p className="text-white text-[12px] opacity-75">или</p>
+													<button id="buyButton" onClick={() => buy(props.content.code, props.content.price, data.nickname as string, data.balance)} className="text-white opacity-75 text-[14px] hover:underline">Приобрести за {props.content.price}АР</button>
+												</div>
 											:
-											<button id="buyButton" onClick={() => buy(props.content.code, props.content.price, data.nickname as string, data.balance)} className="px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold">Приобрести за {props.content.price}АР</button>
+											<button onClick={() => startwatching(props.content.code, "TLR", data.nickname as string)} className="px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold">Смотреть трейлер</button>
 										:
-										<button onClick={() => startwatching(props.content.code, "TLR", data.nickname as string)} className="px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold">Смотреть трейлер</button>
+										<button onClick={() => location.href = props.content.youtube as string} className="px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold">Смотреть на YouTube</button>
 									}
 									<div className="flex">
 										<input type="checkbox" checked={data.favorite.includes(props.content.id)} className="peer hidden" id="saveButton" />
@@ -320,10 +347,10 @@ export default function Home(props: {
 								</div>
 							</div>
 						</section>
-						<video id="upperSection" className="z-0 object-cover min-h-screen min-w-full" src={`/videos/${props.content.code}.mp4`} autoPlay muted loop playsInline></video>
+						<video id="bgvideo" className="z-0 object-cover min-h-screen min-w-full" src={`/videos/${props.content.code}BG.mp4`} autoPlay muted loop playsInline></video>
 
 					</main>
-					<footer className="relative z-10 left-0 bottom-0 w-full h-[105px] bg-[#272727] ">
+					<footer className="relative z-10 left-0 bottom-0 w-full h-[105px] bg-[#272727] hidden ">
 						<div className="flex justify-between ">
 							<div className="relative left-[21px] top-[11px] grid grid-flow-col grid-cols-2 grid-rows-4 h-[60px] tablet:h-[83px] w-[130px] tablet:w-[187px]">
 								<Link href={`/news`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto">Новости</Link>
@@ -352,8 +379,7 @@ export default function Home(props: {
 async function savingUpData(nickname: string, code: string) {
 	const video = document.getElementsByTagName('video')[0] as HTMLVideoElement;
 	if (video) {
-		const data = { "watched": (video.currentTime / video.duration) * 100 > 97, "volume": video.volume, "time": video.currentTime, "nickname": nickname, "codetag": code }
-		console.log(data)
+		const data = { "watched": (video.currentTime / video.duration) * 100 > 70, "volume": video.volume, "time": video.currentTime, "nickname": nickname, "codetag": code }
 		await fetch("/api/content/savingupdata", {
 			method: 'POST',
 			headers: {
@@ -364,7 +390,7 @@ async function savingUpData(nickname: string, code: string) {
 			return response.json();
 		}).then((data: { code: number }) => {
 			if (data.code === 2) {
-				if ((video.currentTime / video.duration) * 100 > 97) {
+				if ((video.currentTime / video.duration) * 100 > 70) {
 					return true;
 				}
 			} else if (data.code === 1) {
@@ -373,7 +399,6 @@ async function savingUpData(nickname: string, code: string) {
 				console.log("Invalid request")
 			}
 		})
-
 	}
 	return false;
 }
@@ -382,7 +407,6 @@ function Render(idFilm: { idFilm: string; }) {
 		const id = idFilm.idFilm.split("::")[0]
 		const time = parseInt(idFilm.idFilm.split("::")[1] as string)
 		const volume = parseFloat(idFilm.idFilm.split("::")[2] as string)
-		const nickname = idFilm.idFilm.split("::")[3]
 		const video = document.getElementsByTagName('video')[0] as HTMLVideoElement;
 		if (video && !video.currentSrc) {
 			const config = {
@@ -406,8 +430,12 @@ function Render(idFilm: { idFilm: string; }) {
 			video.onloadedmetadata = function () {
 				video.currentTime = time;
 			}
-			setInterval(() => savingUpData(nickname as string, id as string), 10000);
 		}
+		setTimeout(function () {
+			if (!video) {
+				Render(idFilm)
+			}
+		}, 3000)
 		return <></>
 	} else {
 		return <></>
@@ -543,9 +571,9 @@ export const getServerSideProps: GetServerSideProps = async (
 			more: true,
 			code: true,
 			datePremiere: true,
+			youtube: true
 		},
 	})
-
 	if (newContent && nickname && typeof ctx.query.id === "string") {
 		const id = atob(ctx.query.id).replace("rebmuNtnetnoC", "")
 		const watchedo = await prisma.view.findMany({
@@ -572,6 +600,7 @@ export const getServerSideProps: GetServerSideProps = async (
 			price: newContent.price,
 			more: newContent.more,
 			code: newContent.code,
+			youtube: newContent.youtube,
 		};
 		const watched = []
 		if (watchedo && watchedo[0] && atob(watchedo[0].codetag as string).includes("EPS")) {

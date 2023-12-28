@@ -65,7 +65,7 @@ model User {
     favorite               Int[]
     acquired               Int[]
     expirydate             DateTime?
-    volume                 Float          @default(0.5)
+    volume                 Float        @default(0.5)
     accounts               Account[]
     posts                  Post[]
     sessions               Session[]
@@ -86,6 +86,7 @@ model Film {
     datePremiere DateTime
     price        Int
     more         String
+    youtube      String?
 }
 
 model View {

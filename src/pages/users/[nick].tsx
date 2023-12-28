@@ -399,7 +399,7 @@ export default function Home(props: { favorite: filmmakers[], acquired: filmmake
 								Вы не имеете право смотреть чужие аккаунты
 							</> : <>Дарова</>}
 					</main>
-					<footer className="relative z-10 left-0 bottom-0 w-full h-[105px] bg-[#272727] ">
+					<footer className="relative z-10 left-0 bottom-0 w-full h-[105px] bg-[#272727] hidden tablet:block">
 						<div className="flex justify-between ">
 							<div className="relative left-[21px] top-[11px] grid grid-flow-col grid-cols-2 grid-rows-4 h-[60px] tablet:h-[83px] w-[130px] tablet:w-[187px]">
 								<Link href={`/news`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto">Новости</Link>

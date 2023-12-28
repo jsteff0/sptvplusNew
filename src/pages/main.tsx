@@ -9,6 +9,10 @@ import { getServerAuthSession } from "~/server/auth";
 import fsPromises from 'fs/promises';
 import path from 'path'
 import { PrismaClient } from '@prisma/client'
+import { env } from "~/env.mjs";
+import { SPWorlds } from 'spworlds';
+const apiSP = new SPWorlds(env.NEXT_PUBLIC_CARD_ID, env.NEXT_PUBLIC_CARD_TOKEN);
+
 
 interface filmmakers {
 	imgID: string;
@@ -84,7 +88,11 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 								</div>
 								<div className="mt-4 flex justify-end gap-3">
 									<button onClick={() => switchWind("addMoney")} className="px-4 py-2 bg-[#373737] rounded-[15px]"><span className="text-[#FFE400] font-bold">Отмена</span></button>
-									{/* <button onClick={() => { const element2: HTMLInputElement | null = document.querySelector("#money"); element2 !== null ? AddMoney(parseInt(element2.value), User.nickname) : console.log("noElement2") }} className="w-[100px] h-[40px] bg-[#FFE400] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold" id="mbtn" > Оплатить</button> */}
+									<button onClick={() => {
+										const money = document.getElementById("money") as HTMLInputElement;
+										const moneyVal = parseInt(money.value);
+										addMoney(moneyVal, data.nickname as string).catch((err) => console.log(err));
+									}} id="alertButton2" className="px-4 py-2 bg-[#FFE400] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold">Оплатить</button>
 								</div>
 							</div>
 						</div>
@@ -215,7 +223,7 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 										</div>
 										: null}
 									{props.recomendtosee.length > 0 ?
-										<div className="w-full h-[201px] tablet:h-[282px] pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
+										<div className="w-full h-[201px] tablet:h-[282px] pl-5 py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
 											<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Что посмотреть</div>
 											<div className="relative flex w-full group">
 												<div
@@ -252,6 +260,11 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 														return (
 															<>
 																<Link href={`/content/${item.code}`} className="flex-none px-[12px] last:pr-6">
+																	<div className={`bg-[url('/preview/${item.imgID}_a.png')] tablet:h-[200px] tablet:w-[150px] h-[122px] w-[99px] rounded-[10px] bg-contain`}>
+																		{((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0) < item.subscription ? <Image width={150} height={30} src={`/subscriptions/only${item.subscription === 3 ? "Max" : item.subscription === 2 ? "Multi" : "One"}.svg`} className="tablet:h-[200px] tablet:w-[150px] h-[20px] w-[99px]" alt="" /> : null}
+																	</div>
+																</Link>
+																{/* <Link href={`/content/${item.code}`} className="flex-none px-[12px] last:pr-6">
 																	{((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0) < item.subscription ?
 																		<>
 																			<Image width={150} height={170} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[170px] tablet:w-[150px] h-[112px] w-[99px] object-cover rounded-t-[10px] bg-center" alt="" />
@@ -262,7 +275,7 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 																		:
 																		<Image width={150} height={200} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[200px] tablet:w-[150px] h-[132px] w-[99px] object-cover rounded-[10px] bg-center" alt="" />
 																	}
-																</Link>
+																</Link> */}
 															</>
 														)
 													})}
@@ -499,7 +512,7 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 							</section>
 						</div>
 					</main>
-					<footer className="relative z-10 left-0 bottom-0 w-full h-[105px] bg-[#272727] ">
+					<footer className="relative z-10 left-0 bottom-0 w-full h-[105px] bg-[#272727] hidden tablet:block">
 						<div className="flex justify-between ">
 							<div className="relative left-[21px] top-[11px] grid grid-flow-col grid-cols-2 grid-rows-4 h-[60px] tablet:h-[83px] w-[130px] tablet:w-[187px]">
 								<Link href={`/news`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto">Новости</Link>
@@ -525,6 +538,18 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 	}
 
 }
+
+async function addMoney(amount: number, nickname: string) {
+	const data = amount + "::" + nickname + "::" + new Date().toISOString()
+	const url = await apiSP.initPayment(
+		amount,
+		"http://192.168.1.8:3000/main",
+		"http://192.168.1.8:3000/api/player/addmoney",
+		data
+	);
+	console.log(url)
+}
+
 function switchWind(BlockId: string) {
 	if (typeof window === "object") {
 		const element = document.getElementById(`${BlockId}`);

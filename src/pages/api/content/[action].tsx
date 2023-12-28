@@ -123,7 +123,15 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 				}
 			})
 			if (req.body.watched) {
-				
+				// const id = parseInt(atob(req.body.codetag).split("::")[0] as string)
+				// await prisma.film.update({
+				// 	where: {
+				// 		id: id,
+				// 	},
+				// 	data: {
+				// 		watched: ,
+				// 	}
+				// })
 				await prisma.view.update({
 					where: {
 						codetag: req.body.codetag,
