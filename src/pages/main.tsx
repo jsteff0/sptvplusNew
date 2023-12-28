@@ -98,7 +98,7 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 						</div>
 					</section>
 					<main className="flex align-middle justify-center flex-auto">
-						<div className="flex tablet:flex-row flex-col-reverse laptop:w-[1010px] tablet:w-[470px] w-screen ">
+						<div className="flex tablet:flex-row flex-col-reverse laptop:w-[1010px] smltp:w-[675px] tablet:w-[475px] w-screen ">
 							<nav className="fixed bottom-0 tablet:z-0 z-10 flex justify-center laptop:w-[190px] tablet:w-[130px] w-screen tablet:min-h-screen h-[62px] bg-white dark:bg-[#0F0F0F] dark:border-[#383838] tablet:border-r-[1px] border-[#E1E1E1] transition-all duration-500 ease-in-out">
 								<div className="flex tablet:flex-col flex-row tablet:items-start items-center tablet:justify-normal justify-between tablet:mt-[105px] w-screen px-6 laptop:px-10 laptop:gap-3  tablet:gap-1 laptop:text-[16px] tablet:text-[12px] text-[11px] font-['Montserrat'] leading-[20px] font-bold">
 									<Link className="group flex tablet:flex-row flex-col tablet:gap-2 gap-0 items-center " href="/main">
@@ -108,7 +108,6 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 										</div>
 										<span className=" tablet:dark:text-[#FFE400] dark:text-white">Главная</span>
 									</Link>
-
 									<Link className="group flex tablet:flex-row flex-col tablet:gap-2 gap-0 items-center opacity-[0.6] hover:opacity-[1] ease-out duration-300" href="/media/news">
 										<div>
 											<div className="laptop:w-[20px] laptop:h-[20px] tablet:w-[15px] tablet:h-[15px] h-[18px] w-[18px] bg-[url(/nav/newsicon.svg)] dark:bg-[url(/nav/newsiconWT.svg)] bg-cover ease-out duration-300"></div>
@@ -116,7 +115,6 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 										</div>
 										<span className=" tablet:dark:text-white dark:text-white ease-out duration-300">Новости</span>
 									</Link>
-
 									<Link className="group flex tablet:flex-row flex-col tablet:gap-2 gap-0 items-center opacity-[0.6] hover:opacity-[1] ease-out duration-300" href="/media/movies">
 										<div>
 											<div className="laptop:w-[20px] laptop:h-[16px] tablet:w-[15px] tablet:h-[12px] tablet:mt-0 mt-[3.6px] h-[14.4px] w-[18px] bg-[url(/nav/movieicon.svg)] dark:bg-[url(/nav/movieiconWT.svg)] bg-cover  ease-out duration-300"></div>
@@ -124,7 +122,6 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 										</div>
 										<span className="tablet:dark:text-white dark:text-white ease-out duration-300">Фильмы</span>
 									</Link>
-
 									<Link className="group flex tablet:flex-row flex-col tablet:gap-2 gap-0 items-center opacity-[0.6] hover:opacity-[1] ease-out duration-300" href="/media/series">
 										<div>
 											<div className="laptop:w-[20px] laptop:h-[16px] tablet:w-[15px] tablet:h-[12px] tablet:mt-0 mt-[3.6px] h-[14.4px] w-[18px] bg-[url(/nav/serialicon.svg)] dark:bg-[url(/nav/serialiconWT.svg)] bg-cover  ease-out duration-300"></div>
@@ -132,7 +129,6 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 										</div>
 										<span className="tablet:dark:text-white dark:text-white ease-out duration-300 ">Сериалы</span>
 									</Link>
-
 									<Link className="group flex tablet:flex-row flex-col tablet:gap-2 gap-0 items-center opacity-[0.6] hover:opacity-[1] ease-out duration-300" href="/media/shows">
 										<div>
 											<div className="laptop:w-[20px] laptop:h-[16px] tablet:w-[15px] tablet:h-[15px] h-[18px] w-[18px] bg-[url(/nav/showicon.svg)] dark:bg-[url(/nav/showiconWT.svg)] bg-cover  ease-out duration-300"></div>
@@ -143,8 +139,8 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 								</div>
 							</nav>
 							<section id="leftcontent" className="laptop:ml-[190px] tablet:ml-[130px] ml-0 w-full transition-all duration-500 ease-in-out">
-								<div className=" py-20 bg-white dark:bg-[#0F0F0F] flex flex-col items-center gap-[40px]">
-									<div className="laptop:w-[750px] laptop:h-[430px] w-[275px] h-[154px]">
+								<div className="py-20 bg-white dark:bg-[#0F0F0F] flex flex-col items-center gap-[40px]">
+									<div className="flex justify-center laptop:w-full laptop:h-[430px] w-[275px] h-[154px]">
 										<div className="absolute bg-gradient-to-t from-black from-30% to-[#fff0] laptop:w-[750px] laptop:h-[430px] w-[275px] h-[154px] rounded-[20px] zd:rounded-[100px] flex flex-col justify-end items-center p-[22px]">
 											<Image width={270} height={160} src={`/preview/7_m.png`} className="laptop:w-[270px] laptop:h-[160px] w-[0] h-[0] object-cover " alt="" />
 											<div className="text-white laptop:text-[24px] tablet:text-[10px] text-[9px]">help me, Im being held hostage, this is the only option to talk</div>
@@ -152,7 +148,7 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 										<Image width={750} height={430} src={`/preview/7.png`} className="laptop:w-[750px] laptop:h-[430px] w-[275px] h-[154px] rounded-[20px] zd:rounded-[100px] object-cover " alt="" />
 									</div>
 									{props.newest.length > 0 ?
-										<div className="w-full h-[201px] tablet:h-[282px] pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
+										<div className="smltp:max-w-full tablet:max-w-[345px] max-w-full w-full h-[201px] tablet:h-[282px] pl-5 py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
 											<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Новинки</div>
 											<div className="relative flex w-full group">
 												<div
@@ -188,17 +184,11 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 													{props.newest.map((item: filmmakers) => {
 														return (
 															<>
-																<Link href={`/content/${item.code}`} className="flex-none px-[12px] last:pr-6">
+																<Link href={`/content/${item.code}`} className="relative flex-none px-[12px] last:pr-6">
+																	<Image width={150} height={200} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[200px] tablet:w-[150px] h-[132px] w-[99px] object-cover rounded-[10px] bg-center" alt="" />
 																	{((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0) < item.subscription ?
-																		<>
-																			<Image width={150} height={170} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[170px] tablet:w-[150px] h-[112px] w-[99px] object-cover rounded-t-[10px] bg-center" alt="" />
-																			<Link href={`subs`} className="">
-																				<Image width={150} height={30} src={`/subscriptions/only${item.subscription === 3 ? "Max" : item.subscription === 2 ? "Multi" : "One"}.svg`} className="tablet:h-[30px] tablet:w-[150px] h-[20px] w-[99px] object-cover bg-center" alt="" />
-																			</Link>
-																		</>
-																		:
-																		<Image width={150} height={200} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[200px] tablet:w-[150px] h-[132px] w-[99px] object-cover rounded-[10px] bg-center" alt="" />
-																	}
+																		<Image width={150} height={200} src={`/subscriptions/only${item.subscription === 3 ? "Max" : item.subscription === 2 ? "Multi" : "One"}.svg`} className="absolute bottom-0 tablet:h-[200px] tablet:w-[150px] h-[20px] w-[99px] object-cover bg-center" alt="" />
+																		: null}
 																</Link>
 															</>
 														)
@@ -223,7 +213,7 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 										</div>
 										: null}
 									{props.recomendtosee.length > 0 ?
-										<div className="w-full h-[201px] tablet:h-[282px] pl-5 py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
+										<div className="smltp:max-w-full tablet:max-w-[345px] max-w-full w-full h-[201px] tablet:h-[282px] pl-5 py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
 											<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Что посмотреть</div>
 											<div className="relative flex w-full group">
 												<div
@@ -242,7 +232,7 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 															e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:opacity-100", "group-hover:opacity-0")
 															e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:w-[75px]", "group-hover:w-0")
 														}
-													}} className="no-scroll-line overflow-x-scroll flex scroll-smooth group ">
+													}} className="no-scroll-line overflow-x-scroll flex scroll-smooth group">
 													<div onClick={(e) => {
 														const parentEl = e.currentTarget.parentNode as HTMLDivElement
 														if (parentEl.scrollLeft > 450)
@@ -259,23 +249,12 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 													{props.recomendtosee.map((item: filmmakers) => {
 														return (
 															<>
-																<Link href={`/content/${item.code}`} className="flex-none px-[12px] last:pr-6">
-																	<div className={`bg-[url('/preview/${item.imgID}_a.png')] tablet:h-[200px] tablet:w-[150px] h-[122px] w-[99px] rounded-[10px] bg-contain`}>
-																		{((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0) < item.subscription ? <Image width={150} height={30} src={`/subscriptions/only${item.subscription === 3 ? "Max" : item.subscription === 2 ? "Multi" : "One"}.svg`} className="tablet:h-[200px] tablet:w-[150px] h-[20px] w-[99px]" alt="" /> : null}
-																	</div>
-																</Link>
-																{/* <Link href={`/content/${item.code}`} className="flex-none px-[12px] last:pr-6">
+																<Link href={`/content/${item.code}`} className="relative flex-none px-[12px] last:pr-6">
+																	<Image width={150} height={200} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[200px] tablet:w-[150px] h-[132px] w-[99px] object-cover rounded-[10px] bg-center" alt="" />
 																	{((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0) < item.subscription ?
-																		<>
-																			<Image width={150} height={170} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[170px] tablet:w-[150px] h-[112px] w-[99px] object-cover rounded-t-[10px] bg-center" alt="" />
-																			<Link href={`subs`} className="">
-																				<Image width={150} height={30} src={`/subscriptions/only${item.subscription === 3 ? "Max" : item.subscription === 2 ? "Multi" : "One"}.svg`} className="tablet:h-[30px] tablet:w-[150px] h-[20px] w-[99px] object-cover bg-center" alt="" />
-																			</Link>
-																		</>
-																		:
-																		<Image width={150} height={200} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[200px] tablet:w-[150px] h-[132px] w-[99px] object-cover rounded-[10px] bg-center" alt="" />
-																	}
-																</Link> */}
+																		<Image width={150} height={200} src={`/subscriptions/only${item.subscription === 3 ? "Max" : item.subscription === 2 ? "Multi" : "One"}.svg`} className="absolute bottom-0 tablet:h-[200px] tablet:w-[150px] h-[20px] w-[99px] object-cover bg-center" alt="" />
+																		: null}
+																</Link>
 															</>
 														)
 													})}
@@ -300,7 +279,7 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 										: null}
 
 									{props.comingOut.length > 0 ?
-										<div className="w-full h-[201px] tablet:h-[282px] pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
+										<div className="smltp:max-w-full tablet:max-w-[345px] max-w-full w-full h-[201px] tablet:h-[282px] pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
 											<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Будущие проекты</div>
 											<div className="relative flex w-full group">
 												<div
@@ -337,17 +316,11 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 													{props.comingOut.map((item: filmmakers) => {
 														return (
 															<>
-																<Link href={`/content/${item.imgID}`} className="flex-none px-[12px] last:pr-6">
+																<Link href={`/content/${item.code}`} className="relative flex-none px-[12px] last:pr-6">
+																	<Image width={150} height={200} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[200px] tablet:w-[150px] h-[132px] w-[99px] object-cover rounded-[10px] bg-center" alt="" />
 																	{((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0) < item.subscription ?
-																		<>
-																			<Image width={150} height={170} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[170px] tablet:w-[150px] h-[112px] w-[99px] object-cover rounded-t-[10px] bg-center" alt="" />
-																			<Link href={`subs`} className="">
-																				<Image width={150} height={30} src={`/subscriptions/only${item.subscription === 3 ? "Max" : item.subscription === 2 ? "Multi" : "One"}.svg`} className="tablet:h-[30px] tablet:w-[150px] h-[20px] w-[99px] object-cover bg-center" alt="" />
-																			</Link>
-																		</>
-																		:
-																		<Image width={150} height={200} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[200px] tablet:w-[150px] h-[132px] w-[99px] object-cover rounded-[10px] bg-center" alt="" />
-																	}
+																		<Image width={150} height={200} src={`/subscriptions/only${item.subscription === 3 ? "Max" : item.subscription === 2 ? "Multi" : "One"}.svg`} className="absolute bottom-0 tablet:h-[200px] tablet:w-[150px] h-[20px] w-[99px] object-cover bg-center" alt="" />
+																		: null}
 																</Link>
 															</>
 														)
@@ -372,7 +345,7 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 										</div>
 										: null}
 									{props.shows.length > 0 ?
-										<div className="w-full h-[201px] tablet:h-[282px] pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
+										<div className="smltp:max-w-full tablet:max-w-[345px] max-w-full w-full h-[201px] tablet:h-[282px] pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
 											<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Шоу</div>
 											<div className="relative flex w-full group">
 												<div
@@ -408,17 +381,11 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 													{props.shows.map((item: filmmakers) => {
 														return (
 															<>
-																<Link href={`/content/${item.code}`} className="flex-none px-[12px] last:pr-6">
+																<Link href={`/content/${item.code}`} className="relative flex-none px-[12px] last:pr-6">
+																	<Image width={150} height={200} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[200px] tablet:w-[150px] h-[132px] w-[99px] object-cover rounded-[10px] bg-center" alt="" />
 																	{((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0) < item.subscription ?
-																		<>
-																			<Image width={150} height={170} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[170px] tablet:w-[150px] h-[112px] w-[99px] object-cover rounded-t-[10px] bg-center" alt="" />
-																			<Link href={`subs`} className="">
-																				<Image width={150} height={30} src={`/subscriptions/only${item.subscription === 3 ? "Max" : item.subscription === 2 ? "Multi" : "One"}.svg`} className="tablet:h-[30px] tablet:w-[150px] h-[20px] w-[99px] object-cover bg-center" alt="" />
-																			</Link>
-																		</>
-																		:
-																		<Image width={150} height={200} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[200px] tablet:w-[150px] h-[132px] w-[99px] object-cover rounded-[10px] bg-center" alt="" />
-																	}
+																		<Image width={150} height={200} src={`/subscriptions/only${item.subscription === 3 ? "Max" : item.subscription === 2 ? "Multi" : "One"}.svg`} className="absolute bottom-0 tablet:h-[200px] tablet:w-[150px] h-[20px] w-[99px] object-cover bg-center" alt="" />
+																		: null}
 																</Link>
 															</>
 														)
@@ -443,7 +410,7 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 										</div>
 										: null}
 									{props.newsVideo.length > 0 ?
-										<div className="w-full h-[201px] tablet:h-[282px] pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
+										<div className="smltp:max-w-full tablet:max-w-[345px] max-w-full w-full h-[201px] tablet:h-[282px] pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
 											<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Последние выпуски новостей</div>
 											<div className="relative flex w-full group">
 												<div
@@ -478,7 +445,7 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 													</div>
 													{props.newsVideo.map((item: { url: string, name: string, png: string }) => {
 														return (
-															<Link href={`${item.url}`} key={""} className="flex-none px-[12px] last:pr-6">
+															<Link href={`${item.url}`} key={item.url} className="flex-none px-[12px] last:pr-6">
 																<div className="flex flex-col items-center justify-center gap-3">
 																	<Image width={285} height={180} src={`/preview/news${item.png}`} className="tablet:h-[180px] tablet:w-[285px] h-[100px] w-[160px] object-cover rounded-[10px] bg-center" alt="" />
 																</div>

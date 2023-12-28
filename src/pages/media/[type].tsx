@@ -189,17 +189,11 @@ export default function Home(props: { typeFilms: filmmakers[], news: news }) {
 													{props.typeFilms.map((item: filmmakers) => {
 														return (
 															<>
-																<Link href={`/content/${item.code}`} className="flex-none p-[12px] last:pr-6">
+																<Link href={`/content/${item.code}`} className="relative flex-none px-[12px] last:pr-6">
+																	<Image width={150} height={200} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[200px] tablet:w-[150px] h-[132px] w-[99px] object-cover rounded-[10px] bg-center" alt="" />
 																	{((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0) < item.subscription ?
-																		<>
-																			<Image width={150} height={170} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[170px] tablet:w-[150px] h-[112px] w-[99px] object-cover rounded-t-[10px] bg-center" alt="" />
-																			<Link href={`/subs`} className="">
-																				<Image width={150} height={30} src={`/subscriptions/only${item.subscription === 3 ? "Max" : item.subscription === 2 ? "Multi" : "One"}.svg`} className="tablet:h-[30px] tablet:w-[150px] h-[20px] w-[99px] object-cover bg-center" alt="" />
-																			</Link>
-																		</>
-																		:
-																		<Image width={150} height={200} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[200px] tablet:w-[150px] h-[132px] w-[99px] object-cover rounded-[10px] bg-center" alt="" />
-																	}
+																		<Image width={150} height={200} src={`/subscriptions/only${item.subscription === 3 ? "Max" : item.subscription === 2 ? "Multi" : "One"}.svg`} className="absolute bottom-0 tablet:h-[200px] tablet:w-[150px] h-[20px] w-[99px] object-cover bg-center" alt="" />
+																		: null}
 																</Link>
 															</>
 														)

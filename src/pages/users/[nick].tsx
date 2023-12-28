@@ -132,7 +132,7 @@ export default function Home(props: { favorite: filmmakers[], acquired: filmmake
 							<>
 								<div className=' laptop:p-[90px] tablet:p-[30px] p-[0px] pt-[50px]'>
 									<div className='flex tablet:flex-row flex-col tablet:items-start items-center gap-6'>
-										<Image width={256} height={256} src={`https://visage.surgeplay.com/front/512/${data.UUID}`} className='laptop:w-[256px] w-[192px] relative pt-[24px] px-[12px] bg-[#ffffff] dark:bg-[#0f0f0f] rounded-[25px]' alt="" />
+										<Image width={256} height={256} src={`https://visage.surgeplay.com/front/512/${data.UUID}`} className='laptop:w-[256px] w-[192px] relative pt-[24px] px-[12px] bg-[#eeeeee] dark:bg-[#0f0f0f] rounded-[25px]' alt="" />
 										<div className='flex flex-col'>
 											<p className="dark:text-white text-black font-['Montserrat'] font-bold laptop:text-[32px] tablet:text-[18px] text-[16px] mt-[10px] ">{data.nickname}</p>
 											<p className="dark:text-white text-black font-['Montserrat'] font-medium laptop:text-[22px] tablet:text-[16px] text-[14px] mt-[10px] ">Баланс: <b>{data.balance} <span className='text-[#FAC301]'>AP</span></b> </p>
@@ -275,17 +275,11 @@ export default function Home(props: { favorite: filmmakers[], acquired: filmmake
 															{props.favorite.map((item: filmmakers) => {
 																return (
 																	<>
-																		<Link href={`/content/${item.code}`} className="flex-none px-[12px] last:pr-6">
+																		<Link href={`/content/${item.code}`} className="relative flex-none px-[12px] last:pr-6">
+																			<Image width={150} height={200} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[200px] tablet:w-[150px] h-[132px] w-[99px] object-cover rounded-[10px] bg-center" alt="" />
 																			{((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0) < item.subscription ?
-																				<>
-																					<Image width={150} height={170} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[170px] tablet:w-[150px] h-[112px] w-[99px] object-cover rounded-t-[10px] bg-center" alt="" />
-																					<Link href={`subs`} className="">
-																						<Image width={150} height={30} src={`/subscriptions/only${item.subscription === 3 ? "Max" : item.subscription === 2 ? "Multi" : "One"}.svg`} className="tablet:h-[30px] tablet:w-[150px] h-[20px] w-[99px] object-cover bg-center" alt="" />
-																					</Link>
-																				</>
-																				:
-																				<Image width={150} height={200} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[200px] tablet:w-[150px] h-[132px] w-[99px] object-cover rounded-[10px] bg-center" alt="" />
-																			}
+																				<Image width={150} height={200} src={`/subscriptions/only${item.subscription === 3 ? "Max" : item.subscription === 2 ? "Multi" : "One"}.svg`} className="absolute bottom-0 tablet:h-[200px] tablet:w-[150px] h-[20px] w-[99px] object-cover bg-center" alt="" />
+																				: null}
 																		</Link>
 																	</>
 																)
@@ -351,17 +345,11 @@ export default function Home(props: { favorite: filmmakers[], acquired: filmmake
 															{props.acquired.map((item: filmmakers) => {
 																return (
 																	<>
-																		<Link href={`/content/${item.code}`} className="flex-none px-[12px] last:pr-6">
+																		<Link href={`/content/${item.code}`} className="relative flex-none px-[12px] last:pr-6">
+																			<Image width={150} height={200} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[200px] tablet:w-[150px] h-[132px] w-[99px] object-cover rounded-[10px] bg-center" alt="" />
 																			{((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0) < item.subscription ?
-																				<>
-																					<Image width={150} height={170} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[170px] tablet:w-[150px] h-[112px] w-[99px] object-cover rounded-t-[10px] bg-center" alt="" />
-																					<Link href={`subs`} className="">
-																						<Image width={150} height={30} src={`/subscriptions/only${item.subscription === 3 ? "Max" : item.subscription === 2 ? "Multi" : "One"}.svg`} className="tablet:h-[30px] tablet:w-[150px] h-[20px] w-[99px] object-cover bg-center" alt="" />
-																					</Link>
-																				</>
-																				:
-																				<Image width={150} height={200} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[200px] tablet:w-[150px] h-[132px] w-[99px] object-cover rounded-[10px] bg-center" alt="" />
-																			}
+																				<Image width={150} height={200} src={`/subscriptions/only${item.subscription === 3 ? "Max" : item.subscription === 2 ? "Multi" : "One"}.svg`} className="absolute bottom-0 tablet:h-[200px] tablet:w-[150px] h-[20px] w-[99px] object-cover bg-center" alt="" />
+																				: null}
 																		</Link>
 																	</>
 																)
