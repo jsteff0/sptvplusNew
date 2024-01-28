@@ -2,18 +2,18 @@
 import Image from "next/image";
 import Link from "next/link";
 import Head from "next/head";
-import Films from "./components/filmline"
+import Films from "../app/components/filmline"
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
 import { getServerAuthSession } from "~/server/auth";
 import fsPromises from 'fs/promises';
 import { PrismaClient } from '@prisma/client'
-import { env } from "~/env.mjs";
-import { SPWorlds } from 'spworlds';
-import Header from "./components/header";
-import Footer from "./components/footer";
-const apiSP = new SPWorlds(env.NEXT_PUBLIC_CARD_ID, env.NEXT_PUBLIC_CARD_TOKEN);
+// import { env } from "~/env.mjs";
+// import { SPWorlds } from 'spworlds';
+import Header from "../app/components/header";
+import Footer from "../app/components/footer";
+// const apiSP = new SPWorlds(env.NEXT_PUBLIC_CARD_ID, env.NEXT_PUBLIC_CARD_TOKEN);
 
 
 interface filmmakers {

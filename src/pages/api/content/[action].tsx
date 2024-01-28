@@ -2,16 +2,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import { ContentTypes, Types, PrismaClient, Prisma } from '@prisma/client'
+import { Types, PrismaClient, Prisma } from '@prisma/client'
 import { randomUUID } from 'crypto';
-import { readFile, writeFile } from 'fs/promises'
 import { type NextApiRequest, type NextApiResponse } from 'next';
 const prisma = new PrismaClient()
-interface news {
-	news: Array<{ text: string, img: string }>;
-	newsVideo: Array<{ url: string, name: string, png: string }>;
-	mainNews: { title: string, text: string, img: string }
-}
 export interface NewApiRequest extends NextApiRequest {
 	body: {
 		imgID: string;

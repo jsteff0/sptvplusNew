@@ -4,15 +4,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import Head from "next/head";
-import Films from "../components/filmline";
+import Films from "../../app/components/filmline";
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
 import { getServerAuthSession } from "~/server/auth";
 import { useRouter } from "next/router";
 import { PrismaClient } from '@prisma/client'
-import Footer from "../components/footer";
-import Header from "../components/header";
+import Footer from "../../app/components/footer";
+import Header from "../../app/components/header";
 
 interface filmmakers {
 	imgID: string;
@@ -549,7 +549,6 @@ export const getServerSideProps: GetServerSideProps = async (
 			id: session.user.id,
 		},
 		select: {
-			acquired: true,
 			fav: true,
 			acq: true
 		},

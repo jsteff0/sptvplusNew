@@ -3,10 +3,10 @@ import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
-import Header from "../components/header";
-import Footer from "../components/footer";
+import Header from "../../app/components/header";
+import Footer from "../../app/components/footer";
 import { getServerAuthSession } from "~/server/auth";
-import { PrismaClient, type Film } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 
 
 export default function Home(props: {
@@ -15,11 +15,13 @@ export default function Home(props: {
 		timing: number[];
 	}[]
 }) {
-	const episodesContent: Film[] = []
+	const episodesContent: {
+		name: string;
+	}[] = []
 	for (let i = 0; i < props.contents.length; i++) {
-		console.log(episodesContent)
-		if (props.contents[i]?.timing.length > 1) {
-			episodesContent.push(props.contents[i])
+		const el = props.contents[i]
+		if (el && el.timing.length > 1) {
+			episodesContent.push(el)
 		}
 	}
 	const [file, setFile] = useState<File>()

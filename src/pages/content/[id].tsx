@@ -4,7 +4,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import Head from "next/head";
-import Films from "../components/filmline"
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
@@ -14,8 +13,8 @@ import { randomUUID } from "crypto";
 import Hls, { TimelineController } from "hls.js";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import Header from "../components/header";
-import Footer from "../components/footer";
+import Header from "../../app/components/header";
+import Footer from "../../app/components/footer";
 
 interface filmmakers {
 	id: number;
@@ -609,13 +608,13 @@ function Render(idFilm: { idFilm: string; }) {
 		const volume = parseFloat(idFilm.idFilm.split("::")[2] as string)
 		const video = document.getElementsByTagName('video')[0] as HTMLVideoElement;
 		if (video && !video.currentSrc) {
-			document.addEventListener("keypress", (e) => {
+			document.addEventListener("keypress", async (e) => {
 				if (e.key === " ") {
 					console.log("sdasdas")
 					if (video.paused) {
-						video.play
+						await video.play()
 					} else {
-						video.pause
+						video.pause()
 					}
 				}
 			})
@@ -952,8 +951,8 @@ export const getServerSideProps: GetServerSideProps = async (
 					}
 				}
 			} else {
-				let isFav = false
-				let isAcq = false
+				const isFav = false
+				const isAcq = false
 				return {
 					props: {
 						content,

@@ -3,7 +3,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { ContentTypes, Types, PrismaClient } from '@prisma/client'
-import { randomUUID } from 'crypto';
 import { readFile, writeFile } from 'fs/promises'
 import { type NextApiRequest, type NextApiResponse } from 'next';
 const prisma = new PrismaClient()

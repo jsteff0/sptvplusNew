@@ -1,7 +1,7 @@
 
 import Head from "next/head";
-import Footer from "./components/footer";
-import Header from "./components/header";
+import Footer from "../app/components/footer";
+import Header from "../app/components/header";
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";

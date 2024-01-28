@@ -5,14 +5,13 @@ import Link from "next/link";
 import Head from "next/head";
 import { useSession } from "next-auth/react";
 import fsPromises from 'fs/promises';
-import Films from "../components/filmline"
 import { api } from "~/utils/api";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { PrismaClient, type ContentTypes } from '@prisma/client'
 import { getServerAuthSession } from "~/server/auth";
 import { useRouter } from "next/router";
-import Footer from "../components/footer";
-import Header from "../components/header";
+import Footer from "../../app/components/footer";
+import Header from "../../app/components/header";
 
 interface filmmakers {
 	imgID: string;

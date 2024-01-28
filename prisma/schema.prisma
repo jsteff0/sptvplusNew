@@ -64,7 +64,7 @@ model User {
     addedPlayers           String[]
     noPlayersAddedYet      String[]
     fav                    Json?
-    acquired               Int[]
+    acq                    Json?
     expirydate             DateTime?
     volume                 Float        @default(0.5)
     accounts               Account[]
@@ -72,7 +72,6 @@ model User {
     sessions               Session[]
     rating                 Rating[]
     view                   View[]
-    acq                    Json?
 }
 
 model Film {
