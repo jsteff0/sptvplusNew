@@ -4,6 +4,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Head from "next/head";
+import Films from "../components/filmline"
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
@@ -12,11 +13,13 @@ import { PrismaClient } from '@prisma/client'
 import { randomUUID } from "crypto";
 import Hls, { TimelineController } from "hls.js";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
-
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import Header from "../components/header";
+import Footer from "../components/footer";
 
 interface filmmakers {
 	id: number;
+	name: string;
 	imgID: string;
 	content: string;
 	describe: string;
@@ -31,17 +34,30 @@ interface filmmakers {
 	more: string;
 	code: string;
 	youtube: string | null;
+	show: number;
 }
 export default function Home(props: {
-	content: filmmakers, isBeforePremier: boolean, encodedCode: string, timeKey: string, watched: string[]
+	content: filmmakers, isBeforePremier: boolean, encodedCode: string, timeKey: string, lastwatched: number, timeKeys: number[], startedwatch: { content: filmmakers }[], isFav: boolean, isAcq: boolean
 }) {
-
 	const { data: session } = useSession();
-	const { data } = api.user.me.useQuery();
+	const { data } = api.user.contentinfo.useQuery();
 	const router = useRouter().query.id;
 	useEffect(() => {
 		Render({ idFilm: props.encodedCode + "::" + props.timeKey + "::" + (data ? data?.volume : 0.5) + "::" + (data ? data?.nickname : "DrDro20") })
 	})
+
+	const [formData, setFormData] = useState<{
+		rate: number;
+		nickname: string;
+		id: string;
+	}>(
+		{
+			rate: 5,
+			nickname: "",
+			id: typeof router === "string" ? router : ""
+		}
+	);
+	const [rated, setRated] = useState<number>(5)
 	if (!data?.nickname || !session?.user.name) {
 		return (
 			<div className="flex justify-center items-center align-middle h-screen w-screen">
@@ -53,18 +69,19 @@ export default function Home(props: {
 		);
 	} else if (props.encodedCode) {
 		let isHover = false;
+
 		return (
 			<>
 				<Head>
-					<title>Главная</title>
+					<title>{props.content.name}</title>
 					<link rel="icon" href="/favicon.ico" />
-					<meta name="description" content="Добро пожаловать на сайт СПTV+" />
+					<meta name="description" content={props.content.name} />
+					<meta name="og:image" content={`/preview/${props.content.imgID}_a.png`} />
 					<link rel="preconnect" href="https://fonts.googleapis.com" />
 					<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
 				</Head>
 				<div className="min-h-screen flex items-center bg-[#000000]">
 					<div id="up" onMouseEnter={() => { isHover = true; }} onMouseLeave={() => {
-
 						const upper = document.getElementById('up') as HTMLDivElement;
 						const downer = document.getElementById('down') as HTMLDivElement;
 						isHover = false;
@@ -72,13 +89,13 @@ export default function Home(props: {
 						downer.classList.replace("opacity-100", "opacity-0")
 					}} className="z-20 opacity-0 duration-300 уease-in-out absolute top-0 w-screen h-[200px] bg-gradient-to-b from-black to-transparent">
 						<Image
-							onClick={() => { savingUpData(data.nickname as string, props.encodedCode).then(() => location.href = location.origin + "/content/" + (typeof router === "string" ? router : null)).catch((err) => console.log(err)); }}
+							onClick={() => { savingUpData(data.nickname as string, router as string, atob(props.encodedCode).split("::")[0] as string).then(() => location.href = location.origin + "/content/" + (typeof router === "string" ? router : null)).catch((err) => console.log(err)); }}
 							src="/control/exitBtn.svg" width={30} height={30} className="m-10" alt="" />
 					</div>
 
 
 					<video className="z-10 h-screen w-screen" id="mainvideo"
-						onEnded={() => savingUpData(data.nickname as string, props.encodedCode)}
+						onEnded={() => savingUpData(data.nickname as string, router as string, atob(props.encodedCode).split("::")[0] as string)}
 						onMouseMove={() => {
 							const upper = document.getElementById('up') as HTMLDivElement;
 							const downer = document.getElementById('down') as HTMLDivElement;
@@ -104,7 +121,7 @@ export default function Home(props: {
 							const sec = Math.floor(e.currentTarget.currentTime) - (min + (hr * 60)) * 60;
 							timeBar.innerHTML = `${hr}:${min < 10 ? `0${min}` : min}:${sec < 10 ? `0${sec}` : sec}`
 							if (sec % 15 === 0) {
-								savingUpData(data.nickname as string, typeof router === "string" ? router : "").catch((err) => console.log(err));
+								savingUpData(data.nickname as string, router as string, atob(props.encodedCode).split("::")[0] as string).catch((err) => console.log(err));
 							}
 						}}
 						onClick={async (e) => {
@@ -118,7 +135,6 @@ export default function Home(props: {
 							}
 						}}>
 					</video>
-					<Render idFilm={props.encodedCode + "::" + props.timeKey + "::" + data.volume + "::" + data.nickname} />
 					<div id="down" onMouseEnter={() => { isHover = true; }} onMouseLeave={() => {
 						const upper = document.getElementById('up') as HTMLDivElement;
 						const downer = document.getElementById('down') as HTMLDivElement;
@@ -191,41 +207,84 @@ export default function Home(props: {
 			</>
 		)
 	} else {
+
+		const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+			setFormData({
+				...formData,
+				rate: parseInt(e.target.value),
+			});
+		};
+		async function subm(event: FormEvent<HTMLFormElement>) {
+			event.preventDefault()
+			const alertTitle = document.getElementById(`alertTitle`);
+			const alertContect = document.getElementById(`alertContect`);
+			if (data?.nickname && formData.rate && alertTitle && alertContect) {
+				const fstdata = formData
+				fstdata.nickname = data.nickname
+
+				await fetch('/api/content/mark', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(fstdata),
+				}).then((response) => {
+					return response.json();
+				}).then((data: { code: number }) => {
+					if (data.code === 2) {
+						alertTitle.innerHTML = "Спасибо"
+						alertContect.innerHTML = `Спасибо что помогаете делать просмотр фильмов на диванчике лучше`
+						switchWind("mark")
+						switchWind("alert")
+						setTimeout(() => {
+							switchWind("alert")
+						}, 3000)
+					} else if (data.code === 1) {
+						alertTitle.innerHTML = "Ошибка"
+						alertContect.innerHTML = `Сообщите drdro20. Извините за неудобства`
+						switchWind("mark")
+						switchWind("alert")
+						setTimeout(() => {
+							switchWind("alert")
+						}, 3000)
+					} else {
+						alertTitle.innerHTML = "Ошибка"
+						alertContect.innerHTML = `Сообщите drdro20. Извините за неудобства`
+						switchWind("mark")
+						switchWind("alert")
+						setTimeout(() => {
+							switchWind("alert")
+						}, 3000)
+					}
+				})
+
+			}
+		}
+
 		const datePremiere = new Date(props.content.datePremiere)
 		return (
 			<>
 				<Head>
-					<title>Главная</title>
+					<title>{props.content.name}</title>
 					<link rel="icon" href="/favicon.ico" />
-					<meta name="description" content="Добро пожаловать на сайт СПTV+" />
+					<meta name="description" content={props.content.name} />
+					<meta name="og:image" content={`/preview/${props.content.imgID}_a.png`} />
 					<link rel="preconnect" href="https://fonts.googleapis.com" />
 					<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
 				</Head>
 				<div className="min-h-screen flex flex-col bg-[#E1E1E1] dark:bg-[#000000]">
-					<header className="fixed flex justify-between items-center px-8 z-20 w-full h-[55px] bg-[#272727]">
-						<Link href="/main" className="w-auto h-auto">
-							<span className=" text-[#FFE400] font-['Montserrat'] text-[20px] font-extrabold">СП</span>
-							<span className=" text-white font-['Montserrat'] text-[20px] font-extrabold text italic">tv+</span>
-						</Link>
-						<div className="float-right flex align-center gap-[14px]">
-							<div className="flex items-center tablet:gap-2 gap-1">
-								<span className="font-['Montserrat'] font-normal tablet:text-[18px] text-[15px] text-white text-center">Баланс: <b>{data.balance}<span className="text-[#FFE400] font-bold"> AP</span></b></span>
-								<button onClick={() => switchWind("addMoney")}>
-									<Image alt="" src={`/buttons/addbtn.svg`} width={18} height={19} />
-								</button>
+					<Header balance={data.balance} subscription={data.subscription} UUID={data.UUID ? `https://api.mineatar.io/face/${data.UUID}` : "/randomguy.png"} nickname={data.nickname} />
+					<section id="alert" className="fixed inset-0 overflow-y-auto z-20 hidden">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<div onClick={() => switchWind("alert")} className="fixed inset-0 bg-black bg-opacity-25"></div>
+							<div className="w-full max-w-md transform  overflow-hidden rounded-2xl bg-[#272727] p-6 text-left align-middle shadow-xl transition-all z-22">
+								<b id="alertTitle" className=" text-white text-[20px] font-['Montserrat']" ></b><br />
+								<div id="alertContect" className="mt-4 text-white">
+
+								</div>
 							</div>
-							<a href={`/users/${data.nickname}`}>
-								{data.subscription === "MAX" || data.subscription === "fMAX" ? <>
-									<Image alt="" src={`/subscriptions/subsmax.svg`} width={11} height={11} className="float-right right-6 top-[8px] rounded absolute "></Image>
-								</> : data.subscription === "MULTI" || data.subscription === "fMULTI" ? <>
-									<Image alt="" src={`/subscriptions/subsmulti.svg`} width={11} height={11} className="float-right right-6 top-[8px] rounded absolute "></Image>
-								</> : data.subscription === "ONE" ? <>
-									<Image alt="" src={`/subscriptions/subsone.svg`} width={11} height={11} className="float-right right-6 top-[8px] rounded absolute "></Image>
-								</> : <></>}
-								<Image width={30} height={30} className="rounded tablet:w-[30px] w-[25px] tablet:h-[30px] h-[25px]" src={data.UUID ? `https://api.mineatar.io/face/${data.UUID}` : "/randomguy.png"} alt="" />
-							</a>
 						</div>
-					</header>
+					</section>
 					<section id="addMoney" className="fixed inset-0 overflow-y-auto z-30 hidden">
 						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<div className="fixed inset-0 bg-black bg-opacity-25"></div>
@@ -254,10 +313,19 @@ export default function Home(props: {
 					<section id="more" className="fixed inset-0 overflow-y-auto z-30 hidden">
 						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<div className="fixed inset-0 bg-black bg-opacity-25"></div>
-							<div className="w-full max-w-md transform  overflow-hidden rounded-2xl bg-[#272727] p-6 text-left align-middle shadow-xl transition-all z-22">
-								<b className=" text-white text-[20px] font-['Montserrat']">Подробнее</b><br />
+							<div className="font-['Montserrat'] w-full max-w-md transform  overflow-hidden rounded-2xl bg-[#272727] p-6 text-left align-middle shadow-xl transition-all z-22">
+								<b className=" text-white text-[20px] ">Подробнее</b><br />
 								<div className="mt-4 text-white">
 									{props.content.more}
+									{!props.isBeforePremier ?
+										<button onClick={() => { switchWind("more"); switchWind("mark") }}
+											className="bg-[#373737] px-5 mt-6 text-white font-semibold text-[12px] hover:shadow-md h-[40px] rounded-[20px] flex items-center ease-out duration-300">
+											<Image alt="Звезда" className="mr-2" width={12} height={12} src={"/buttons/star.png"} />
+											Оценить
+										</button>
+										:
+										null
+									}
 								</div>
 								<div className="mt-4 flex justify-end gap-3">
 									<button onClick={() => switchWind("more")} className="px-4 py-2 bg-[#373737] rounded-[15px]"><span className="text-[#FFE400] font-bold">Отмена</span></button>
@@ -265,28 +333,80 @@ export default function Home(props: {
 							</div>
 						</div>
 					</section>
-					{!props.content.youtube && !props.isBeforePremier && ((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0) >= props.content.subscription || data.acquired.includes(props.content.id) && props.content.timing.length > 1 ?
+					<section id="mark" className="fixed inset-0 overflow-y-auto z-30 hidden">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<div onClick={() => switchWind("mark")} className="fixed inset-0 bg-black bg-opacity-25"></div>
+							<form onSubmit={subm}>
+								<div className="w-full max-w-md transform  overflow-hidden rounded-2xl bg-[#272727] p-6 text-left align-middle shadow-xl transition-all">
+									<b className=" text-white text-[20px] font-['Montserrat']">Оценка</b><br />
+
+									<div className="flex m-4 font-['Montserrat'] text-white font-bold">
+										<span className="opacity-40 m-2 text-[12px]">Ужастно</span>
+										<label htmlFor="rt1" className="flex flex-col items-center">
+											<input type="radio" name="rating" id="rt1" value={1} className="hidden peer" onChange={handleChange} />
+											<Image src={`/icons/rating/1${rated === 1 ? "ch" : ""}.svg`} alt="1" width={40} height={40} className="peer-checked:animate-pulse" onClick={(e) => setRated(parseInt(e.currentTarget.alt))} />
+											1
+										</label>
+
+										<label htmlFor="rt2" className="flex flex-col items-center">
+											<input type="radio" name="rating" id="rt2" value={2} className="hidden peer" onChange={handleChange} />
+											<Image src={`/icons/rating/2${rated === 2 ? "ch" : ""}.svg`} alt="2" width={40} height={40} className="peer-checked:animate-pulse" onClick={(e) => setRated(parseInt(e.currentTarget.alt))} />
+											2
+										</label>
+
+										<label htmlFor="rt3" className="flex flex-col items-center">
+											<input type="radio" name="rating" id="rt3" value={3} className="hidden peer" onChange={handleChange} />
+											<Image src={`/icons/rating/3${rated === 3 ? "ch" : ""}.svg`} alt="3" width={40} height={40} className="peer-checked:animate-pulse" onClick={(e) => setRated(parseInt(e.currentTarget.alt))} />
+											3
+										</label>
+
+										<label htmlFor="rt4" className="flex flex-col items-center">
+											<input type="radio" name="rating" id="rt4" value={4} className="hidden peer" onChange={handleChange} />
+											<Image src={`/icons/rating/4${rated === 4 ? "ch" : ""}.svg`} alt="4" width={40} height={40} className="peer-checked:animate-pulse" onClick={(e) => setRated(parseInt(e.currentTarget.alt))} />
+											4
+										</label>
+
+										<label htmlFor="rt5" defaultChecked className="flex flex-col items-center">
+											<input type="radio" name="rating" id="rt5" value={5} className="hidden peer" onChange={handleChange} />
+											<Image src={`/icons/rating/5${rated === 5 ? "ch" : ""}.svg`} alt="5" width={40} height={40} className="peer-checked:animate-pulse" onClick={(e) => setRated(parseInt(e.currentTarget.alt))} />
+											5
+										</label>
+										<span className="opacity-40 m-2 text-[12px]">Замечательно</span>
+
+									</div>
+
+									<div className="mt-4 flex justify-end gap-3">
+										<button type="submit" className="px-4 py-2 bg-[#ffbb00] rounded-[15px]"><span className="text-white font-bold">Отправить</span></button>
+										<button type="button" onClick={() => switchWind("mark")} className="px-4 py-2 bg-[#373737] rounded-[15px]"><span className="text-[#FFE400] font-bold">Отмена</span></button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</section >
+					{!props.content.youtube && !props.isBeforePremier && ((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0) >= props.content.subscription || props.isAcq && props.content.timing.length > 1 ?
 						<section id="chooseSeriaWind" className="fixed inset-0 overflow-y-auto z-30 hidden">
 							<div className="flex min-h-full items-center justify-center p-4 text-center">
 								<div className="fixed inset-0 bg-black bg-opacity-25"></div>
-								<div className="w-full max-w-[200px] transform overflow-hidden rounded-2xl bg-[#272727] p-6 text-left align-middle shadow-xl transition-all z-22">
-									<b className=" text-white text-[14px] font-['Montserrat']">Выбрать серию</b><br />
-									<section className="flex bg-[#303030] h-[220px] flex-col items-center overflow-y-scroll no-scroll-line rounded-xl m-4">
+								<div className="w-full max-w-[200px] pt-5 transform overflow-hidden rounded-2xl bg-[#272727] text-left align-middle shadow-xl transition-all z-22">
+									<b className="text-white text-[14px] font-['Montserrat'] m-6">Выбрать серию</b><br />
+									<section className="flex my-6 h-[200px] flex-col items-center overflow-y-scroll no-scroll-line">
 										{props.content.timing.map((item: number, i) => {
 											return (
 												<>
-													<button onClick={() => startwatching(props.content.code, "EPS" + (i + 1), data.nickname as string)} className={`text-white flex-none p-2 m-[10px] first:mt-[12px] last:mb-[12px] hover:bg-[#393939] hover:cursor-pointer`}>
+													<button onClick={() => startwatching(props.content.code, "EPS" + (i + 1), data.nickname as string)} className={`text-white flex-none w-full p-2 hover:bg-[#393939] hover:cursor-pointer`}>
 														<b className="text-[18px]">{i + 1} эпизод</b>
 														<br />
 														<span className="text-[12px]">{`${Math.floor(item / 60)} минут${Math.floor(item / 60) % 10 === 1 && Math.floor(item / 60) !== 11 ? "a" : (Math.floor(item / 60) % 10 === 2 && Math.floor(item / 60) !== 12) || (Math.floor(item / 60) % 10 === 3 && Math.floor(item / 60) !== 13) || (Math.floor(item / 60) % 10 === 4 && Math.floor(item / 60) !== 14) ? "ы" : ""}`}</span>
 														<br />
-														{props.watched.includes((i + 1).toString()) ? <i className="text-[12px] ">Просмотренно</i> : <></>}
+														<div className="mt-2 h-[3px] w-full bg-white rounded-full">
+															<div id="progressed" className={`h-[3px] bg-[#e5d332] rounded-full`}></div>
+														</div>
 													</button>
 												</>
 											)
 										})}
 									</section>
-									<div className="mt-4 flex justify-end gap-3">
+									<div className="mt-4 flex justify-end gap-3 p-2">
 										<button onClick={() => switchWind("chooseSeriaWind")} className="px-4 py-2 bg-[#373737] rounded-[15px]"><span className="text-[#FFE400] font-bold">Отмена</span></button>
 									</div>
 								</div>
@@ -296,13 +416,14 @@ export default function Home(props: {
 						null
 					}
 
-					<main className="flex align-middle justify-center flex-auto">
+					<main className="flex align-middle relative justify-center flex-auto min-h-[630px]">
+
 						<section
-							className="z-10  laptop:bg-gradient-to-r bg-[#000000df] from-[#000000e8] from-[35%] to-transparent absolute h-screen w-full left-0 flex laptop:justify-normal justify-center">
+							className="z-10 laptop:bg-gradient-to-r min-h-[630px] relative bg-[#000000df] from-[#000000e8] from-[35%] to-transparent  w-full left-0 flex flex-col laptop:justify-normal justify-center">
 							<div className="laptop:max-w-[40%] max-w-screen px-10 py-20 flex flex-col items-center">
 								<img src={`/preview/${props.content.imgID}_m.png`} className="laptop:w-auto tablet:w-[50%] w-auto" alt="" />
 								<div className="font-medium smltp:text-[13px] text-[9px] text-[rgb(173,173,173)] flex smltp:gap-[8px] gap-[4px] justify-center font-['Montserrat']">
-									<span className={`${props.content.mark >= 2.5 ? props.content.mark >= 3.9 ? "text-[#00760C]" : "text-[#766300]" : "text-[#761500]"}`}>{(props.content.mark.toString().includes('.')) ? props.content.mark : `${props.content.mark}.0`}</span>
+									<span onClick={() => switchWind("mark")} className={`${props.content.mark !== 0.0 ? props.content.mark >= 2.5 ? props.content.mark >= 3.9 ? "text-[#00760C]" : "text-[#766300]" : "text-[#761500]" : "text-[#7c7c7c]"} cursor-pointer`}>{props.content.mark !== 0.0 ? (props.content.mark.toString().includes('.')) ? props.content.mark : `${props.content.mark}.0` : `Оценить`}</span>
 									<span>{props.content.watched >= 1000000 ? `${(props.content.watched / 1000000).toFixed(1)}M` : props.content.watched > 1000 ? `${(props.content.watched / 1000).toFixed(1)}K` : props.content.watched}</span>
 									<span>{datePremiere.getFullYear()}</span>
 									<span>{props.content.types.map((item: string) => {
@@ -312,21 +433,27 @@ export default function Home(props: {
 									<span>{props.content.studio}</span>
 								</div>
 								<div className="flex justify-center font-normal text-white text-[20px] p-10 font-['Montserrat']">{props.content.describe}</div>
-								<div className="flex gap-2 font-['Montserrat']">
+								<div className={`gap-2 font-['Montserrat'] flex`}>
 									{!props.content.youtube ?
 										!props.isBeforePremier ?
-											((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0) >= props.content.subscription || data.acquired.includes(props.content.id)
+											((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0) >= props.content.subscription || props.isAcq
 												?
 												props.content.timing.length > 1
 													?
-													<button onClick={() => switchWind("chooseSeriaWind")} className="peer-checked:hidden block flex-none px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold">Выбрать эпизод</button>
+													<button onClick={() => {
+														if (props.lastwatched !== -1) {
+															void startwatching(props.content.code, "EPS" + props.lastwatched, data.nickname as string)
+														} else {
+															switchWind("chooseSeriaWind")
+														}
+													}} className="peer-checked:hidden block flex-none px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold">{props.lastwatched !== -1 ? `Продолжить c ${props.lastwatched} серии` : "Выбрать эпизод"}</button>
 													:
-													<button onClick={() => startwatching(props.content.code, "FLM", data.nickname as string)} className="px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold flex items-center gap-2">Начать просмотр</button>
+													<button onClick={() => startwatching(props.content.code, "FLM", data.nickname as string)} className="peer-checked:hidden block flex-none px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold">{!props.timeKeys.length || props.timeKeys[0] === 0 ? "Начать просмотр" : `Продолжить просмотр`}</button>
 												:
 												<div className="flex flex-col items-center gap-1">
 													<Link href={"/subs"} className="px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold">Оформить подписку</Link>
 													<p className="text-white text-[12px] opacity-75">или</p>
-													<button id="buyButton" onClick={() => buy(props.content.code, props.content.price, data.nickname as string, data.balance)} className="text-white opacity-75 text-[14px] hover:underline">Приобрести за {props.content.price}АР</button>
+													<button id="buyButton" onClick={() => buy({ "code": props.content.code, "show": props.content.show, "imgID": props.content.imgID, "subscription": props.content.subscription, "price": props.content.price }, data.nickname as string, data.balance)} className="text-white opacity-75 text-[14px] hover:underline">{props.content.price > 0 ? `Приобрести за ${props.content.price}АР` : `Бесплатный просмотр`}</button>
 												</div>
 											:
 											<button onClick={() => startwatching(props.content.code, "TLR", data.nickname as string)} className="px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold">Смотреть трейлер</button>
@@ -334,52 +461,124 @@ export default function Home(props: {
 										<button onClick={() => location.href = props.content.youtube as string} className="px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold">Смотреть на YouTube</button>
 									}
 									<div className="flex">
-										<input type="checkbox" checked={data.favorite.includes(props.content.id)} className="peer hidden" id="saveButton" />
-										<label htmlFor="saveButton" onClick={() => save(props.content.code, data.nickname as string)}
-											className="bg-[#171717] peer-checked:bg-[#ffb300] w-[40px] shadow h-[40px] rounded-[20px] mr-2 flex items-center justify-center ease-out duration-300 ">
+										<input type="checkbox" checked={props.isFav} className="peer hidden" id="saveButton" />
+										<label htmlFor="saveButton" onClick={() => save({ "code": props.content.code, "show": props.content.show, "imgID": props.content.imgID, "subscription": props.content.subscription, }, data.nickname as string)}
+											className="bg-[#171717] peer-checked:bg-[#ffb300] w-[40px] shadow h-[40px] rounded-[20px] mr-2 flex items-center justify-center ease-out duration-300 cursor-pointer disabled:cursor-default">
 											<img src="/buttons/saveICN.svg" alt="" className="absolute w-[20px] h-[20px]" />
 										</label>
 										<button id="moreButton" onClick={() => switchWind("more")}
-											className="bg-[#171717] w-[40px] shadow h-[40px] rounded-[20px] mr-2 flex items-center justify-center ease-out duration-300">
+											className="bg-[#171717] w-[40px] shadow h-[40px] rounded-[20px] mr-2 flex items-center justify-center ease-out duration-300 cursor-pointer disabled:cursor-default">
 											<img src="/buttons/moreICN.svg" alt="" className="absolute w-[20px] h-[20px]" />
 										</button>
+
+
+										{props.lastwatched !== -1 ?
+											!props.content.youtube ?
+												!props.isBeforePremier ?
+													((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0) >= props.content.subscription || props.isAcq ?
+														props.content.timing.length > 1 ?
+															<button id="markContent" onClick={() => switchWind("chooseSeriaWind")}
+																className="bg-[#171717] px-5 py-2 text-white font-semibold text-[12px] shadow h-[40px] rounded-[20px] flex items-center justify-center ease-out duration-300">
+																<img src="/buttons/episodes.svg" className="w-[20px] h-[20px]" alt="" />
+															</button>
+															:
+															null
+														:
+														null
+													:
+													null
+												:
+												null
+											:
+											null
+										}
+
 									</div>
 								</div>
 							</div>
+							{props.startedwatch.length > 0 ? <div className="smltp:max-w-full tablet:max-w-[345px] max-w-full w-full h-[201px] tablet:h-[282px] pl-5 my-6 flex-col justify-start items-start gap-[25px] inline-flex">
+								<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Продолжить просмотр</div>
+								<div className="relative flex w-full group">
+									<div
+										onScroll={(e) => {
+											if (e.currentTarget.scrollLeft > 12) {
+												e.currentTarget.children[0]?.classList.replace("group-hover:opacity-0", "group-hover:opacity-100")
+												e.currentTarget.children[0]?.classList.replace("group-hover:w-0", "group-hover:w-[75px]")
+											} else {
+												e.currentTarget.children[0]?.classList.replace("group-hover:opacity-100", "group-hover:opacity-0")
+												e.currentTarget.children[0]?.classList.replace("group-hover:w-[75px]", "group-hover:w-0")
+											}
+											if (e.currentTarget.scrollLeft + e.currentTarget.offsetWidth < e.currentTarget.scrollWidth - 100) {
+												e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:opacity-0", "group-hover:opacity-100")
+												e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:w-0", "group-hover:w-[75px]")
+											} else {
+												e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:opacity-100", "group-hover:opacity-0")
+												e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:w-[75px]", "group-hover:w-0")
+											}
+										}} className="no-scroll-line overflow-x-scroll flex scroll-smooth group ">
+										<div onClick={(e) => {
+											const parentEl = e.currentTarget.parentNode as HTMLDivElement
+											if (parentEl.scrollLeft > 450)
+												parentEl.scrollLeft -= 450
+											else
+												parentEl.scrollLeft = 0
+										}} className="absolute w-0 h-full bg-gradient-to-r from-[#000000b2] to-[#ffffff00] flex items-center duration-300 ease-in-out group-hover:opacity-0 group-hover:w-0 opacity-0">
+											<div className="p-2">
+												<svg className="w-[23px] h-[45px] hover:w-[26px]" viewBox="0 0 23 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+													<path d="M18.5105 38.9583L0.958446 21.4583C0.750113 21.25 0.602197 21.0243 0.514697 20.7812C0.427197 20.5382 0.384142 20.2777 0.385531 20C0.385531 19.7222 0.428586 19.4618 0.514697 19.2187C0.600808 18.9757 0.748724 18.75 0.958446 18.5416L18.5105 0.989542C18.9966 0.503431 19.6043 0.260376 20.3334 0.260376C21.0626 0.260376 21.6876 0.520793 22.2084 1.04163C22.7293 1.56246 22.9897 2.1701 22.9897 2.86454C22.9897 3.55899 22.7293 4.16663 22.2084 4.68746L6.89595 20L22.2084 35.3125C22.6946 35.7986 22.9376 36.3979 22.9376 37.1104C22.9376 37.8229 22.6772 38.4388 22.1564 38.9583C21.6355 39.4791 21.0279 39.7395 20.3334 39.7395C19.639 39.7395 19.0314 39.4791 18.5105 38.9583Z" fill="white" />
+												</svg>
+											</div>
+										</div>
+										{props.startedwatch.map((item: { content: filmmakers }) => {
+											if (item.content.show) {
+												return (
+													<>
+
+														<Link href={`/content/${item.content.code}`} className="relative flex-none px-[12px] last:pr-6">
+															<Image width={285} height={180} src={`/preview/${item.content.imgID}.png`} className="tablet:h-[180px] tablet:w-[285px] h-[100px] w-[160px] object-cover rounded-[10px] bg-center" alt="" />
+
+														</Link>
+													</>
+												)
+											} else {
+												return
+											}
+										})}
+
+										<div onClick={(e) => {
+											const parentEl = e.currentTarget.parentNode as HTMLDivElement
+											if (parentEl.scrollLeft + parentEl.offsetWidth < parentEl.scrollWidth - 450)
+												parentEl.scrollLeft += 450
+											else
+												parentEl.scrollLeft = parentEl.scrollWidth - parentEl.offsetWidth
+										}} className={`absolute float-right right-0 w-0 h-full bg-gradient-to-l from-[#000000b2] to-[#ffffff00] flex justify-end items-center duration-300 ease-in-out group-hover:opacity-100 group-hover:w-[75px] opacity-0 `}>
+											<div className="p-2">
+												<svg className="w-[23px] h-[45px] hover:w-[26px]" viewBox="0 0 23 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+													<path d="M4.86472 1.04158L22.4168 18.5416C22.6251 18.7499 22.773 18.9756 22.8605 19.2187C22.948 19.4617 22.9911 19.7221 22.9897 19.9999C22.9897 20.2777 22.9467 20.5381 22.8605 20.7812C22.7744 21.0242 22.6265 21.2499 22.4168 21.4583L4.86472 39.0103C4.3786 39.4964 3.77097 39.7395 3.0418 39.7395C2.31263 39.7395 1.68763 39.4791 1.1668 38.9583C0.645966 38.4374 0.38555 37.8298 0.38555 37.1353C0.38555 36.4409 0.645967 35.8333 1.1668 35.3124L16.4793 19.9999L1.1668 4.68742C0.680692 4.20131 0.437635 3.602 0.437635 2.8895C0.437636 2.177 0.698052 1.56103 1.21889 1.04158C1.73972 0.52075 2.34736 0.260333 3.0418 0.260333C3.73625 0.260334 4.34389 0.52075 4.86472 1.04158Z" fill="white" />
+												</svg>
+											</div>
+										</div>
+									</div>
+
+								</div>
+							</div> : null}
 						</section>
-						<video id="bgvideo" className="z-0 object-cover min-h-screen min-w-full" src={`/videos/${props.content.code}BG.mp4`} autoPlay muted loop playsInline></video>
+						{/* <video id="bgvideo" className="z-0 object-cover max-h-screen min-w-full" src={`/videos/${props.content.code}BG.mp4`} autoPlay muted loop playsInline></video> */}
+						<img src={`/preview/${props.content.id}.png`} className="z-0 object-cover absolute max-h-screen min-h-[630px] min-w-full" alt="" />
 
 					</main>
-					<footer className="relative z-10 left-0 bottom-0 w-full h-[105px] bg-[#272727] hidden ">
-						<div className="flex justify-between ">
-							<div className="relative left-[21px] top-[11px] grid grid-flow-col grid-cols-2 grid-rows-4 h-[60px] tablet:h-[83px] w-[130px] tablet:w-[187px]">
-								<Link href={`/news`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto">Новости</Link>
-								<Link href={`/series`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto">Сериалы</Link>
-								<Link href={`/movies`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto">Фильмы</Link>
-								<Link href={`/shows`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto">Шоу</Link>
-								<Link href={`https://discord.gg/ea9ue92MmZ`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto">Дискорд</Link>
-								<Link href={`https://docs.google.com/forms/d/e/1FAIpQLSelqiT10IZYGwVL6nOucPWnHi7WaVYZCnKdJ8YqXZThQlfwJg/viewform?usp=sf_link`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto">СПtvCreators</Link>
-							</div>
-							<Image src="/logo.svg" width={`100`} height={`100`} className="w-0 tablet:w-[100px] h-0 tablet:h-[100px] mt-[2px]" alt="" />
-							<div className="relative right-[21px] top-[21px] grid grid-flow-col grid-cols-1 grid-rows-4 h-[52px] tablet:h-[83px] w-auto">
-								<Link href={``} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto text-right">Ген. Директор: rConidze</Link>
-								<Link href={``} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto text-right">Директора: Vikss_, re1ron</Link>
-								<Link href={`https://t.me/DrDroDev`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto text-right">Разработчик: Dro20</Link>
-							</div>
-						</div>
-						<span className="absolute font-['Montserrat'] font-bold text-[8px] tablet:text-[12px] text-[#ffffff20] w-auto float-right right-5 top-[85px]">© Все права защищены  2023 СПTV</span>
 
-					</footer>
+					<Footer />
 				</div>
 			</>
 		)
 	}
 }
 
-async function savingUpData(nickname: string, code: string) {
+async function savingUpData(nickname: string, code: string, tag: string) {
 	const video = document.getElementsByTagName('video')[0] as HTMLVideoElement;
 	if (video) {
-		const data = { "watched": (video.currentTime / video.duration) * 100 > 70, "volume": video.volume, "time": video.currentTime, "nickname": nickname, "codetag": code }
+		const data = { "watched": (video.currentTime / video.duration) * 100 > 70, "volume": video.volume, "time": video.currentTime, "nickname": nickname, "code": code, "tag": tag }
 		await fetch("/api/content/savingupdata", {
 			method: 'POST',
 			headers: {
@@ -403,12 +602,23 @@ async function savingUpData(nickname: string, code: string) {
 	return false;
 }
 function Render(idFilm: { idFilm: string; }) {
+
 	if (Hls.isSupported()) {
 		const id = idFilm.idFilm.split("::")[0]
 		const time = parseInt(idFilm.idFilm.split("::")[1] as string)
 		const volume = parseFloat(idFilm.idFilm.split("::")[2] as string)
 		const video = document.getElementsByTagName('video')[0] as HTMLVideoElement;
 		if (video && !video.currentSrc) {
+			document.addEventListener("keypress", (e) => {
+				if (e.key === " ") {
+					console.log("sdasdas")
+					if (video.paused) {
+						video.play
+					} else {
+						video.pause
+					}
+				}
+			})
 			const config = {
 				autoStartLoad: true,
 				timelineController: TimelineController,
@@ -455,8 +665,7 @@ function switchWind(BlockId: string) {
 }
 async function startwatching(code: string, tag: string, nickname: string) {
 	if (typeof window === "object") {
-		const id = atob(code).replace("rebmuNtnetnoC", "")
-		const data = { "codetag": btoa(id + "::" + tag), "nickname": nickname }
+		const data = { "code": code, "tag": tag, "nickname": nickname }
 		await fetch("/api/content/startwatching", {
 			method: 'POST',
 			headers: {
@@ -476,10 +685,12 @@ async function startwatching(code: string, tag: string, nickname: string) {
 		})
 	}
 }
-async function save(code: string, nickname: string) {
+async function save(content: { code: string, show: number, imgID: string, subscription: number }, nickname: string) {
+
 	if (typeof window === "object") {
 		const button = document.getElementById("saveButton") as HTMLInputElement;
-		const data = { "code": code, "nickname": nickname }
+		const data = { "content": content, "nickname": nickname }
+		button.disabled = true
 		await fetch("/api/content/save", {
 			method: 'POST',
 			headers: {
@@ -491,6 +702,7 @@ async function save(code: string, nickname: string) {
 		}).then((data: { code: number, added: boolean }) => {
 			if (data.code === 2) {
 				button.checked = data.added
+				button.disabled = false
 			} else if (data.code === 1) {
 				console.log("Invalid nickname")
 			} else {
@@ -499,18 +711,18 @@ async function save(code: string, nickname: string) {
 		})
 	}
 }
-async function buy(code: string, price: number, nickname: string, balance: number) {
+async function buy(content: { code: string, show: number, imgID: string, subscription: number, price: number }, nickname: string, balance: number) {
 	if (typeof window === "object") {
 		const btn = document.getElementById("buyButton") as HTMLButtonElement;
-		if (price > balance) {
+		if (content.price > balance) {
 			btn.innerHTML = "Недостаточно средств"
 			btn.disabled = true;
 			setTimeout(() => {
-				btn.innerHTML = `Приобрести за ${price}АР`;
+				btn.innerHTML = `Приобрести за ${content.price}АР`;
 				btn.disabled = false;
 			}, 3000)
 		} else {
-			const data = { "code": code, "price": price, "nickname": nickname }
+			const data = { "content": content, "nickname": nickname }
 			await fetch("/api/content/buy", {
 				method: 'POST',
 				headers: {
@@ -549,44 +761,37 @@ export const getServerSideProps: GetServerSideProps = async (
 			id: session.user.id
 		},
 		select: {
-			nickname: true
+			nickname: true,
+			view: {
+				select: {
+					tag: true,
+					contentcode: true,
+					timeKey: true,
+					content: {
+						select: {
+							imgID: true,
+							code: true,
+							subscription: true,
+							show: true
+						}
+					},
+				}
+			},
+			fav: true,
+			acq: true,
 		}
 	})
 	const newContent = await prisma.film.findUnique({
 		where: {
 			code: ctx.query.id as string
 		},
-		select: {
-			id: true,
-			imgID: true,
-			content: true,
-			describe: true,
-			mark: true,
-			watched: true,
-			types: true,
-			timing: true,
-			studio: true,
-			subscription: true,
-			price: true,
-			more: true,
-			code: true,
-			datePremiere: true,
-			youtube: true
-		},
 	})
-	if (newContent && nickname && typeof ctx.query.id === "string") {
-		const id = atob(ctx.query.id).replace("rebmuNtnetnoC", "")
-		const watchedo = await prisma.view.findMany({
-			where: {
-				nickname: nickname.nickname,
-				watched: true,
-			},
-			select: {
-				codetag: true,
-			}
-		})
+
+	if (newContent && nickname && nickname.view && typeof ctx.query.id === "string") {
 		const content: filmmakers = {
+			show: newContent.show,
 			id: newContent.id,
+			name: newContent.name,
 			imgID: newContent.imgID,
 			content: newContent.content,
 			describe: newContent.describe,
@@ -602,91 +807,163 @@ export const getServerSideProps: GetServerSideProps = async (
 			code: newContent.code,
 			youtube: newContent.youtube,
 		};
-		const watched = []
-		if (watchedo && watchedo[0] && atob(watchedo[0].codetag as string).includes("EPS")) {
-			for (let i = 0; i < watchedo.length; i++) {
-				if (atob(watchedo[i]?.codetag as string).split("::")[0]?.includes(id)) {
-					watched.push(atob(watchedo[i]?.codetag as string).split("::EPS")[1])
+		const timeKeys = Array(newContent.timing.length - 1)
+		let lastwatched = -1
+		if (newContent.timing.length > 1) {
+			for (let i = 0; i < nickname.view.length; i++) {
+				const element = nickname.view[i];
+				if (element?.contentcode === newContent.code) {
+					timeKeys[newContent.id - 1] = element.timeKey
+					lastwatched = newContent.id
+				}
+			}
+		} else {
+			for (let i = 0; i < nickname.view.length; i++) {
+				const element = nickname.view[i];
+				if (element?.contentcode === newContent.code) {
+					timeKeys[0] = nickname.view[i]?.timeKey
+					break
 				}
 			}
 		}
+		const startedwatch = nickname.view
+
 		for (let i = 0; i < newContent.types.length; i++) {
-			if (newContent.types[i] === "comedy")
-				content.types.push("комедия")
-			else if (newContent.types[i] === "horror")
-				content.types.push("хорор")
-			else if (newContent.types[i] === "romance")
-				content.types.push("романс")
-			else if (newContent.types[i] === "action")
-				content.types.push("экшн")
-			else if (newContent.types[i] === "drama")
-				content.types.push("драма")
-			else if (newContent.types[i] === "thriler")
-				content.types.push("триллер")
-			else if (newContent.types[i] === "fantasy")
-				content.types.push("фэнтэзи")
-			else if (newContent.types[i] === "historical")
-				content.types.push("исторический")
-			else if (newContent.types[i] === "darkcomedy")
-				content.types.push("чёрная комедия")
-			else if (newContent.types[i] === "musicals")
-				content.types.push("мьюзикл")
-			else if (newContent.types[i] === "animated")
-				content.types.push("анимационный")
+			switch (newContent.types[i]) {
+				case "comedy":
+					content.types.push("комедия")
+					break;
+				case "horror":
+					content.types.push("хорор")
+					break;
+				case "romance":
+					content.types.push("романс")
+					break;
+				case "action":
+					content.types.push("экшн")
+					break;
+				case "drama":
+					content.types.push("драма")
+					break;
+				case "thriler":
+					content.types.push("триллер")
+					break;
+				case "fantasy":
+					content.types.push("фэнтэзи")
+					break;
+				case "historical":
+					content.types.push("исторический")
+					break;
+				case "darkcomedy":
+					content.types.push("чёрная комедия")
+					break;
+				case "musicals":
+					content.types.push("мьюзикл")
+					break;
+				case "animated":
+					content.types.push("анимационный")
+					break;
+			}
 		}
 		const datenow = new Date();
-		const isBeforePremier = datenow < newContent.datePremiere ? true : false;
+		const isBeforePremier = datenow < newContent.datePremiere
 		if (ctx.query.watch && typeof ctx.query.watch === "string" && ctx.query.timeKey && typeof ctx.query.timeKey === "string") {
-			const playKey = ctx.query.watch;
-			const decodePlayKey = atob(playKey).split("::")
-			const nickname = decodePlayKey[1]
-			const key = decodePlayKey[2]
-			const newCode = atob(decodePlayKey[0] as string)
+			const playKey = JSON.parse(atob(ctx.query.watch)) as { tag: string, code: string, nickname: string, key: string };
 			const timeKey = ctx.query.timeKey
 			const newUUID = randomUUID();
+
 			const oldKey = await prisma.view.findUnique({
 				where: {
-					codetag: btoa(newCode),
-					nickname: nickname
+					id: btoa(playKey.nickname + playKey.code + playKey.tag),
 				},
 				select: {
-					key: true
+					key: true,
 				}
 			})
-			if (oldKey?.key === key) {
+			if (oldKey?.key === playKey.key) {
 				await prisma.view.update({
 					where: {
-						codetag: btoa(newCode),
-						nickname: nickname,
+						id: btoa(playKey.nickname + playKey.code + playKey.tag),
 					},
 					data: {
 						key: newUUID,
 					}
 				})
-				const encodedCode = btoa(newCode)
+				const encodedCode = btoa(playKey.tag + "::" + playKey.code)
 				return {
 					props: {
 						content,
 						isBeforePremier,
 						encodedCode,
 						timeKey,
-						watched
 					}
 				}
 			} else {
 				return {
-					redirect: { destination: "/main" },
-					props: {
-					}
+					redirect: { destination: "/content/" + playKey.code },
+					props: {}
 				}
 			}
 		} else {
-			return {
-				props: {
-					content,
-					isBeforePremier,
-					watched
+			if (
+				nickname?.fav &&
+				typeof nickname?.fav === 'object' &&
+				Array.isArray(nickname?.fav) &&
+				nickname?.acq &&
+				typeof nickname?.acq === 'object' &&
+				Array.isArray(nickname?.acq)
+			) {
+				let isFav = false
+				let isAcq = false
+				for (let i = 0; i < (nickname.fav.length > nickname.acq.length ? nickname.fav.length : nickname.acq.length) || (!isFav && !isAcq); i++) {
+					if(i < nickname.fav.length && i < nickname.acq.length) {
+						const elfav = nickname.fav[i] as { code: string, show: number, imgID: string, subscription: number }
+						if (elfav.code === content.code) {
+							isFav = true
+						}
+						const elacq = nickname.acq[i] as { code: string, show: number, imgID: string, subscription: number }
+						if (elacq.code === content.code) {
+							isAcq = true
+						}
+					} else if (i > nickname.fav.length && i < nickname.acq.length) {
+						const el = nickname.acq[i] as { code: string, show: number, imgID: string, subscription: number }
+						if (el.code === content.code) {
+							isAcq = true
+							break
+						}
+					} else if(i > nickname.acq.length && i < nickname.fav.length){
+						const el = nickname.fav[i] as { code: string, show: number, imgID: string, subscription: number }
+						if (el.code === content.code) {
+							isFav = true
+							break
+						}
+					}
+				}
 
+				return {
+					props: {
+						content,
+						isBeforePremier,
+						lastwatched,
+						timeKeys,
+						startedwatch,
+						isFav,
+						isAcq,
+					}
+				}
+			} else {
+				let isFav = false
+				let isAcq = false
+				return {
+					props: {
+						content,
+						isBeforePremier,
+						lastwatched,
+						timeKeys,
+						startedwatch,
+						isFav,
+						isAcq,
+					}
 				}
 			}
 		}

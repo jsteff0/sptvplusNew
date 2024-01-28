@@ -39,4 +39,5 @@
     ".next/types/**/*.ts"
   ],
   "exclude": ["node_modules", "public/manifests/**/*.ts"],
+
 }

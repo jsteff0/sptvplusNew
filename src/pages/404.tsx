@@ -5,7 +5,7 @@ const Home = () => {
 		<>
 			<Head>
 				<title>Error404</title>
-				<meta name="description" content="Добро пожаловать на сайт СПTV+" />
+				<meta name="description" content="Ошибка, не правильный url" />
 				<link rel="icon" href="/logo.png" />
 			</Head>
 			<main className="w-full h-full min-h-screen bg-[#272727]">

@@ -1,6 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+
 import Head from "next/head";
+import Footer from "./components/footer";
+import Header from "./components/header";
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
@@ -9,7 +10,7 @@ import { getServerAuthSession } from "~/server/auth";
 export default function Home() {
 
 	const { data: session } = useSession();
-	const { data } = api.user.me.useQuery();
+	const { data } = api.user.main.useQuery();
 	if (!data?.nickname || !session?.user.name) {
 		return (
 			<div className="flex justify-center items-center align-middle h-screen w-screen">
@@ -23,37 +24,14 @@ export default function Home() {
 		return (
 			<>
 				<Head>
-					<title>Главная</title>
+					<title>Подписки</title>
 					<link rel="icon" href="/favicon.ico" />
 					<meta name="description" content="Добро пожаловать на сайт СПTV+" />
 					<link rel="preconnect" href="https://fonts.googleapis.com" />
 					<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
 				</Head>
 				<div className="min-h-screen flex flex-col bg-[#E1E1E1] dark:bg-[#000000]">
-					<header className="fixed flex justify-between items-center px-8 z-10 w-full h-[55px] bg-[#272727]">
-						<Link href="/main" className="w-auto h-auto">
-							<span className=" text-[#FFE400] font-['Montserrat'] text-[20px] font-extrabold">СП</span>
-							<span className=" text-white font-['Montserrat'] text-[20px] font-extrabold text italic">tv+</span>
-						</Link>
-						<div className="float-right flex align-center gap-[14px]">
-							<div className="flex items-center tablet:gap-2 gap-1">
-								<span className="font-['Montserrat'] font-normal tablet:text-[18px] text-[15px] text-white text-center">Баланс: <b>{data.balance}<span className="text-[#FFE400] font-bold"> AP</span></b></span>
-								<button onClick={() => switchWind("addMoney")}>
-									<Image alt="" src={`/buttons/addbtn.svg`} width={18} height={19}></Image>
-								</button>
-							</div>
-							<a href={`/users/${data.nickname}`}>
-								{data.subscription === "MAX" || data.subscription === "fMAX" ? <>
-									<Image alt="" src={`/subscriptions/subsmax.svg`} width={11} height={11} className="float-right right-6 top-[8px] rounded absolute "></Image>
-								</> : data.subscription === "MULTI" || data.subscription === "fMULTI" ? <>
-									<Image alt="" src={`/subscriptions/subsmulti.svg`} width={11} height={11} className="float-right right-6 top-[8px] rounded absolute "></Image>
-								</> : data.subscription === "ONE" ? <>
-									<Image alt="" src={`/subscriptions/subsone.svg`} width={11} height={11} className="float-right right-6 top-[8px] rounded absolute "></Image>
-								</> : <></>}
-								<Image width={30} height={30} className="rounded tablet:w-[30px] w-[25px] tablet:h-[30px] h-[25px]" src={data.UUID ? `https://api.mineatar.io/face/${data.UUID}` : "/randomguy.png"} alt="" />
-							</a>
-						</div>
-					</header>
+					<Header balance={data.balance} subscription={data.subscription} UUID={data.UUID ? `https://api.mineatar.io/face/${data.UUID}` : "/randomguy.png"} nickname={data.nickname}/>
 					<section id="addMoney" className="fixed inset-0 overflow-y-auto z-20 hidden">
 						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<div onClick={() => switchWind("alert")} className="fixed inset-0 bg-black bg-opacity-25"></div>
@@ -114,26 +92,7 @@ export default function Home() {
 							</div>
 						</div>
 					</main>
-					<footer className="relative z-10 left-0 bottom-0 w-full h-[105px] bg-[#272727] ">
-						<div className="flex justify-between ">
-							<div className="relative left-[21px] top-[11px] grid grid-flow-col grid-cols-2 grid-rows-4 h-[60px] tablet:h-[83px] w-[130px] tablet:w-[187px]">
-								<Link href={`/news`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto">Новости</Link>
-								<Link href={`/series`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto">Сериалы</Link>
-								<Link href={`/movies`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto">Фильмы</Link>
-								<Link href={`/shows`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto">Шоу</Link>
-								<Link href={`https://discord.gg/ea9ue92MmZ`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto">Дискорд</Link>
-								<Link href={`https://docs.google.com/forms/d/e/1FAIpQLSelqiT10IZYGwVL6nOucPWnHi7WaVYZCnKdJ8YqXZThQlfwJg/viewform?usp=sf_link`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto">СПtvCreators</Link>
-							</div>
-							<Image src="/logo.svg" width={`100`} height={`100`} className="w-0 tablet:w-[100px] h-0 tablet:h-[100px] mt-[2px]" alt="" />
-							<div className="relative right-[21px] top-[21px] grid grid-flow-col grid-cols-1 grid-rows-4 h-[52px] tablet:h-[83px] w-auto">
-								<Link href={``} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto text-right">Ген. Директор: rConidze</Link>
-								<Link href={``} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto text-right">Директора: Vikss_, re1ron</Link>
-								<Link href={`https://t.me/DrDroDev`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto text-right">Разработчик: Dro20</Link>
-							</div>
-						</div>
-						<span className="absolute font-['Montserrat'] font-bold text-[8px] tablet:text-[12px] text-[#ffffff20] w-auto float-right right-5 top-[85px]">© Все права защищены  2023 СПTV</span>
-
-					</footer>
+					<Footer/>
 				</div>
 			</>
 		)

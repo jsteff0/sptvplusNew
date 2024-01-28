@@ -4,22 +4,26 @@
 import Image from "next/image";
 import Link from "next/link";
 import Head from "next/head";
+import Films from "../components/filmline";
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
 import { getServerAuthSession } from "~/server/auth";
 import { useRouter } from "next/router";
 import { PrismaClient } from '@prisma/client'
+import Footer from "../components/footer";
+import Header from "../components/header";
 
 interface filmmakers {
 	imgID: string;
 	code: string;
 	subscription: number;
+	show: number;
 }
 
 export default function Home(props: { favorite: filmmakers[], acquired: filmmakers[] }) {
 	const { data: session } = useSession();
-	const { data } = api.user.me.useQuery();
+	const { data } = api.user.fulluserinfo.useQuery();
 	const router = useRouter().query.nick;
 	if (!data?.nickname || !session?.user.name) {
 		return (
@@ -31,42 +35,19 @@ export default function Home(props: { favorite: filmmakers[], acquired: filmmake
 			</div>
 		);
 	} else {
-		//const favoriteCODES = JSON.parse(data.favorite).codes as number[];
-		//const favoriteFILMS: =
+		console.log(props.favorite)
 		return (
 			<>
 				<Head>
-					<title>Главная</title>
+					<title>{router}</title>
 					<link rel="icon" href="/favicon.ico" />
 					<meta name="description" content="Добро пожаловать на сайт СПTV+" />
 					<link rel="preconnect" href="https://fonts.googleapis.com" />
 					<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
 				</Head>
 				<div className="min-h-screen flex flex-col bg-[#E1E1E1] dark:bg-[#000000]">
-					<header className="fixed flex justify-between items-center px-8 z-10 w-full h-[55px] bg-[#272727]">
-						<Link href="/main" className="w-auto h-auto">
-							<span className=" text-[#FFE400] font-['Montserrat'] text-[20px] font-extrabold">СП</span>
-							<span className=" text-white font-['Montserrat'] text-[20px] font-extrabold text italic">tv+</span>
-						</Link>
-						<div className="float-right flex align-center gap-[14px]">
-							<div className="flex items-center tablet:gap-2 gap-1">
-								<span className="font-['Montserrat'] font-normal tablet:text-[18px] text-[15px] text-white text-center">Баланс: <b>{data.balance}<span className="text-[#FFE400] font-bold"> AP</span></b></span>
-								<button onClick={() => switchWind("addMoney")}>
-									<Image alt="" src={`/buttons/addbtn.svg`} width={18} height={19}></Image>
-								</button>
-							</div>
-							<a href={`/users/${data.nickname}`}>
-								{data.subscription === "MAX" || data.subscription === "fMAX" ? <>
-									<Image alt="" src={`/subscriptions/subsmax.svg`} width={11} height={11} className="float-right right-6 top-[8px] rounded absolute "></Image>
-								</> : data.subscription === "MULTI" || data.subscription === "fMULTI" ? <>
-									<Image alt="" src={`/subscriptions/subsmulti.svg`} width={11} height={11} className="float-right right-6 top-[8px] rounded absolute "></Image>
-								</> : data.subscription === "ONE" ? <>
-									<Image alt="" src={`/subscriptions/subsone.svg`} width={11} height={11} className="float-right right-6 top-[8px] rounded absolute "></Image>
-								</> : <></>}
-								<Image width={30} height={30} className="rounded tablet:w-[30px] w-[25px] tablet:h-[30px] h-[25px]" src={data.UUID ? `https://api.mineatar.io/face/${data.UUID}` : "/randomguy.png"} alt="" />
-							</a>
-						</div>
-					</header>
+					<Header balance={data.balance} subscription={data.subscription} UUID={data.UUID ? `https://api.mineatar.io/face/${data.UUID}` : "/randomguy.png"} nickname={data.nickname} />
+
 					<section id="addMoney" className="fixed inset-0 overflow-y-auto z-20 hidden">
 						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<div className="fixed inset-0 bg-black bg-opacity-25"></div>
@@ -137,7 +118,6 @@ export default function Home(props: { favorite: filmmakers[], acquired: filmmake
 											<p className="dark:text-white text-black font-['Montserrat'] font-bold laptop:text-[32px] tablet:text-[18px] text-[16px] mt-[10px] ">{data.nickname}</p>
 											<p className="dark:text-white text-black font-['Montserrat'] font-medium laptop:text-[22px] tablet:text-[16px] text-[14px] mt-[10px] ">Баланс: <b>{data.balance} <span className='text-[#FAC301]'>AP</span></b> </p>
 											<div className="dark:text-white text-black font-['Montserrat'] font-medium laptop:text-[22px] tablet:text-[16px] text-[14px] mt-[10px]">
-												{ }
 												{data.subscription === "MAX" ? <>
 													Ваша подписка: <b>Max</b><br />
 													Добавленные игроки в подписку:<br />
@@ -238,140 +218,16 @@ export default function Home(props: { favorite: filmmakers[], acquired: filmmake
 											null
 										}
 										<>
-											{props.favorite.length > 0 ?
-												<div className="w-full bg-white dark:bg-[#0f0f0f] rounded-xl pl-5 mb-6 py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
-													<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Избранное</div>
-													<div className="relative flex w-full group">
-														<div
-															onScroll={(e) => {
-																if (e.currentTarget.scrollLeft > 12) {
-																	e.currentTarget.children[0]?.classList.replace("group-hover:opacity-0", "group-hover:opacity-100")
-																	e.currentTarget.children[0]?.classList.replace("group-hover:w-0", "group-hover:w-[75px]")
-																} else {
-																	e.currentTarget.children[0]?.classList.replace("group-hover:opacity-100", "group-hover:opacity-0")
-																	e.currentTarget.children[0]?.classList.replace("group-hover:w-[75px]", "group-hover:w-0")
-																}
-																if (e.currentTarget.scrollLeft + e.currentTarget.offsetWidth < e.currentTarget.scrollWidth - 100) {
-																	e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:opacity-0", "group-hover:opacity-100")
-																	e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:w-0", "group-hover:w-[75px]")
-																} else {
-																	e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:opacity-100", "group-hover:opacity-0")
-																	e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:w-[75px]", "group-hover:w-0")
-																}
-															}} className="no-scroll-line overflow-x-scroll flex scroll-smooth group ">
-															<div onClick={(e) => {
-																const parentEl = e.currentTarget.parentNode as HTMLDivElement
-																if (parentEl.scrollLeft > 450)
-																	parentEl.scrollLeft -= 450
-																else
-																	parentEl.scrollLeft = 0
-															}} className="absolute w-0 h-full bg-gradient-to-r from-[#000000b2] to-[#ffffff00] flex items-center duration-300 ease-in-out group-hover:opacity-0 group-hover:w-0 opacity-0">
-																<div className="p-2">
-																	<svg className="w-[23px] h-[45px] hover:w-[26px]" viewBox="0 0 23 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-																		<path d="M18.5105 38.9583L0.958446 21.4583C0.750113 21.25 0.602197 21.0243 0.514697 20.7812C0.427197 20.5382 0.384142 20.2777 0.385531 20C0.385531 19.7222 0.428586 19.4618 0.514697 19.2187C0.600808 18.9757 0.748724 18.75 0.958446 18.5416L18.5105 0.989542C18.9966 0.503431 19.6043 0.260376 20.3334 0.260376C21.0626 0.260376 21.6876 0.520793 22.2084 1.04163C22.7293 1.56246 22.9897 2.1701 22.9897 2.86454C22.9897 3.55899 22.7293 4.16663 22.2084 4.68746L6.89595 20L22.2084 35.3125C22.6946 35.7986 22.9376 36.3979 22.9376 37.1104C22.9376 37.8229 22.6772 38.4388 22.1564 38.9583C21.6355 39.4791 21.0279 39.7395 20.3334 39.7395C19.639 39.7395 19.0314 39.4791 18.5105 38.9583Z" fill="white" />
-																	</svg>
-																</div>
-															</div>
-															{props.favorite.map((item: filmmakers) => {
-																return (
-																	<>
-																		<Link href={`/content/${item.code}`} className="relative flex-none px-[12px] last:pr-6">
-																			<Image width={150} height={200} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[200px] tablet:w-[150px] h-[132px] w-[99px] object-cover rounded-[10px] bg-center" alt="" />
-																			{((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0) < item.subscription ?
-																				<Image width={150} height={200} src={`/subscriptions/only${item.subscription === 3 ? "Max" : item.subscription === 2 ? "Multi" : "One"}.svg`} className="absolute bottom-0 tablet:h-[200px] tablet:w-[150px] h-[20px] w-[99px] object-cover bg-center" alt="" />
-																				: null}
-																		</Link>
-																	</>
-																)
-															})}
-
-															<div onClick={(e) => {
-																const parentEl = e.currentTarget.parentNode as HTMLDivElement
-																if (parentEl.scrollLeft + parentEl.offsetWidth < parentEl.scrollWidth - 450)
-																	parentEl.scrollLeft += 450
-																else
-																	parentEl.scrollLeft = parentEl.scrollWidth - parentEl.offsetWidth
-															}} className={`absolute float-right right-0 w-0 h-full bg-gradient-to-l from-[#000000b2] to-[#ffffff00] flex justify-end items-center duration-300 ease-in-out group-hover:opacity-100 group-hover:w-[75px] opacity-0 `}>
-																<div className="p-2">
-																	<svg className="w-[23px] h-[45px] hover:w-[26px]" viewBox="0 0 23 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-																		<path d="M4.86472 1.04158L22.4168 18.5416C22.6251 18.7499 22.773 18.9756 22.8605 19.2187C22.948 19.4617 22.9911 19.7221 22.9897 19.9999C22.9897 20.2777 22.9467 20.5381 22.8605 20.7812C22.7744 21.0242 22.6265 21.2499 22.4168 21.4583L4.86472 39.0103C4.3786 39.4964 3.77097 39.7395 3.0418 39.7395C2.31263 39.7395 1.68763 39.4791 1.1668 38.9583C0.645966 38.4374 0.38555 37.8298 0.38555 37.1353C0.38555 36.4409 0.645967 35.8333 1.1668 35.3124L16.4793 19.9999L1.1668 4.68742C0.680692 4.20131 0.437635 3.602 0.437635 2.8895C0.437636 2.177 0.698052 1.56103 1.21889 1.04158C1.73972 0.52075 2.34736 0.260333 3.0418 0.260333C3.73625 0.260334 4.34389 0.52075 4.86472 1.04158Z" fill="white" />
-																	</svg>
-																</div>
-															</div>
-														</div>
-
-													</div>
-												</div>
+											{props.favorite && props.favorite.length > 0 ?
+												<Films items={props.favorite} sub={((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0)} name={"Избранное"} />
 												:
 												<div className="w-full  pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
 													<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Избранное</div>
 													<span className="tablet:text-[18px] text-[14px]">Вы не откладывали в избранное наши проекты</span>
-												</div>}
-
-											{props.acquired.length > 0 ?
-												<div className="w-full bg-white dark:bg-[#0f0f0f] rounded-xl pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
-													<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Преобретено</div>
-													<div className="relative flex w-full group">
-														<div
-															onScroll={(e) => {
-																if (e.currentTarget.scrollLeft > 12) {
-																	e.currentTarget.children[0]?.classList.replace("group-hover:opacity-0", "group-hover:opacity-100")
-																	e.currentTarget.children[0]?.classList.replace("group-hover:w-0", "group-hover:w-[75px]")
-																} else {
-																	e.currentTarget.children[0]?.classList.replace("group-hover:opacity-100", "group-hover:opacity-0")
-																	e.currentTarget.children[0]?.classList.replace("group-hover:w-[75px]", "group-hover:w-0")
-																}
-																if (e.currentTarget.scrollLeft + e.currentTarget.offsetWidth < e.currentTarget.scrollWidth - 100) {
-																	e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:opacity-0", "group-hover:opacity-100")
-																	e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:w-0", "group-hover:w-[75px]")
-																} else {
-																	e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:opacity-100", "group-hover:opacity-0")
-																	e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:w-[75px]", "group-hover:w-0")
-																}
-															}} className="no-scroll-line overflow-x-scroll flex scroll-smooth group ">
-															<div onClick={(e) => {
-																const parentEl = e.currentTarget.parentNode as HTMLDivElement
-																if (parentEl.scrollLeft > 450)
-																	parentEl.scrollLeft -= 450
-																else
-																	parentEl.scrollLeft = 0
-															}} className="absolute w-0 h-full bg-gradient-to-r from-[#000000b2] to-[#ffffff00] flex items-center duration-300 ease-in-out group-hover:opacity-0 group-hover:w-0 opacity-0">
-																<div className="p-2">
-																	<svg className="w-[23px] h-[45px] hover:w-[26px]" viewBox="0 0 23 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-																		<path d="M18.5105 38.9583L0.958446 21.4583C0.750113 21.25 0.602197 21.0243 0.514697 20.7812C0.427197 20.5382 0.384142 20.2777 0.385531 20C0.385531 19.7222 0.428586 19.4618 0.514697 19.2187C0.600808 18.9757 0.748724 18.75 0.958446 18.5416L18.5105 0.989542C18.9966 0.503431 19.6043 0.260376 20.3334 0.260376C21.0626 0.260376 21.6876 0.520793 22.2084 1.04163C22.7293 1.56246 22.9897 2.1701 22.9897 2.86454C22.9897 3.55899 22.7293 4.16663 22.2084 4.68746L6.89595 20L22.2084 35.3125C22.6946 35.7986 22.9376 36.3979 22.9376 37.1104C22.9376 37.8229 22.6772 38.4388 22.1564 38.9583C21.6355 39.4791 21.0279 39.7395 20.3334 39.7395C19.639 39.7395 19.0314 39.4791 18.5105 38.9583Z" fill="white" />
-																	</svg>
-																</div>
-															</div>
-															{props.acquired.map((item: filmmakers) => {
-																return (
-																	<>
-																		<Link href={`/content/${item.code}`} className="relative flex-none px-[12px] last:pr-6">
-																			<Image width={150} height={200} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[200px] tablet:w-[150px] h-[132px] w-[99px] object-cover rounded-[10px] bg-center" alt="" />
-																			{((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0) < item.subscription ?
-																				<Image width={150} height={200} src={`/subscriptions/only${item.subscription === 3 ? "Max" : item.subscription === 2 ? "Multi" : "One"}.svg`} className="absolute bottom-0 tablet:h-[200px] tablet:w-[150px] h-[20px] w-[99px] object-cover bg-center" alt="" />
-																				: null}
-																		</Link>
-																	</>
-																)
-															})}
-
-															<div onClick={(e) => {
-																const parentEl = e.currentTarget.parentNode as HTMLDivElement
-																if (parentEl.scrollLeft + parentEl.offsetWidth < parentEl.scrollWidth - 450)
-																	parentEl.scrollLeft += 450
-																else
-																	parentEl.scrollLeft = parentEl.scrollWidth - parentEl.offsetWidth
-															}} className={`absolute float-right right-0 w-0 h-full bg-gradient-to-l from-[#000000b2] to-[#ffffff00] flex justify-end items-center duration-300 ease-in-out group-hover:opacity-100 group-hover:w-[75px] opacity-0 `}>
-																<div className="p-2">
-																	<svg className="w-[23px] h-[45px] hover:w-[26px]" viewBox="0 0 23 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-																		<path d="M4.86472 1.04158L22.4168 18.5416C22.6251 18.7499 22.773 18.9756 22.8605 19.2187C22.948 19.4617 22.9911 19.7221 22.9897 19.9999C22.9897 20.2777 22.9467 20.5381 22.8605 20.7812C22.7744 21.0242 22.6265 21.2499 22.4168 21.4583L4.86472 39.0103C4.3786 39.4964 3.77097 39.7395 3.0418 39.7395C2.31263 39.7395 1.68763 39.4791 1.1668 38.9583C0.645966 38.4374 0.38555 37.8298 0.38555 37.1353C0.38555 36.4409 0.645967 35.8333 1.1668 35.3124L16.4793 19.9999L1.1668 4.68742C0.680692 4.20131 0.437635 3.602 0.437635 2.8895C0.437636 2.177 0.698052 1.56103 1.21889 1.04158C1.73972 0.52075 2.34736 0.260333 3.0418 0.260333C3.73625 0.260334 4.34389 0.52075 4.86472 1.04158Z" fill="white" />
-																	</svg>
-																</div>
-															</div>
-														</div>
-
-													</div>
 												</div>
+											}
+											{props.acquired && props.acquired.length > 0 ?
+												<Films items={props.acquired} sub={((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0)} name={"Приобретено"} />
 												:
 												<div className="w-full  pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
 													<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Преобретено</div>
@@ -383,30 +239,10 @@ export default function Home(props: { favorite: filmmakers[], acquired: filmmake
 									</span>
 								</div>
 							</>
-							: data.subscription !== "ADMIN" ? <>
-								Вы не имеете право смотреть чужие аккаунты
-							</> : <>Дарова</>}
+							: <>Вы не имеете право смотреть чужие аккаунты</>}
 					</main>
-					<footer className="relative z-10 left-0 bottom-0 w-full h-[105px] bg-[#272727] hidden tablet:block">
-						<div className="flex justify-between ">
-							<div className="relative left-[21px] top-[11px] grid grid-flow-col grid-cols-2 grid-rows-4 h-[60px] tablet:h-[83px] w-[130px] tablet:w-[187px]">
-								<Link href={`/news`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto">Новости</Link>
-								<Link href={`/series`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto">Сериалы</Link>
-								<Link href={`/movies`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto">Фильмы</Link>
-								<Link href={`/shows`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto">Шоу</Link>
-								<Link href={`https://discord.gg/ea9ue92MmZ`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto">Дискорд</Link>
-								<Link href={`https://docs.google.com/forms/d/e/1FAIpQLSelqiT10IZYGwVL6nOucPWnHi7WaVYZCnKdJ8YqXZThQlfwJg/viewform?usp=sf_link`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto">СПtvCreators</Link>
-							</div>
-							<Image src="/logo.svg" width={`100`} height={`100`} className="w-0 tablet:w-[100px] h-0 tablet:h-[100px] mt-[2px]" alt="" />
-							<div className="relative right-[21px] top-[21px] grid grid-flow-col grid-cols-1 grid-rows-4 h-[52px] tablet:h-[83px] w-auto">
-								<Link href={``} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto text-right">Ген. Директор: rConidze</Link>
-								<Link href={``} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto text-right">Директора: Vikss_, re1ron</Link>
-								<Link href={`https://t.me/DrDroDev`} className="font-['Montserrat'] font-normal text-[10px] tablet:text-[14px] text-white w-auto text-right">Разработчик: Dro20</Link>
-							</div>
-						</div>
-						<span className="absolute font-['Montserrat'] font-bold text-[8px] tablet:text-[12px] text-[#ffffff20] w-auto float-right right-5 top-[85px]">© Все права защищены  2023 СПTV</span>
+					<Footer />
 
-					</footer>
 				</div>
 			</>
 		)
@@ -477,7 +313,6 @@ async function addPlayer(nicknameAdder: string) {
 		}
 	}
 }
-//TODO: доделать отмену игрока, удаление игрока, принятие, отклонение, выход из подписки
 async function cancelPlayer(nickname: string, nicknameAdder: string) {
 	if (typeof window === "object") {
 		const addPlayerSection = document.getElementById(`addPlayer`);
@@ -714,35 +549,14 @@ export const getServerSideProps: GetServerSideProps = async (
 			id: session.user.id,
 		},
 		select: {
-			favorite: true,
 			acquired: true,
+			fav: true,
+			acq: true
 		},
 	})
 	if (ids) {
-		const favorite = await prisma.film.findMany({
-			where: {
-				id: {
-					in: ids.favorite,
-				}
-			},
-			select: {
-				imgID: true,
-				code: true,
-				subscription: true
-			},
-		})
-		const acquired = await prisma.film.findMany({
-			where: {
-				id: {
-					in: ids.acquired,
-				}
-			},
-			select: {
-				imgID: true,
-				code: true,
-				subscription: true
-			},
-		})
+		const favorite = ids.fav
+		const acquired = ids.acq
 		return {
 			props: { favorite, acquired }
 		}

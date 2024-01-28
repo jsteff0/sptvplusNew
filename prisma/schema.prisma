@@ -58,26 +58,32 @@ model User {
     UUID                   String?
     balance                Int          @default(0)
     subscription           Subscription @default(NO)
+    management             Management   @default(NO)
     subscriptionOwner      String?
     noSubscriptionOwnerYet String?
     addedPlayers           String[]
     noPlayersAddedYet      String[]
-    favorite               Int[]
+    fav                    Json?
     acquired               Int[]
     expirydate             DateTime?
     volume                 Float        @default(0.5)
     accounts               Account[]
     posts                  Post[]
     sessions               Session[]
+    rating                 Rating[]
+    view                   View[]
+    acq                    Json?
 }
 
 model Film {
+    show         Int          @default(0)
     id           Int          @id
+    name         String       @unique
     imgID        String
     content      ContentTypes
     describe     String
-    mark         Float
-    watched      Int
+    mark         Float        @default(5.0)
+    watched      Int          @default(0)
     types        Types[]
     timing       Int[]
     studio       String
@@ -87,14 +93,31 @@ model Film {
     price        Int
     more         String
     youtube      String?
+    view         View[]
 }
 
 model View {
-    nickname String?
-    codetag  String? @unique
-    key      String  @id @default(uuid())
-    timeKey  Int     @default(0)
-    watched  Boolean @default(false)
+    id          String @id @default(cuid())
+    tag         String
+    key         String @default(uuid())
+    timeKey     Int    @default(0)
+    duration    Int
+    contentcode String
+    nickname    String
+    user        User   @relation(fields: [nickname], references: [nickname])
+    content     Film   @relation(fields: [contentcode], references: [code])
+
+    @@index([nickname, contentcode, tag])
+}
+
+model Rating {
+    mark              Int
+    id                String @id
+    createdByNickname String
+    createdBy         User   @relation(fields: [createdByNickname], references: [nickname])
+
+    @@index([id])
+    @@index([createdByNickname])
 }
 
 model VerificationToken {
@@ -105,6 +128,13 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
+enum Management {
+    NO
+    NEWS
+    CONTENT
+    FULL
+}
+
 enum Subscription {
     NO
     ONE
@@ -112,7 +142,6 @@ enum Subscription {
     fMULTI
     MAX
     fMAX
-    ADMIN
 }
 
 enum Types {

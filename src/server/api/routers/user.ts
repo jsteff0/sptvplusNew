@@ -3,48 +3,47 @@ import {
 	createTRPCRouter,
 	protectedProcedure,
 } from "~/server/api/trpc";
-
 export const userRouter = createTRPCRouter({
-	me: protectedProcedure.query(async ({ ctx }) => {
+	main: protectedProcedure.query(async ({ ctx }) => {
 		const userRes = await ctx.db.user.findFirst({
 			where: { id: ctx.session.user.id },
-			select: { nickname: true, UUID: true, subscription: true, balance: true, addedPlayers: true, subscriptionOwner: true, noSubscriptionOwnerYet: true, noPlayersAddedYet: true, expirydate: true, favorite: true, acquired: true, volume: true },
+			select: { nickname: true, UUID: true, subscription: true, balance: true, management: true },
 		});
-
-		if ((userRes?.subscription === "MULTI" || userRes?.subscription === "fMULTI" || userRes?.subscription === "MAX" || userRes?.subscription === "fMAX" || userRes?.subscription === "ONE") && userRes?.expirydate && userRes.addedPlayers) {
-			
+		const userAdded = await ctx.db.user.findFirst({
+			where: { id: ctx.session.user.id },
+			select: { nickname: true, subscription: true, balance: true, addedPlayers: true, subscriptionOwner: true, noSubscriptionOwnerYet: true, noPlayersAddedYet: true, expirydate: true },
+		});
+		if (userAdded && userAdded.expirydate) {
 			const date1 = new Date()
-			const date2 = userRes.expirydate
-			
-			if (date2.getTime() < date1.getTime()) {
-				if (userRes.subscription === "fMAX" || userRes.subscription === "fMULTI" || userRes.subscription === "MAX" || userRes.subscription === "MULTI") {
+			const date2 = userAdded.expirydate
+			if ((userAdded?.subscription === "MULTI" || userAdded?.subscription === "fMULTI" || userAdded?.subscription === "MAX" || userAdded?.subscription === "fMAX" || userAdded?.subscription === "ONE") && userAdded?.expirydate && userAdded.addedPlayers && date2.getTime() < date1.getTime()) {
+				if (userAdded.subscription === "fMAX" || userAdded.subscription === "fMULTI" || userAdded.subscription === "MAX" || userAdded.subscription === "MULTI") {
 					const whoAddedInfo = await ctx.db.user.findFirst({
-						where: { nickname: userRes.subscriptionOwner },
+						where: { nickname: userAdded.subscriptionOwner },
 						select: { balance: true, subscription: true }
 					});
-
 					if (whoAddedInfo && (whoAddedInfo.balance || whoAddedInfo.balance === 0) && whoAddedInfo.subscription) {
-						if (whoAddedInfo.balance >= (whoAddedInfo.subscription === "MULTI" ? 24 : 32) && userRes.subscriptionOwner) {
+						if (whoAddedInfo.balance >= (whoAddedInfo.subscription === "MULTI" ? 24 : 32) && userAdded.subscriptionOwner) {
 							date1.setMonth(date1.getMonth() + 1)
 							await ctx.db.user.update({
-								where: { nickname: userRes.subscriptionOwner },
+								where: { nickname: userAdded.subscriptionOwner },
 								data: {
 									balance: whoAddedInfo.balance - (whoAddedInfo.subscription === "MULTI" ? 24 : 32),
 									expirydate: date1
 								}
 							});
-							for (let i = 0; i < userRes.addedPlayers.length; i++) {
+							for (let i = 0; i < userAdded.addedPlayers.length; i++) {
 								await ctx.db.user.update({
-									where: { nickname: userRes.addedPlayers[i] },
+									where: { nickname: userAdded.addedPlayers[i] },
 									data: {
 										expirydate: date1
 									}
 								});
 							}
-						} else if(userRes.subscriptionOwner) {
-							for (let i = 0; i < userRes.addedPlayers.length; i++) {
+						} else if (userAdded.subscriptionOwner) {
+							for (let i = 0; i < userAdded.addedPlayers.length; i++) {
 								await ctx.db.user.update({
-									where: { nickname: userRes.addedPlayers[i] },
+									where: { nickname: userAdded.addedPlayers[i] },
 									data: {
 										subscription: "NO",
 										addedPlayers: [],
@@ -53,16 +52,16 @@ export const userRouter = createTRPCRouter({
 									}
 								});
 							}
-							for (let i = 0; i < userRes.noPlayersAddedYet.length; i++) {
+							for (let i = 0; i < userAdded.noPlayersAddedYet.length; i++) {
 								await ctx.db.user.update({
-									where: { nickname: userRes.noPlayersAddedYet[i] },
+									where: { nickname: userAdded.noPlayersAddedYet[i] },
 									data: {
 										noSubscriptionOwnerYet: null,
 									}
 								});
 							}
 							await ctx.db.user.update({
-								where: { nickname: userRes.subscriptionOwner },
+								where: { nickname: userAdded.subscriptionOwner },
 								data: {
 									subscription: "NO",
 									addedPlayers: [],
@@ -72,20 +71,292 @@ export const userRouter = createTRPCRouter({
 							});
 						}
 					}
-				} else if (userRes.subscription === "ONE") {
-					if ((userRes.balance || userRes.balance === 0) && userRes.nickname) {
-						
-						if (userRes.balance >= 16) {
+				} else if (userAdded.subscription === "ONE") {
+					if ((userAdded.balance || userAdded.balance === 0) && userAdded.nickname) {
+						if (userAdded.balance >= 16) {
 							await ctx.db.user.update({
-								where: { nickname: userRes.nickname },
+								where: { nickname: userAdded.nickname },
 								data: {
 									expirydate: date1,
-									balance: userRes.balance - 16
+									balance: userAdded.balance - 16
 								}
 							});
 						} else {
 							await ctx.db.user.update({
-								where: { nickname: userRes.nickname },
+								where: { nickname: userAdded.nickname },
+								data: {
+									subscription: "NO",
+								}
+							});
+						}
+					}
+				}
+			}
+		}
+		return userRes
+	}),
+	fulluserinfo: protectedProcedure.query(async ({ ctx }) => {
+		const userRes = await ctx.db.user.findFirst({
+			where: { id: ctx.session.user.id },
+			select: { nickname: true, UUID: true, subscription: true, balance: true, addedPlayers: true, subscriptionOwner: true, noSubscriptionOwnerYet: true, noPlayersAddedYet: true, expirydate: true, fav: true, acq: true, management: true },
+		});
+		const userAdded = await ctx.db.user.findFirst({
+			where: { id: ctx.session.user.id },
+			select: { nickname: true, subscription: true, balance: true, addedPlayers: true, subscriptionOwner: true, noSubscriptionOwnerYet: true, noPlayersAddedYet: true, expirydate: true },
+		});
+		if (userAdded && userAdded.expirydate) {
+			const date1 = new Date()
+			const date2 = userAdded.expirydate
+			if ((userAdded?.subscription === "MULTI" || userAdded?.subscription === "fMULTI" || userAdded?.subscription === "MAX" || userAdded?.subscription === "fMAX" || userAdded?.subscription === "ONE") && userAdded?.expirydate && userAdded.addedPlayers && date2.getTime() < date1.getTime()) {
+				if (userAdded.subscription === "fMAX" || userAdded.subscription === "fMULTI" || userAdded.subscription === "MAX" || userAdded.subscription === "MULTI") {
+					const whoAddedInfo = await ctx.db.user.findFirst({
+						where: { nickname: userAdded.subscriptionOwner },
+						select: { balance: true, subscription: true }
+					});
+					if (whoAddedInfo && (whoAddedInfo.balance || whoAddedInfo.balance === 0) && whoAddedInfo.subscription) {
+						if (whoAddedInfo.balance >= (whoAddedInfo.subscription === "MULTI" ? 24 : 32) && userAdded.subscriptionOwner) {
+							date1.setMonth(date1.getMonth() + 1)
+							await ctx.db.user.update({
+								where: { nickname: userAdded.subscriptionOwner },
+								data: {
+									balance: whoAddedInfo.balance - (whoAddedInfo.subscription === "MULTI" ? 24 : 32),
+									expirydate: date1
+								}
+							});
+							for (let i = 0; i < userAdded.addedPlayers.length; i++) {
+								await ctx.db.user.update({
+									where: { nickname: userAdded.addedPlayers[i] },
+									data: {
+										expirydate: date1
+									}
+								});
+							}
+						} else if (userAdded.subscriptionOwner) {
+							for (let i = 0; i < userAdded.addedPlayers.length; i++) {
+								await ctx.db.user.update({
+									where: { nickname: userAdded.addedPlayers[i] },
+									data: {
+										subscription: "NO",
+										addedPlayers: [],
+										subscriptionOwner: null,
+										noPlayersAddedYet: []
+									}
+								});
+							}
+							for (let i = 0; i < userAdded.noPlayersAddedYet.length; i++) {
+								await ctx.db.user.update({
+									where: { nickname: userAdded.noPlayersAddedYet[i] },
+									data: {
+										noSubscriptionOwnerYet: null,
+									}
+								});
+							}
+							await ctx.db.user.update({
+								where: { nickname: userAdded.subscriptionOwner },
+								data: {
+									subscription: "NO",
+									addedPlayers: [],
+									subscriptionOwner: null,
+									noPlayersAddedYet: []
+								}
+							});
+						}
+					}
+				} else if (userAdded.subscription === "ONE") {
+					if ((userAdded.balance || userAdded.balance === 0) && userAdded.nickname) {
+						if (userAdded.balance >= 16) {
+							await ctx.db.user.update({
+								where: { nickname: userAdded.nickname },
+								data: {
+									expirydate: date1,
+									balance: userAdded.balance - 16
+								}
+							});
+						} else {
+							await ctx.db.user.update({
+								where: { nickname: userAdded.nickname },
+								data: {
+									subscription: "NO",
+								}
+							});
+						}
+					}
+				}
+			}
+		}
+		return userRes
+	}),
+	contentinfo: protectedProcedure.query(async ({ ctx }) => {
+		const userRes = await ctx.db.user.findFirst({
+			where: { id: ctx.session.user.id },
+			select: { nickname: true, UUID: true, subscription: true, balance: true, fav: true, acq: true, volume: true, management: true },
+		});
+		const userAdded = await ctx.db.user.findFirst({
+			where: { id: ctx.session.user.id },
+			select: { nickname: true, subscription: true, balance: true, addedPlayers: true, subscriptionOwner: true, noSubscriptionOwnerYet: true, noPlayersAddedYet: true, expirydate: true },
+		});
+		if (userAdded && userAdded.expirydate) {
+			const date1 = new Date()
+			const date2 = userAdded.expirydate
+			if ((userAdded?.subscription === "MULTI" || userAdded?.subscription === "fMULTI" || userAdded?.subscription === "MAX" || userAdded?.subscription === "fMAX" || userAdded?.subscription === "ONE") && userAdded?.expirydate && userAdded.addedPlayers && date2.getTime() < date1.getTime()) {
+				if (userAdded.subscription === "fMAX" || userAdded.subscription === "fMULTI" || userAdded.subscription === "MAX" || userAdded.subscription === "MULTI") {
+					const whoAddedInfo = await ctx.db.user.findFirst({
+						where: { nickname: userAdded.subscriptionOwner },
+						select: { balance: true, subscription: true }
+					});
+					if (whoAddedInfo && (whoAddedInfo.balance || whoAddedInfo.balance === 0) && whoAddedInfo.subscription) {
+						if (whoAddedInfo.balance >= (whoAddedInfo.subscription === "MULTI" ? 24 : 32) && userAdded.subscriptionOwner) {
+							date1.setMonth(date1.getMonth() + 1)
+							await ctx.db.user.update({
+								where: { nickname: userAdded.subscriptionOwner },
+								data: {
+									balance: whoAddedInfo.balance - (whoAddedInfo.subscription === "MULTI" ? 24 : 32),
+									expirydate: date1
+								}
+							});
+							for (let i = 0; i < userAdded.addedPlayers.length; i++) {
+								await ctx.db.user.update({
+									where: { nickname: userAdded.addedPlayers[i] },
+									data: {
+										expirydate: date1
+									}
+								});
+							}
+						} else if (userAdded.subscriptionOwner) {
+							for (let i = 0; i < userAdded.addedPlayers.length; i++) {
+								await ctx.db.user.update({
+									where: { nickname: userAdded.addedPlayers[i] },
+									data: {
+										subscription: "NO",
+										addedPlayers: [],
+										subscriptionOwner: null,
+										noPlayersAddedYet: []
+									}
+								});
+							}
+							for (let i = 0; i < userAdded.noPlayersAddedYet.length; i++) {
+								await ctx.db.user.update({
+									where: { nickname: userAdded.noPlayersAddedYet[i] },
+									data: {
+										noSubscriptionOwnerYet: null,
+									}
+								});
+							}
+							await ctx.db.user.update({
+								where: { nickname: userAdded.subscriptionOwner },
+								data: {
+									subscription: "NO",
+									addedPlayers: [],
+									subscriptionOwner: null,
+									noPlayersAddedYet: []
+								}
+							});
+						}
+					}
+				} else if (userAdded.subscription === "ONE") {
+					if ((userAdded.balance || userAdded.balance === 0) && userAdded.nickname) {
+						if (userAdded.balance >= 16) {
+							await ctx.db.user.update({
+								where: { nickname: userAdded.nickname },
+								data: {
+									expirydate: date1,
+									balance: userAdded.balance - 16
+								}
+							});
+						} else {
+							await ctx.db.user.update({
+								where: { nickname: userAdded.nickname },
+								data: {
+									subscription: "NO",
+								}
+							});
+						}
+					}
+				}
+			}
+		}
+		return userRes
+	}),
+	management: protectedProcedure.query(async ({ ctx }) => {
+		const userRes = await ctx.db.user.findFirst({
+			where: { id: ctx.session.user.id },
+			select: { nickname: true, UUID: true, subscription: true, balance: true, management: true },
+		});
+		const userAdded = await ctx.db.user.findFirst({
+			where: { id: ctx.session.user.id },
+			select: { nickname: true, subscription: true, balance: true, addedPlayers: true, subscriptionOwner: true, noSubscriptionOwnerYet: true, noPlayersAddedYet: true, expirydate: true },
+		});
+		if (userAdded && userAdded.expirydate) {
+			const date1 = new Date()
+			const date2 = userAdded.expirydate
+			if ((userAdded?.subscription === "MULTI" || userAdded?.subscription === "fMULTI" || userAdded?.subscription === "MAX" || userAdded?.subscription === "fMAX" || userAdded?.subscription === "ONE") && userAdded?.expirydate && userAdded.addedPlayers && date2.getTime() < date1.getTime()) {
+				if (userAdded.subscription === "fMAX" || userAdded.subscription === "fMULTI" || userAdded.subscription === "MAX" || userAdded.subscription === "MULTI") {
+					const whoAddedInfo = await ctx.db.user.findFirst({
+						where: { nickname: userAdded.subscriptionOwner },
+						select: { balance: true, subscription: true }
+					});
+					if (whoAddedInfo && (whoAddedInfo.balance || whoAddedInfo.balance === 0) && whoAddedInfo.subscription) {
+						if (whoAddedInfo.balance >= (whoAddedInfo.subscription === "MULTI" ? 24 : 32) && userAdded.subscriptionOwner) {
+							date1.setMonth(date1.getMonth() + 1)
+							await ctx.db.user.update({
+								where: { nickname: userAdded.subscriptionOwner },
+								data: {
+									balance: whoAddedInfo.balance - (whoAddedInfo.subscription === "MULTI" ? 24 : 32),
+									expirydate: date1
+								}
+							});
+							for (let i = 0; i < userAdded.addedPlayers.length; i++) {
+								await ctx.db.user.update({
+									where: { nickname: userAdded.addedPlayers[i] },
+									data: {
+										expirydate: date1
+									}
+								});
+							}
+						} else if (userAdded.subscriptionOwner) {
+							for (let i = 0; i < userAdded.addedPlayers.length; i++) {
+								await ctx.db.user.update({
+									where: { nickname: userAdded.addedPlayers[i] },
+									data: {
+										subscription: "NO",
+										addedPlayers: [],
+										subscriptionOwner: null,
+										noPlayersAddedYet: []
+									}
+								});
+							}
+							for (let i = 0; i < userAdded.noPlayersAddedYet.length; i++) {
+								await ctx.db.user.update({
+									where: { nickname: userAdded.noPlayersAddedYet[i] },
+									data: {
+										noSubscriptionOwnerYet: null,
+									}
+								});
+							}
+							await ctx.db.user.update({
+								where: { nickname: userAdded.subscriptionOwner },
+								data: {
+									subscription: "NO",
+									addedPlayers: [],
+									subscriptionOwner: null,
+									noPlayersAddedYet: []
+								}
+							});
+						}
+					}
+				} else if (userAdded.subscription === "ONE") {
+					if ((userAdded.balance || userAdded.balance === 0) && userAdded.nickname) {
+						if (userAdded.balance >= 16) {
+							await ctx.db.user.update({
+								where: { nickname: userAdded.nickname },
+								data: {
+									expirydate: date1,
+									balance: userAdded.balance - 16
+								}
+							});
+						} else {
+							await ctx.db.user.update({
+								where: { nickname: userAdded.nickname },
 								data: {
 									subscription: "NO",
 								}
