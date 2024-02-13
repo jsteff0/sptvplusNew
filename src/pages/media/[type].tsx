@@ -392,7 +392,7 @@ export const getServerSideProps: GetServerSideProps = async (
 			props: { typeFilms }
 		}
 	} else {
-		const prmsParse = await fsPromises.readFile("./news.json")
+		const prmsParse = await fsPromises.readFile("/news.json")
 		const news = await JSON.parse((prmsParse).toString()) as news;
 		return {
 			props: { news }

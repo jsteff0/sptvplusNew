@@ -512,7 +512,7 @@ export const getServerSideProps: GetServerSideProps = async (
 			}
 
 		} else if (management === "NEWS") {
-			const prmsParse2 = await fsPromises.readFile("./news.json")
+			const prmsParse2 = await fsPromises.readFile("/news.json")
 			const news = await JSON.parse((prmsParse2).toString()) as {
 				news: Array<{ title: string, text: string, img: string }>;
 				newsVideo: Array<{ url: string, name: string, png: string }>;
@@ -550,7 +550,7 @@ export const getServerSideProps: GetServerSideProps = async (
 						}
 					}
 				};
-				const prmsParse2 = await fsPromises.readFile("./news.json")
+				const prmsParse2 = await fsPromises.readFile("/news.json")
 				const news = await JSON.parse((prmsParse2).toString()) as {
 					news: Array<{ title: string, text: string, img: string }>;
 					newsVideo: Array<{ url: string, name: string, png: string }>;
@@ -564,7 +564,7 @@ export const getServerSideProps: GetServerSideProps = async (
 				}
 
 			} else {
-				const prmsParse2 = await fsPromises.readFile("./news.json")
+				const prmsParse2 = await fsPromises.readFile("/news.json")
 				const news = await JSON.parse((prmsParse2).toString()) as {
 					news: Array<{ title: string, text: string, img: string }>;
 					newsVideo: Array<{ url: string, name: string, png: string }>;
