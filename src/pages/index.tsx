@@ -33,9 +33,6 @@ export default function Home() {
           <section className="relative flex flex-col w-full h-auto group">
             <div id="scroll" className="no-scroll-line overflow-x-scroll flex scroll-smooth">
               <div className="flex-none px-2">
-                <img src={`/preview/0.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
-              </div>
-              <div className="flex-none px-2">
                 <img src={`/preview/1.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
               </div>
               <div className="flex-none px-2">
@@ -51,16 +48,19 @@ export default function Home() {
                 <img src={`/preview/5.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
               </div>
               <div className="flex-none px-2">
-                <img src={`/preview/6.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
+                <img src={`/preview/1.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
               </div>
               <div className="flex-none px-2">
-                <img src={`/preview/7.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
+                <img src={`/preview/2.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
               </div>
               <div className="flex-none px-2">
-                <img src={`/preview/8.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
+                <img src={`/preview/3.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
               </div>
               <div className="flex-none px-2">
-                <img src={`/preview/9.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
+                <img src={`/preview/4.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
+              </div>
+              <div className="flex-none px-2">
+                <img src={`/preview/5.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
               </div>
 
             </div>

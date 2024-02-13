@@ -3,9 +3,7 @@ import { getProviders, signIn } from "next-auth/react"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "~/server/auth";
 import Head from "next/head";
-import { SPWorlds } from 'spworlds';
 import { db } from "~/server/db";
-const apiSP = new SPWorlds('300c00dd-f5b9-449d-839a-ecdb5bd83373', '1+TkKRZBN8tsR3hoOOu8sZyXTZQHhNcO');
 
 export default function SignIn({ }: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
@@ -46,8 +44,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     })
     if (!check?.nickname) {
       const dsID = session.user.image?.split("/")[4] ?? ""
-      const nickSP = await apiSP.findUser(dsID)
-      const URL = `https://api.mojang.com/users/profiles/minecraft/${nickSP}`
+      const fetchNick = await fetch("http://82.97.243.67:8080/getNick?id="+dsID).then((responde) => {return responde.text()})
+      const nick = fetchNick
+      console.log(nick)
+      const URL = `https://api.mojang.com/users/profiles/minecraft/${nick}`
       const fetchUUID = await fetch(URL)
       const UUID = await fetchUUID.json() as { id: string, name: string }
       await db.user.update({

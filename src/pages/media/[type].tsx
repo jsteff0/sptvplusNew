@@ -77,29 +77,29 @@ export default function Home(props: { typeFilms: filmmakers[], news: news }) {
 						</div>
 					</section>
 					<main className="flex align-middle justify-center flex-auto">
-						<div className="flex tablet:flex-row flex-col-reverse laptop:w-[1010px] tablet:w-[470px] w-screen ">
-							<nav className="fixed bottom-0 tablet:z-0 z-10 flex justify-center laptop:w-[190px] tablet:w-[130px] w-screen tablet:min-h-screen h-[62px] bg-white dark:bg-[#0F0F0F] dark:border-[#383838] tablet:border-r-[1px] border-[#E1E1E1] transition-all duration-500 ease-in-out">
-								<div className="flex tablet:flex-col flex-row tablet:items-start items-center tablet:justify-normal justify-between tablet:mt-[105px] w-screen px-6 laptop:px-10 laptop:gap-3  tablet:gap-1 laptop:text-[16px] tablet:text-[12px] text-[11px] font-['Montserrat'] leading-[20px] font-bold">
+						<div className="flex tablet:flex-row flex-col-reverse w-screen ">
+							<nav className="fixed bottom-0 tablet:z-0 z-10 flex justify-center tablet:w-[190px] w-screen tablet:min-h-screen h-[62px] bg-white dark:bg-[#0a0a0a] dark:border-[#383838] tablet:border-r-[1px] border-[#E1E1E1] transition-all duration-500 ease-in-out">
+								<div className="flex tablet:flex-col flex-row tablet:items-start items-center tablet:justify-normal justify-between tablet:mt-[105px] w-screen px-6 tablet:px-10 tablet:gap-3 tablet:text-[16px] text-[11px] font-['Montserrat'] leading-[20px] font-bold">
 									<Link className="group flex tablet:flex-row flex-col tablet:gap-2 gap-0 items-center opacity-[0.6] hover:opacity-[1] ease-out duration-300" href="/main">
 										<div>
-											<div className="laptop:w-[20px] laptop:h-[20px] tablet:w-[15px] tablet:h-[15px] h-[18px] w-[18px] bg-[url(/nav/homeicon.svg)] dark:bg-[url(/nav/homeiconWT.svg)] bg-cover ease-out duration-300"></div>
-											<div className="w-0 tablet:h-[3px] h-0 bg-[#FFE400] group-hover:tablet:w-[15px] group-hover:laptop:w-[20px] ease-out duration-300"></div>
+											<div className="tablet:w-[20px] tablet:h-[20px] h-[18px] w-[18px] bg-[url(/nav/homeicon.svg)] dark:bg-[url(/nav/homeiconWT.svg)] bg-cover"></div>
+											<div className="w-0 tablet:h-[3px] h-0 bg-[#FFE400] group-hover:tablet:w-[20px] ease-out duration-300"></div>
 										</div>
 										<span className=" tablet:dark:text-white dark:text-white ease-out duration-300">Главная</span>
 									</Link>
 									{router.query.type === "news" ?
 										<Link className="group flex tablet:flex-row flex-col tablet:gap-2 gap-0 items-center " href="/main">
 											<div>
-												<div className="laptop:w-[20px] laptop:h-[20px] tablet:w-[15px] tablet:h-[15px] h-[18px] w-[18px] bg-[url(/nav/newsicon.svg)] dark:bg-[url(/nav/newsiconWT.svg)] bg-cover"></div>
-												<div className="tablet:h-[3px] h-0 bg-[#FFE400] laptop:w-[20px] tablet:w-[15px]"></div>
+												<div className="tablet:w-[20px] tablet:h-[20px] h-[18px] w-[18px] bg-[url(/nav/newsicon.svg)] dark:bg-[url(/nav/newsiconWT.svg)] bg-cover ease-out duration-300"></div>
+												<div className="tablet:h-[3px] h-0 bg-[#FFE400] tablet:w-[20px]"></div>
 											</div>
 											<span className=" tablet:dark:text-[#FFE400] dark:text-white">Новости</span>
 										</Link>
 										:
 										<Link className="group flex tablet:flex-row flex-col tablet:gap-2 gap-0 items-center opacity-[0.6] hover:opacity-[1] ease-out duration-300" href="/media/news">
 											<div>
-												<div className="laptop:w-[20px] laptop:h-[20px] tablet:w-[15px] tablet:h-[15px] h-[18px] w-[18px] bg-[url(/nav/newsicon.svg)] dark:bg-[url(/nav/newsiconWT.svg)] bg-cover ease-out duration-300"></div>
-												<div className="w-0 tablet:h-[3px] h-0 bg-[#FFE400] group-hover:tablet:w-[15px] group-hover:laptop:w-[20px] ease-out duration-300"></div>
+												<div className="tablet:w-[20px] tablet:h-[20px] h-[18px] w-[18px] bg-[url(/nav/newsicon.svg)] dark:bg-[url(/nav/newsiconWT.svg)] bg-cover ease-out duration-300"></div>
+												<div className="w-0 tablet:h-[3px] h-0 bg-[#FFE400] group-hover:tablet:w-[20px] ease-out duration-300"></div>
 											</div>
 											<span className=" tablet:dark:text-white dark:text-white ease-out duration-300">Новости</span>
 										</Link>
@@ -107,16 +107,16 @@ export default function Home(props: { typeFilms: filmmakers[], news: news }) {
 									{router.query.type === "movies" ?
 										<Link className="group flex tablet:flex-row flex-col tablet:gap-2 gap-0 items-center" href="/main">
 											<div>
-												<div className="laptop:w-[20px] laptop:h-[16px] tablet:w-[15px] tablet:h-[12px] tablet:mt-0 mt-[3.6px] h-[14.4px] w-[18px] bg-[url(/nav/movieicon.svg)] dark:bg-[url(/nav/movieiconWT.svg)] bg-cover"></div>
-												<div className="tablet:h-[3px] h-0 bg-[#FFE400] laptop:w-[20px] tablet:w-[15px] mt-[2px]"></div>
+												<div className="tablet:w-[20px] tablet:h-[16px] tablet:mt-0 mt-[3.6px] h-[14.4px] w-[18px] bg-[url(/nav/movieicon.svg)] dark:bg-[url(/nav/movieiconWT.svg)] bg-cover ease-out duration-300"></div>
+												<div className="tablet:h-[3px] h-0 bg-[#FFE400] tablet:w-[20px] mt-[2px]"></div>
 											</div>
 											<span className="tablet:dark:text-[#FFE400] dark:text-white">Фильмы</span>
 										</Link>
 										:
 										<Link className="group flex tablet:flex-row flex-col tablet:gap-2 gap-0 items-center opacity-[0.6] hover:opacity-[1] ease-out duration-300" href="/media/movies">
 											<div>
-												<div className="laptop:w-[20px] laptop:h-[16px] tablet:w-[15px] tablet:h-[12px] tablet:mt-0 mt-[3.6px] h-[14.4px] w-[18px] bg-[url(/nav/movieicon.svg)] dark:bg-[url(/nav/movieiconWT.svg)] bg-cover  ease-out duration-300"></div>
-												<div className="w-0 tablet:h-[3px] h-0 bg-[#FFE400] group-hover:tablet:w-[15px] group-hover:laptop:w-[20px] ease-out duration-300 mt-[2px]"></div>
+												<div className="tablet:w-[20px] tablet:h-[16px] tablet:mt-0 mt-[3.6px] h-[14.4px] w-[18px] bg-[url(/nav/movieicon.svg)] dark:bg-[url(/nav/movieiconWT.svg)] bg-cover ease-out duration-300"></div>
+												<div className="w-0 tablet:h-[3px] h-0 bg-[#FFE400] group-hover:tablet:w-[20px] ease-out duration-300 mt-[2px]"></div>
 											</div>
 											<span className="tablet:dark:text-white dark:text-white ease-out duration-300">Фильмы</span>
 										</Link>
@@ -126,16 +126,16 @@ export default function Home(props: { typeFilms: filmmakers[], news: news }) {
 									{router.query.type === "series" ?
 										<Link className="group flex tablet:flex-row flex-col tablet:gap-2 gap-0 items-center" href="/main">
 											<div>
-												<div className="laptop:w-[20px] laptop:h-[16px] tablet:w-[15px] tablet:h-[12px] tablet:mt-0 mt-[3.6px] h-[14.4px] w-[18px] bg-[url(/nav/serialicon.svg)] dark:bg-[url(/nav/serialiconWT.svg)] bg-cover"></div>
-												<div className="tablet:h-[3px] h-0 bg-[#FFE400] laptop:w-[20px] tablet:w-[15px] mt-[2px]"></div>
+												<div className="tablet:w-[20px] tablet:h-[16px] tablet:mt-0 mt-[3.6px] h-[14.4px] w-[18px] bg-[url(/nav/serialicon.svg)] dark:bg-[url(/nav/serialiconWT.svg)] bg-cover ease-out duration-300"></div>
+												<div className="tablet:h-[3px] h-0 bg-[#FFE400] tablet:w-[20px] mt-[2px]"></div>
 											</div>
 											<span className="tablet:dark:text-[#FFE400] dark:text-white">Сериалы</span>
 										</Link>
 										:
 										<Link className="group flex tablet:flex-row flex-col tablet:gap-2 gap-0 items-center opacity-[0.6] hover:opacity-[1] ease-out duration-300" href="/media/series">
 											<div>
-												<div className="laptop:w-[20px] laptop:h-[16px] tablet:w-[15px] tablet:h-[12px] tablet:mt-0 mt-[3.6px] h-[14.4px] w-[18px] bg-[url(/nav/serialicon.svg)] dark:bg-[url(/nav/serialiconWT.svg)] bg-cover  ease-out duration-300"></div>
-												<div className="w-0 tablet:h-[3px] h-0 bg-[#FFE400] group-hover:tablet:w-[15px] group-hover:laptop:w-[20px] ease-out duration-300 mt-[2px]"></div>
+												<div className="tablet:w-[20px] tablet:h-[16px] tablet:mt-0 mt-[3.6px] h-[14.4px] w-[18px] bg-[url(/nav/serialicon.svg)] dark:bg-[url(/nav/serialiconWT.svg)] bg-cover ease-out duration-300"></div>
+												<div className="w-0 tablet:h-[3px] h-0 bg-[#FFE400] group-hover:tablet:w-[20px] ease-out duration-300 mt-[2px]"></div>
 											</div>
 											<span className="tablet:dark:text-white dark:text-white ease-out duration-300 ">Сериалы</span>
 										</Link>
@@ -143,15 +143,15 @@ export default function Home(props: { typeFilms: filmmakers[], news: news }) {
 									{router.query.type === "shows" ?
 										<Link className="group flex tablet:flex-row flex-col tablet:gap-2 gap-0 items-center " href="/main">
 											<div>
-												<div className="laptop:w-[20px] laptop:h-[20px] tablet:w-[15px] tablet:h-[15px] h-[18px] w-[18px] bg-[url(/nav/showicon.svg)] dark:bg-[url(/nav/showiconWT.svg)] bg-cover"></div>
-												<div className="tablet:h-[3px] h-0 bg-[#FFE400] laptop:w-[20px] tablet:w-[15px]"></div>
+												<div className="tablet:w-[20px] tablet:h-[16px] h-[18px] w-[18px] bg-[url(/nav/showicon.svg)] dark:bg-[url(/nav/showiconWT.svg)] bg-cover ease-out duration-300"></div>
+												<div className="tablet:h-[3px] h-0 bg-[#FFE400] tablet:w-[20px]"></div>
 											</div>
 											<span className=" tablet:dark:text-[#FFE400] dark:text-white">Шоу</span>
 										</Link>
 										:
 										<Link className="group flex tablet:flex-row flex-col tablet:gap-2 gap-0 items-center opacity-[0.6] hover:opacity-[1] ease-out duration-300" href="/media/shows">
 											<div>
-												<div className="laptop:w-[20px] laptop:h-[16px] tablet:w-[15px] tablet:h-[15px] h-[18px] w-[18px] bg-[url(/nav/showicon.svg)] dark:bg-[url(/nav/showiconWT.svg)] bg-cover  ease-out duration-300"></div>
+												<div className="tablet:w-[20px] tablet:h-[16px] h-[18px] w-[18px] bg-[url(/nav/showicon.svg)] dark:bg-[url(/nav/showiconWT.svg)] bg-cover ease-out duration-300"></div>
 												<div className="w-0 tablet:h-[3px] h-0 bg-[#FFE400] group-hover:tablet:w-[15px] group-hover:laptop:w-[20px] ease-out duration-300 mt-[2px]"></div>
 											</div>
 											<span className="tablet:dark:text-white dark:text-white ease-out duration-300">Шоу</span>
@@ -170,7 +170,7 @@ export default function Home(props: { typeFilms: filmmakers[], news: news }) {
 									}
 								</div>
 							</nav>
-							<section id="leftcontent" className="laptop:ml-[190px] tablet:ml-[130px] ml-0 laptop:w-[820px] tablet:w-[340px] w-screen transition-all duration-500 ease-in-out z-0 ">
+							<section id="leftcontent" className="tablet:ml-[190px] ml-0 w-full transition-all duration-500 ease-in-out">
 								<div className="h-full min-h-screen py-20 bg-white dark:bg-[#0F0F0F] flex flex-col items-center gap-[40px]">
 									{router.query.type !== "news" ?
 										props.typeFilms.length > 0 ?
@@ -233,7 +233,7 @@ export default function Home(props: { typeFilms: filmmakers[], news: news }) {
 																	<>
 																		<div className="flex-none px-[12px] first:pl-6 last:pr-6 ">
 																			<div className="flex flex-col items-center justify-center">
-																				<Image width={285} height={180} src={`/news/${item.img}`} className="dark:border-[1px] tablet:h-[180px] tablet:w-[285px] h-[100px] w-[160px] object-cover rounded-t-[10px] bg-center" alt="" />
+																				<Image width={285} height={160} src={`/news/${item.img}`} className="dark:border-[1px] tablet:w-[285px] tablet:h-[160px] w-[160px] h-[90px] object-cover rounded-t-[10px] bg-center" alt="" />
 																				<div className="relative bottom-0 tablet:w-[285px] w-[160px] tablet:h-[60px] h-[33px] bg-[#0000007b] dark:bg-[#7a7a7a7b] rounded-b-[10px] flex flex-col justify-center items-center">
 																					<div className="text-white font-['Montserrat'] font-medium tablet:text-[13px] text-[9px] w-auto tablet:p-3 p-1 h-auto">{item.text}</div>
 																				</div>

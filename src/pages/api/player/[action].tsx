@@ -10,7 +10,8 @@ export interface NewApiRequest extends NextApiRequest {
 		nickname: string;
 		amount: number;
 		nicknameAdder: string;
-		payer: string
+		payer: string,
+		redirect: string
 	};
 	json: {
 		data: string;
@@ -222,33 +223,11 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 				res.status(200).json({ "code": 1 });
 			}
 		} else if (req.query.action === "getMoneyUrl") {
-			console.log(req.body.nickname +"::"+ (new Date().toISOString()), req.body.amount,)
-			//const request = await fetch("http://82.97.243.67/getNick", { method: 'GET' })
-			const request = await fetch(`http://localhost/getUrlToPay?amount=${req.body.amount}&data=${req.body.nickname +"::"+ (new Date().toISOString())}`, { method: 'GET' })
-			const url = await request.json()
-			res.status(200).json({ "url": url.url });
-			// console.log(req.json)
-			// if (req.method === "POST") {
-			// 	const moreInfo = await prisma.user.findFirst({
-			// 		where: {
-			// 			nickname: req.json.payer,
-			// 		},
-			// 		select: {
-			// 			balance: true
-			// 		}
-			// 	})
-			// 	if (moreInfo) {
-			// 		const newBalance = moreInfo.balance + req.json.amount
-			// 		await prisma.user.update({
-			// 			where: {
-			// 				nickname: req.body.nickname,
-			// 			},
-			// 			data: {
-			// 				balance: newBalance
-			// 			}
-			// 		})
-			// 	}
-			// }
+			// console.log(req.body.nickname +"::"+ (new Date().toISOString()), req.body.amount,)
+			// console.log(req.body.redirect)
+			const request = await fetch(`http://82.97.243.67:8080/getUrlToPay?amount=${req.body.amount}&data=${req.body.nickname +"::"+ (new Date().toISOString())}&redirect=${req.body.redirect}`, { method: 'GET' })
+			const url = await request.text()
+			res.status(200).json({ "url": url });
 		} else if (req.query.action === "moneywebhook") {
 		}
 	}

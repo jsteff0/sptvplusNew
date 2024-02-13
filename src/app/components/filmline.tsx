@@ -13,7 +13,7 @@ export default function Films({ items, sub, name }: {
 	name: string;
 }) {
 	return (
-		<div className="smltp:max-w-full tablet:max-w-[345px] max-w-full w-full h-[201px] tablet:h-[282px] pl-5 py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
+		<div className=" max-w-full w-full h-[201px] tablet:h-[282px] pl-5 py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
 			<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">{name}</div>
 			<div className="relative flex w-full group">
 				<div
@@ -47,21 +47,20 @@ export default function Films({ items, sub, name }: {
 						</div>
 					</div>
 					{items.map((item: filmmakers) => {
-						console.log(item)
 						if (item.show) {
 							return (
 								<>
-								
 									<Link href={`/content/${item.code}`} className="relative flex-none px-[12px] last:pr-6">
-										<Image width={150} height={200} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[200px] tablet:w-[150px] h-[132px] w-[99px] object-cover rounded-[10px] bg-center" alt="" />
+										<Image width={150} height={200} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[200px] tablet:w-[150px] h-[132px] w-[99px] object-cover peer rounded-[10px] bg-center" alt="" />
 										{sub < item.subscription ?
-											<Image width={150} height={200} src={`/subscriptions/only${item.subscription === 3 ? "Max" : item.subscription === 2 ? "Multi" : "One"}.svg`} className="absolute bottom-0 tablet:h-[200px] tablet:w-[150px] h-[20px] w-[99px] object-cover bg-center" alt="" />
+											<Image width={150} height={200} src={`/subscriptions/only${item.subscription === 3 ? "Max" : item.subscription === 2 ? "Multi" : "One"}.svg`} className={`absolute bottom-0 tablet:h-[200px] tablet:w-[150px] h-[132px] w-[99px] object-cover bg-center`} alt="" />
 											: null}
 									</Link>
 								</>
-							)} else {
-								return 
-							}
+							)
+						} else {
+							return
+						}
 					})}
 
 					<div onClick={(e) => {

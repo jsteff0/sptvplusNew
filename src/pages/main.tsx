@@ -38,8 +38,7 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 			</div>
 		);
 	} else {
-		const randomMainPageNum = Math.floor(Math.random() * ((props.recomendtosee.length-1) - 0 + 1) + 0);
-		console.log(props.recomendtosee[randomMainPageNum]?.describe, props.recomendtosee[randomMainPageNum]?.imgID)
+		const randomMainPageNum = Math.floor(Math.random() * ((props.recomendtosee.length - 1) - 0 + 1) + 0);
 		return (
 			<>
 				<Head>
@@ -54,13 +53,13 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 
 					<section id="addMoney" className="fixed inset-0 overflow-y-auto z-20 hidden">
 						<div className="flex min-h-full items-center justify-center p-4 text-center">
-							<div className="fixed inset-0 bg-black bg-opacity-25"></div>
+							<div onClick={() => switchWind("addMoney")} className="fixed inset-0 bg-black bg-opacity-25"></div>
 							<div className="w-full max-w-md transform  overflow-hidden rounded-2xl bg-[#272727] p-6 text-left align-middle shadow-xl transition-all z-22">
-								<b className=" text-white text-[20px] font-['Montserrat']">Пополнить баланс</b><br />
+								<b className=" text-white text-[20px] ">Пополнить баланс</b><br />
 								<div className="mt-2"><span className="text-white font-['Montserrat']">Баланс: <b>{data.balance} <span className="text-[#FFE400]">AP</span></b></span></div>
 								<div className="mt-4">
 									<label htmlFor="money" className="text-white font-['Montserrat']">Добавить на баланс:</label><br />
-									<input pattern="[0-9]+" type="number" id="money" onChange={(e) => {
+									<input pattern="[0-9]+" type="number" id="money" required onChange={(e) => {
 										const val = e.currentTarget.value;
 										if (parseInt(val) > 500)
 											e.currentTarget.value = "500"
@@ -75,48 +74,50 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 									<button onClick={() => {
 										const money = document.getElementById("money") as HTMLInputElement;
 										const moneyVal = parseInt(money.value);
-										addMoney(moneyVal, data.nickname as string).catch((err) => console.log(err));
-									}} id="alertButton2" className="px-4 py-2 bg-[#FFE400] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold">Оплатить</button>
+										if (moneyVal > 0) {
+											addMoney(moneyVal, data.nickname as string,).catch((err) => console.log(err));
+										}
+									}} id="alertButton2" className="px-4 py-2 bg-[#ffb300] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold">Оплатить</button>
 								</div>
 							</div>
 						</div>
 					</section>
 					<main className="flex align-middle justify-center flex-auto">
-						<div className="flex tablet:flex-row flex-col-reverse laptop:w-[1010px] smltp:w-[675px] tablet:w-[475px] w-screen ">
-							<nav className="fixed bottom-0 tablet:z-0 z-10 flex justify-center laptop:w-[190px] tablet:w-[130px] w-screen tablet:min-h-screen h-[62px] bg-white dark:bg-[#0F0F0F] dark:border-[#383838] tablet:border-r-[1px] border-[#E1E1E1] transition-all duration-500 ease-in-out">
-								<div className="flex tablet:flex-col flex-row tablet:items-start items-center tablet:justify-normal justify-between tablet:mt-[105px] w-screen px-6 laptop:px-10 laptop:gap-3  tablet:gap-1 laptop:text-[16px] tablet:text-[12px] text-[11px] font-['Montserrat'] leading-[20px] font-bold">
+						<div className="flex tablet:flex-row flex-col-reverse w-screen ">
+							<nav className="fixed bottom-0 tablet:z-0 z-10 flex justify-center tablet:w-[190px] w-screen tablet:min-h-screen h-[62px] bg-white dark:bg-[#0a0a0a] dark:border-[#383838] tablet:border-r-[1px] border-[#E1E1E1] transition-all duration-500 ease-in-out">
+								<div className="flex tablet:flex-col flex-row tablet:items-start items-center tablet:justify-normal justify-between tablet:mt-[105px] w-screen px-6 tablet:px-10 tablet:gap-3 tablet:text-[16px] text-[11px] font-['Montserrat'] leading-[20px] font-bold">
 									<Link className="group flex tablet:flex-row flex-col tablet:gap-2 gap-0 items-center " href="/main">
 										<div>
-											<div className="laptop:w-[20px] laptop:h-[20px] tablet:w-[15px] tablet:h-[15px] h-[18px] w-[18px] bg-[url(/nav/homeicon.svg)] dark:bg-[url(/nav/homeiconWT.svg)] bg-cover"></div>
-											<div className="tablet:h-[3px] h-0 bg-[#FFE400] laptop:w-[20px] tablet:w-[15px]"></div>
+											<div className="tablet:w-[20px] tablet:h-[20px] h-[18px] w-[18px] bg-[url(/nav/homeicon.svg)] dark:bg-[url(/nav/homeiconWT.svg)] bg-cover"></div>
+											<div className="tablet:h-[3px] h-0 bg-[#FFE400] tablet:w-[20px]"></div>
 										</div>
 										<span className=" tablet:dark:text-[#FFE400] dark:text-white">Главная</span>
 									</Link>
 									<Link className="group flex tablet:flex-row flex-col tablet:gap-2 gap-0 items-center opacity-[0.6] hover:opacity-[1] ease-out duration-300" href="/media/news">
 										<div>
-											<div className="laptop:w-[20px] laptop:h-[20px] tablet:w-[15px] tablet:h-[15px] h-[18px] w-[18px] bg-[url(/nav/newsicon.svg)] dark:bg-[url(/nav/newsiconWT.svg)] bg-cover ease-out duration-300"></div>
-											<div className="w-0 tablet:h-[3px] h-0 bg-[#FFE400] group-hover:tablet:w-[15px] group-hover:laptop:w-[20px] ease-out duration-300"></div>
+											<div className="tablet:w-[20px] tablet:h-[20px] h-[18px] w-[18px] bg-[url(/nav/newsicon.svg)] dark:bg-[url(/nav/newsiconWT.svg)] bg-cover ease-out duration-300"></div>
+											<div className="w-0 tablet:h-[3px] h-0 bg-[#FFE400] group-hover:tablet:w-[20px] ease-out duration-300"></div>
 										</div>
 										<span className=" tablet:dark:text-white dark:text-white ease-out duration-300">Новости</span>
 									</Link>
 									<Link className="group flex tablet:flex-row flex-col tablet:gap-2 gap-0 items-center opacity-[0.6] hover:opacity-[1] ease-out duration-300" href="/media/movies">
 										<div>
-											<div className="laptop:w-[20px] laptop:h-[16px] tablet:w-[15px] tablet:h-[12px] tablet:mt-0 mt-[3.6px] h-[14.4px] w-[18px] bg-[url(/nav/movieicon.svg)] dark:bg-[url(/nav/movieiconWT.svg)] bg-cover  ease-out duration-300"></div>
-											<div className="w-0 tablet:h-[3px] h-0 bg-[#FFE400] group-hover:tablet:w-[15px] group-hover:laptop:w-[20px] ease-out duration-300 mt-[2px]"></div>
+											<div className="tablet:w-[20px] tablet:h-[16px] tablet:mt-0 mt-[3.6px] h-[14.4px] w-[18px] bg-[url(/nav/movieicon.svg)] dark:bg-[url(/nav/movieiconWT.svg)] bg-cover ease-out duration-300"></div>
+											<div className="w-0 tablet:h-[3px] h-0 bg-[#FFE400] group-hover:tablet:w-[20px] ease-out duration-300 mt-[2px]"></div>
 										</div>
 										<span className="tablet:dark:text-white dark:text-white ease-out duration-300">Фильмы</span>
 									</Link>
 									<Link className="group flex tablet:flex-row flex-col tablet:gap-2 gap-0 items-center opacity-[0.6] hover:opacity-[1] ease-out duration-300" href="/media/series">
 										<div>
-											<div className="laptop:w-[20px] laptop:h-[16px] tablet:w-[15px] tablet:h-[12px] tablet:mt-0 mt-[3.6px] h-[14.4px] w-[18px] bg-[url(/nav/serialicon.svg)] dark:bg-[url(/nav/serialiconWT.svg)] bg-cover  ease-out duration-300"></div>
-											<div className="w-0 tablet:h-[3px] h-0 bg-[#FFE400] group-hover:tablet:w-[15px] group-hover:laptop:w-[20px] ease-out duration-300 mt-[2px]"></div>
+											<div className="tablet:w-[20px] tablet:h-[16px] tablet:mt-0 mt-[3.6px] h-[14.4px] w-[18px] bg-[url(/nav/serialicon.svg)] dark:bg-[url(/nav/serialiconWT.svg)] bg-cover ease-out duration-300"></div>
+											<div className="w-0 tablet:h-[3px] h-0 bg-[#FFE400] group-hover:tablet:w-[20px] ease-out duration-300 mt-[2px]"></div>
 										</div>
 										<span className="tablet:dark:text-white dark:text-white ease-out duration-300 ">Сериалы</span>
 									</Link>
 									<Link className="group flex tablet:flex-row flex-col tablet:gap-2 gap-0 items-center opacity-[0.6] hover:opacity-[1] ease-out duration-300" href="/media/shows">
 										<div>
-											<div className="laptop:w-[20px] laptop:h-[16px] tablet:w-[15px] tablet:h-[15px] h-[18px] w-[18px] bg-[url(/nav/showicon.svg)] dark:bg-[url(/nav/showiconWT.svg)] bg-cover  ease-out duration-300"></div>
-											<div className="w-0 tablet:h-[3px] h-0 bg-[#FFE400] group-hover:tablet:w-[15px] group-hover:laptop:w-[20px] ease-out duration-300 mt-[2px]"></div>
+											<div className="tablet:w-[20px] tablet:h-[16px] h-[18px] w-[18px] bg-[url(/nav/showicon.svg)] dark:bg-[url(/nav/showiconWT.svg)] bg-cover ease-out duration-300"></div>
+											<div className="w-0 tablet:h-[3px] h-0 bg-[#FFE400] group-hover:tablet:w-[20px] ease-out duration-300 mt-[2px]"></div>
 										</div>
 										<span className="tablet:dark:text-white dark:text-white ease-out duration-300">Шоу</span>
 									</Link>
@@ -124,8 +125,8 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 										data.management !== "NO" ?
 											<Link className="group flex tablet:flex-row flex-col tablet:gap-2 gap-0 items-center opacity-[0.6] hover:opacity-[1] ease-out duration-300" href="/panels/main">
 												<div>
-													<div className="laptop:w-[20px] laptop:h-[20px] tablet:w-[15px] tablet:h-[15px] h-[18px] w-[18px] bg-[url(/nav/addicon.svg)] dark:bg-[url(/nav/addiconWT.svg)] bg-cover  ease-out duration-300"></div>
-													<div className="w-0 tablet:h-[3px] h-0 bg-[#FFE400] group-hover:tablet:w-[15px] group-hover:laptop:w-[20px] ease-out duration-300 mt-[2px]"></div>
+													<div className="tablet:w-[20px] tablet:h-[20px] h-[18px] w-[18px] bg-[url(/nav/addicon.svg)] dark:bg-[url(/nav/addiconWT.svg)] bg-cover  ease-out duration-300"></div>
+													<div className="w-0 tablet:h-[3px] h-0 bg-[#FFE400] group-hover:tablet:w-[20px] ease-out duration-300 mt-[2px]"></div>
 												</div>
 												<span className="tablet:dark:text-white dark:text-white ease-out duration-300">Добавить контент</span>
 											</Link>
@@ -133,23 +134,29 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 									}
 								</div>
 							</nav>
-							<section id="leftcontent" className="laptop:ml-[190px] tablet:ml-[130px] ml-0 w-full transition-all duration-500 ease-in-out">
-								<div className="py-20 bg-white dark:bg-[#0F0F0F] flex flex-col min-h-screen items-center gap-[40px]">
-									<a href={`/content/${props.recomendtosee[randomMainPageNum]?.code}`} className="flex justify-center laptop:w-full laptop:h-[430px] w-[275px] h-[154px]">
-										<div className="absolute bg-gradient-to-t from-black from-30% to-[#fff0] laptop:w-[750px] laptop:h-[430px] w-[275px] h-[154px] rounded-[20px] zd:rounded-[100px] flex flex-col justify-end items-center p-[22px]">
-											<Image width={270} height={160} src={`/preview/${props.recomendtosee[randomMainPageNum]?.imgID}_m.png`} className="laptop:w-auto tablet:w-[50%] w-auto" alt="" />
-											<div className="text-white laptop:text-[20px] tablet:text-[10px] text-[9px]">{props.recomendtosee[randomMainPageNum]?.describe}</div>
-										</div>
-										<Image width={750} height={430} src={`/preview/${props.recomendtosee[randomMainPageNum]?.imgID}.png`} className="laptop:w-[750px] laptop:h-[430px] w-[275px] h-[154px] rounded-[20px] zd:rounded-[100px] object-cover " alt="" />
-									</a>
+							<section id="leftcontent" className="tablet:ml-[190px] ml-0 w-full transition-all duration-500 ease-in-out">
+								<div className="py-20 bg-white dark:bg-[#0a0a0a] flex flex-col min-h-screen items-center gap-[40px]">
+									<div className="m-4 hidden smltp:flex">
+										<section className="flex flex-col justify-center gap-12 p-8 absolute bg-gradient-to-r from-[#000000f7] from-40% to-[#fff0] smltp:w-[560px] smltp:h-[315px] w-[255px] h-[143px] rounded-[20px]  ">
+											<Image width={168} height={0} src={`/preview/${props.recomendtosee[randomMainPageNum]?.imgID}_m.png`} className="rounded-[20px] object-cover" alt="" />
+											<section className="flex flex-col gap-4 w-[35%]">
+												<p className="text-white font-['Montserrat'] font-light text-[12px]">{props.recomendtosee[randomMainPageNum]?.describe}</p>
+												<a className="px-4 py-2 w-[102px] bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold" href={`/content/${props.recomendtosee[randomMainPageNum]?.code}`}>Смотреть</a>
+											</section>
+										</section>
+										<Image width={560} height={315} src={`/preview/${props.recomendtosee[randomMainPageNum]?.imgID}.png`} className="rounded-[20px] object-cover smltp:w-[560px] smltp:h-[315px] w-[255px] h-[143px]" alt="" />
+									</div>
+									<div className="m-4 flex smltp:hidden">
+										<video src={`/videos/index.mp4`} className="rounded-[10px] object-cover w-full" autoPlay muted loop playsInline />
+									</div>
 
 									{props.newest.length > 0 && props ? <Films items={props.newest} sub={((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0)} name={"Новинки"} /> : null}
 									{props.recomendtosee.length > 0 ? <Films items={props.recomendtosee} sub={((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0)} name={"Что посмотреть"} /> : null}
 									{props.comingOut.length > 0 ? <Films items={props.comingOut} sub={((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0)} name={"Будущие проекты"} /> : null}
 									{props.shows.length > 0 ? <Films items={props.shows} sub={((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0)} name={"Шоу"} /> : null}
 									{props.newsVideo.length > 0 ?
-										<div className="smltp:max-w-full tablet:max-w-[345px] max-w-full w-full h-[201px] tablet:h-[282px] pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
-											<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Последние выпуски новостей</div>
+										<div className="max-w-full w-full pl-5 py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
+											<div className="tablet:text-[32px] font-['Montserrat'] font-bold dark:text-white">Последние выпуски новостей</div>
 											<div className="relative flex w-full group">
 												<div
 													onScroll={(e) => {
@@ -187,7 +194,7 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 																<div className="flex flex-col items-center justify-center gap-3">
 																	<Image width={285} height={180} src={`/preview/${item.png}`} className="tablet:h-[180px] tablet:w-[285px] h-[100px] w-[160px] object-cover rounded-[10px] bg-center" alt="" />
 																</div>
-																<div className="text-black dark:text-white tablet:text-[16px] text-[12px]">{item.name}</div>
+																<div className="text-black dark:text-white tablet:text-[18px] text-[14px] font-['Montserrat'] font-semibold mt-2">{item.name}</div>
 															</Link>
 														)
 													})}
@@ -226,7 +233,7 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 }
 
 async function addMoney(_amount: number, _nickname: string) {
-	const data = { "amount": _amount, "nickname": _nickname }
+	const data = { "amount": _amount, "nickname": _nickname, "redirect": location.href }
 	await fetch("/api/player/getMoneyUrl", {
 		method: 'POST',
 		headers: {
@@ -236,16 +243,8 @@ async function addMoney(_amount: number, _nickname: string) {
 	}).then((response) => {
 		return response.json();
 	}).then((data: { url: string }) => {
-	console.log(data.url)
+		location.href = data.url
 	})
-	// const data = amount + "::" + nickname + "::" + new Date().toISOString()
-	// const url = await apiSP.initPayment(
-	// 	amount,
-	// 	"http://82.97.243.67:00/main",
-	// 	"http://192.168.1.8:3000/api/player/addmoney",
-	// 	data
-	// );
-	// console.log(url)
 }
 
 function switchWind(BlockId: string) {
@@ -257,6 +256,7 @@ function switchWind(BlockId: string) {
 			} else {
 				element.classList.add("hidden");
 			}
+
 		}
 	}
 }
@@ -313,7 +313,7 @@ export const getServerSideProps: GetServerSideProps = async (
 			describe: true,
 		},
 	})
-	
+
 	const comingOut = await prisma.film.findMany({
 		where: {
 			datePremiere: {
