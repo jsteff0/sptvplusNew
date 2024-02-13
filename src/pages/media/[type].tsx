@@ -171,7 +171,7 @@ export default function Home(props: { typeFilms: filmmakers[], news: news }) {
 								</div>
 							</nav>
 							<section id="leftcontent" className="tablet:ml-[190px] ml-0 w-full transition-all duration-500 ease-in-out">
-								<div className="h-full min-h-screen py-20 bg-white dark:bg-[#0F0F0F] flex flex-col items-center gap-[40px]">
+								<div className="h-full min-h-screen py-20 bg-white dark:bg-[#0a0a0a] flex flex-col items-center gap-[40px]">
 									{router.query.type !== "news" ?
 										props.typeFilms.length > 0 ?
 											<>
