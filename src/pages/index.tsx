@@ -1,5 +1,6 @@
 import Link from "next/link";
-import Head from "next/head";
+import Head from "next/head"; Image
+import Image from "next/image";
 let flag = 1
 import Footer from "../app/components/footer";
 export default function Home() {
@@ -27,40 +28,40 @@ export default function Home() {
             <span className="text-white absolute z-10 font-['Montserrat'] laptop:text-[65px] tablet:text-[37px] text-[26px] font-bold tablet:ml-24 mt-32 ">Новая эра<br /> киноиндустрии<br /> на СП</span>
           </section>
           <section className=" flex flex-row laptop:flex-row tablet:flex-col items-start tablet:items-center justify-center gap-6">
-            <img src="/logo.svg" alt="" className="laptop:w-[521px] laptop:h-[357px] w-[120px] h-[82px]" />
+            <Image height={357} width={521} src={`/logo.svg`} className="laptop:w-[521px] laptop:h-[357px] w-[120px] h-[82px]" alt="" />
             <span className="text-white font-['Montserrat'] laptop:text-[60px] tablet:text-[39px] text-[12px] text-start tablet:text-center  font-bold">Главный<br /> телеканал<br /> Страны<br /> Подписчиков</span>
           </section>
           <section className="relative flex flex-col w-full h-auto group">
             <div id="scroll" className="no-scroll-line overflow-x-scroll flex scroll-smooth">
               <div className="flex-none px-2">
-                <img src={`/preview/1.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
+                <Image height={200} width={350} src={`/preview/1.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
               </div>
               <div className="flex-none px-2">
-                <img src={`/preview/2.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
+                <Image height={200} width={350} src={`/preview/2.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
               </div>
               <div className="flex-none px-2">
-                <img src={`/preview/3.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
+                <Image height={200} width={350} src={`/preview/3.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
               </div>
               <div className="flex-none px-2">
-                <img src={`/preview/4.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
+                <Image height={200} width={350} src={`/preview/4.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
               </div>
               <div className="flex-none px-2">
-                <img src={`/preview/5.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
+                <Image height={200} width={350} src={`/preview/5.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
               </div>
               <div className="flex-none px-2">
-                <img src={`/preview/1.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
+                <Image height={200} width={350} src={`/preview/1.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
               </div>
               <div className="flex-none px-2">
-                <img src={`/preview/2.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
+                <Image height={200} width={350} src={`/preview/2.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
               </div>
               <div className="flex-none px-2">
-                <img src={`/preview/3.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
+                <Image height={200} width={350} src={`/preview/3.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
               </div>
               <div className="flex-none px-2">
-                <img src={`/preview/4.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
+                <Image height={200} width={350} src={`/preview/4.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
               </div>
               <div className="flex-none px-2">
-                <img src={`/preview/5.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
+                <Image height={200} width={350} src={`/preview/5.png`} className="h-[200px] w-[350px] px-1 object-contain" alt="" />
               </div>
 
             </div>
@@ -145,7 +146,8 @@ export default function Home() {
             </div>
           </section>
           <section className="flex flex-col items-center font-['Montserrat']">
-            <img src="/icons/creators.svg" className="tablet:w-[300px] tablet:h-[70px] w-[120px] h-[28px]" alt="" />
+            <Image height={70} width={300} src={`/icons/creators.svg`} className="tablet:w-[300px] tablet:h-[70px] w-[120px] h-[28px]" alt="" />
+
             <p className="tablet:text-[20px] text-[14px] text-white font-semibold w-[250px] text-center py-6">Присоединяйся в нашу команду</p>
             <a className="hover:bg-[#FAD201] hover:border-[#FAD201] hover:text-black text-white tablet:text-[24px] text-[16px] ease-out duration-200 px-8 border-2" href="https://docs.google.com/forms/d/e/1FAIpQLSelqiT10IZYGwVL6nOucPWnHi7WaVYZCnKdJ8YqXZThQlfwJg/viewform?usp=sf_link">Отправить заявку</a>
             <Link className="text-white font-extralight py-1 peer/readmore" href="/SPCrt">Читать больше</Link>
@@ -156,7 +158,7 @@ export default function Home() {
               <div className="border-0 hover:border-[2px] border-[#FF0000] transition-all duration-500 bg-gradient-to-t via-[#00000000] from-[#ff000090] bg-size-200 bg-pos-0 hover:bg-pos-100 z-10">
                 <div className="flex flex-col items-center px-10">
                   <div className="text-white text-[26px] font-['Montserrat'] mt-2 font-semibold z-10">Подписывайся</div>
-                  <img src="/icons/YouTubeIcon.svg" className="w-[62px] h-[43.4px] my-6" alt="" />
+                  <Image height={43.4} width={62} src={`/icons/YouTubeIcon.svg`} className="w-[62px] h-[43.4px] my-6" alt="" />
                 </div>
               </div>
             </a>
@@ -164,13 +166,13 @@ export default function Home() {
               <div className="border-0 hover:border-[2px] border-[#5865F2] transition-all duration-500 bg-gradient-to-t via-[#00000000] from-[#5865f28d] bg-size-200 bg-pos-0 hover:bg-pos-100 z-10">
                 <div className="flex flex-col items-center px-10">
                   <div className="text-white text-[26px] font-['Montserrat'] mt-2 font-semibold z-10">Присоединяйся</div>
-                  <img src="/icons/DiscordIcon.svg" className="w-[62px] h-[43.4px] my-6" alt="" />
+                  <Image height={43.4} width={62} src={`/icons/DiscordIcon.svg`} className="w-[62px] h-[43.4px] my-6" alt="" />
                 </div>
               </div>
             </a>
           </section>
         </main>
-        <Footer/>
+        <Footer />
       </div>
 
     </>

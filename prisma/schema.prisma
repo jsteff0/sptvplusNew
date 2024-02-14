@@ -111,7 +111,8 @@ model View {
 
 model Rating {
     mark              Int
-    id                String @id
+    id                String
+    idrating          String    @id @default(uuid())
     createdByNickname String
     createdBy         User   @relation(fields: [createdByNickname], references: [nickname])
 
