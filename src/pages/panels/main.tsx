@@ -10,6 +10,7 @@ import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
 import { getServerAuthSession } from "~/server/auth";
 import fsPromises from 'fs/promises';
 import { PrismaClient, type Management } from '@prisma/client'
+import { useEffect } from "react";
 
 interface filmmakers {
 	show: number;
