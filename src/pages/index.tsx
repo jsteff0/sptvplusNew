@@ -12,15 +12,15 @@ export default function Home() {
         <link rel="preconnect" href="https://fonts.googleapis.com" />
       </Head>
       <div className="min-h-screen flex flex-col">
-        <header className="fixed flex justify-between items-center px-8 z-30 w-full h-[55px] bg-[#272727]">
+        <header className="fixed flex justify-between items-center px-8 z-30 w-full h-[55px] bg-[#0f0f0f]">
           <Link href="/" className="w-auto h-auto">
             <span className=" text-[#FFE400] font-['Montserrat'] text-[20px] font-extrabold">СП</span>
             <span className=" text-white font-['Montserrat'] text-[20px] font-extrabold text italic">tv+</span>
           </Link>
           <Link href="/main" className=" bg-white py-[4px] px-[15px] rounded-full text-[11px] font-['Montserrat'] font-normal">Начать</Link>
         </header>
-        <div className="w-[466px] h-[466px] fixed bg-[#FA9601] blur-[933px] top-6 opacity-25 z-20"></div>
-        <div className="w-[466px] h-[466px] fixed bg-[#FAD201] blur-[933px] float-right bottom-10 right-4 opacity-10 z-20"></div>
+        <div className="w-[466px] h-[466px] fixed bg-[#FA9601] blur-[933px] top-6 opacity-25 z-0"></div>
+        <div className="w-[466px] h-[466px] fixed bg-[#FAD201] blur-[933px] float-right bottom-10 right-4 opacity-10 z-0"></div>
         <main className="flex-auto mt-[55px] pb-[55px] flex flex-col justify-center align-middle gap-[100px] z-10 bg-[#101010]">
           <section className="h-screen w-screen flex flex-col tablet:items-start items-center">
             <video className="tablet:block hidden relative object-cover z-0 min-h-screen min-w-full" src="/videos/index.mp4" autoPlay muted loop playsInline></video>

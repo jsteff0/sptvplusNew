@@ -353,7 +353,7 @@ export const getServerSideProps: GetServerSideProps = async (
 			show: true
 		},
 	})
-	const prmsParse2 = await fsPromises.readFile("/newsinfo.json")
+	const prmsParse2 = await fsPromises.readFile(process.cwd()+"/newsinfo.json")
 	const news = await JSON.parse((prmsParse2).toString()) as {
 		newsVideo: Array<{ url: string, name: string, png: string }>;
 	};
