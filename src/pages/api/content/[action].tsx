@@ -252,6 +252,7 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 					where: {
 						id: req.body.id,
 						createdByNickname: req.body.nickname,
+						idrating: req.body.id+req.body.nickname
 					},
 					update: {
 						mark: req.body.rate,
@@ -260,6 +261,7 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 						mark: req.body.rate,
 						createdByNickname: req.body.nickname,
 						id: req.body.id,
+						idrating: req.body.id+req.body.nickname
 					},
 				})
 				const aggregations = await prisma.rating.aggregate({
