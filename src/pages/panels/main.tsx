@@ -512,11 +512,34 @@ export const getServerSideProps: GetServerSideProps = async (
 			}
 
 		} else if (management === "NEWS") {
-			const prmsParse2 = await fsPromises.readFile("/news.json")
-			const news = await JSON.parse((prmsParse2).toString()) as {
-				news: Array<{ title: string, text: string, img: string }>;
-				newsVideo: Array<{ url: string, name: string, png: string }>;
-			};
+			//const prmsParse2 = await fsPromises.readFile(process.cwd()+"/newsinfo.json")
+			// const news = await JSON.parse((prmsParse2).toString()) as {
+			// 	newsVideo: Array<{ url: string, name: string, png: string }>;
+			// };
+			const news = {
+				"news": [
+					{
+						"text": "Телеканал СПtv открыл холдинг платформу для создателей контента",
+						"img": "cptvpreates.png"
+					},
+					{
+						"text": "АБОБА",
+						"img": "undefined.png"
+					}
+				],
+				"newsVideo": [
+					{
+						"url": "https://youtu.be/eq_78xANfPA",
+						"name": "Выпуст от 3.6.2023",
+						"png": "news2.png"
+					}
+				],
+				"mainNews": {
+					"title": "Открытие СПtv+",
+					"text": "Телеканал СПtv открыл холдинг платформу для создателей контента",
+					"img": "cptvpreates.png"
+				}
+			}
 			return {
 				props: {
 					news,
@@ -564,11 +587,34 @@ export const getServerSideProps: GetServerSideProps = async (
 				}
 
 			} else {
-				const prmsParse2 = await fsPromises.readFile("/news.json")
-				const news = await JSON.parse((prmsParse2).toString()) as {
-					news: Array<{ title: string, text: string, img: string }>;
-					newsVideo: Array<{ url: string, name: string, png: string }>;
-				};
+				//const prmsParse2 = await fsPromises.readFile(process.cwd()+"/newsinfo.json")
+				// const news = await JSON.parse((prmsParse2).toString()) as {
+				// 	newsVideo: Array<{ url: string, name: string, png: string }>;
+				// };
+				const news = {
+					"news": [
+						{
+							"text": "Телеканал СПtv открыл холдинг платформу для создателей контента",
+							"img": "cptvpreates.png"
+						},
+						{
+							"text": "АБОБА",
+							"img": "undefined.png"
+						}
+					],
+					"newsVideo": [
+						{
+							"url": "https://youtu.be/eq_78xANfPA",
+							"name": "Выпуст от 3.6.2023",
+							"png": "news2.png"
+						}
+					],
+					"mainNews": {
+						"title": "Открытие СПtv+",
+						"text": "Телеканал СПtv открыл холдинг платформу для создателей контента",
+						"img": "cptvpreates.png"
+					}
+				}
 				return {
 					props: {
 

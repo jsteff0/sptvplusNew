@@ -14,12 +14,13 @@ export default function Header({ balance, subscription, UUID, nickname }: {
 				<span className=" text-white font-['Montserrat'] text-[20px] font-extrabold text italic">tv+</span>
 			</Link>
 			<div className="float-right flex align-center gap-[14px]">
-				<div className="flex items-center tablet:gap-2 gap-1">
+				{/* <div className="flex items-center tablet:gap-2 gap-1">
 					<span className="font-['Montserrat'] font-normal tablet:text-[18px] text-[15px] text-white text-center">Баланс: <b>{balance}<span className="text-[#FFE400] font-bold"> AP</span></b></span>
 					<button onClick={() => switchWind("addMoney")}>
 						<Image alt="" src={`/buttons/addbtn.svg`} width={18} height={19}></Image>
 					</button>
-				</div>
+				</div> */}
+				<span className="font-['Montserrat'] font-normal tablet:text-[18px] text-[15px] text-white text-center">Баланс: <b>{balance}<span className="text-[#FFE400] font-bold"> AP</span></b></span>
 				<a href={`/users/${nickname}`}>
 					{subscription === "MAX" || subscription === "fMAX" ? <>
 						<Image alt="" src={`/subscriptions/subsmax.svg`} width={11} height={11} className="float-right right-6 top-[8px] rounded absolute "></Image>
@@ -34,15 +35,15 @@ export default function Header({ balance, subscription, UUID, nickname }: {
 		</header>
 	)
 }
-function switchWind(BlockId: string) {
-	if (typeof window === "object") {
-		const element = document.getElementById(`${BlockId}`);
-		if (element) {
-			if (element.className.includes("hidden")) {
-				element.classList.remove("hidden");
-			} else {
-				element.classList.add("hidden");
-			}
-		}
-	}
-}
+// function switchWind(BlockId: string) {
+// 	if (typeof window === "object") {
+// 		const element = document.getElementById(`${BlockId}`);
+// 		if (element) {
+// 			if (element.className.includes("hidden")) {
+// 				element.classList.remove("hidden");
+// 			} else {
+// 				element.classList.add("hidden");
+// 			}
+// 		}
+// 	}
+// }

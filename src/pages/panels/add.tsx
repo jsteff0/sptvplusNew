@@ -36,18 +36,18 @@ export default function Home(props: {
 			const genreCheck2 = genreCheck
 			genreCheck2.push(e.currentTarget.name)
 			setgenreCheck(genreCheck2)
-			console.log(genreCheck)
+			//console.log(genreCheck)
 		} else {
 			const genreCheck2 = genreCheck
 			genreCheck2.splice(genreCheck2.indexOf(e.currentTarget.name), 1)
 			setgenreCheck(genreCheck2)
-			console.log(genreCheck)
+			//console.log(genreCheck)
 		}
 
 	}
 	const { data: session } = useSession();
 	const { data } = api.user.management.useQuery();
-	console.log(data?.nickname)
+	//console.log(data?.nickname)
 	const [formData, setFormData] = useState<{
 		nickname: string;
 		name: string;
