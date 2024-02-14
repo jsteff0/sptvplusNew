@@ -150,7 +150,7 @@ export default function Home() {
 
             <p className="tablet:text-[20px] text-[14px] text-white font-semibold w-[250px] text-center py-6">Присоединяйся в нашу команду</p>
             <a className="hover:bg-[#FAD201] hover:border-[#FAD201] hover:text-black text-white tablet:text-[24px] text-[16px] ease-out duration-200 px-8 border-2" href="https://docs.google.com/forms/d/e/1FAIpQLSelqiT10IZYGwVL6nOucPWnHi7WaVYZCnKdJ8YqXZThQlfwJg/viewform?usp=sf_link">Отправить заявку</a>
-            <Link className="text-white font-extralight py-1 peer/readmore" href="/SPCrt">Читать больше</Link>
+            <Link className="text-white font-extralight py-1 peer/readmore" href="/spcreates">Читать больше</Link>
             <div className="peer/readmore h-[2px] w-0 relative top-[-8px] peer-hover/readmore:w-[120px] ease-out duration-100 bg-[#FAD201]"></div>
           </section>
           <section className="flex laptop:flex-row flex-col justify-center gap-[300px]">
