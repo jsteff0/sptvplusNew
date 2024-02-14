@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
 import { getServerAuthSession } from "~/server/auth";
-import fsPromises from 'fs/promises';
+// import fsPromises from 'fs/promises';
 import { PrismaClient } from '@prisma/client'
 // import { env } from "~/env.mjs";
 // import { SPWorlds } from 'spworlds';
@@ -353,10 +353,35 @@ export const getServerSideProps: GetServerSideProps = async (
 			show: true
 		},
 	})
-	const prmsParse2 = await fsPromises.readFile(process.cwd()+"/newsinfo.json")
-	const news = await JSON.parse((prmsParse2).toString()) as {
-		newsVideo: Array<{ url: string, name: string, png: string }>;
-	};
+	//const prmsParse2 = await fsPromises.readFile(process.cwd()+"/newsinfo.json")
+	// const news = await JSON.parse((prmsParse2).toString()) as {
+	// 	newsVideo: Array<{ url: string, name: string, png: string }>;
+	// };
+	const news = {
+		"news": [
+		  {
+			"text": "Телеканал СПtv открыл холдинг платформу для создателей контента",
+			"img": "cptvpreates.png"
+		  },
+		  {
+			"text": "АБОБА",
+			"img": "undefined.png"
+		  }
+		],
+		"newsVideo": [
+		  {
+			"url": "https://youtu.be/eq_78xANfPA",
+			"name": "Выпуст от 3.6.2023",
+			"png": "news2.png"
+		  }
+		],
+		"mainNews": {
+		  "title": "Открытие СПtv+",
+		  "text": "Телеканал СПtv открыл холдинг платформу для создателей контента",
+		  "img": "cptvpreates.png"
+		}
+	  }
+	
 
 	const newsVideo = news.newsVideo;
 
