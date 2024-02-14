@@ -368,7 +368,7 @@ export default function Home(props: {
 												<input onChange={handleChange} type="text" placeholder="Название" maxLength={50} className="w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" name="name" required />
 
 												<label className="text-white my-4">Картинка <input onChange={(e) => setPicture(e.target.files?.[0])} type="file" name="picture" required /></label>
-												<label className="text-white my-4">Афиша <input onChange={(e) => setPoster(e.target.files?.[0])} type="file" name="poster" required /></label>
+												<label className="text-white my-4">Постер <input onChange={(e) => setPoster(e.target.files?.[0])} type="file" name="poster" required /></label>
 												<label className="text-white my-4">Текст <input onChange={(e) => setPostertext(e.target.files?.[0])} type="file" name="postertext" required /></label>
 
 												<input onChange={handleChange} type="text" placeholder="Студия производства" className="w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" name="studio" required />
@@ -443,7 +443,7 @@ export default function Home(props: {
 
 												<input onChange={handleChange} type="number" placeholder="Цена" className="w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" name="prise" required />
 
-												<textarea onChange={handleChange} className="w-full h-[160px] bg-[#313131] p-6 my-4 rounded-[15px] " name="more" placeholder="Подробнее о фильме" cols={30} rows={10} required></textarea>
+												<textarea onChange={handleChange} className="w-full h-[160px] bg-[#313131] p-6 my-4 rounded-[15px] " name="more" placeholder="Подробнее" cols={30} rows={10} required></textarea>
 
 												<input onChange={handleChange} type="text" placeholder="Ссылка на YouTube" name="youtube" className="w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" />
 											</div>
