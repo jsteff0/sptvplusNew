@@ -63,7 +63,7 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 						data: {
 							fav: mrinf.fav
 						},
-					}).catch((_err) => res.status(200).json({ "code": 0}))
+					}).catch((_err) => res.status(200).json({ "code": 0 }))
 					res.status(200).json({ "code": 2, "added": true });
 				} else {
 					mrinf.fav.splice(mrinf.fav.indexOf(code), 1)
@@ -74,7 +74,7 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 						data: {
 							fav: mrinf.fav
 						},
-					}).catch((_err) => res.status(200).json({ "code": 0}))
+					}).catch((_err) => res.status(200).json({ "code": 0 }))
 					res.status(200).json({ "code": 2, "added": false });
 				}
 			} else {
@@ -93,31 +93,17 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 			const code = req.body.code
 			const price = req.body.price
 			if (code && mrinf) {
-				if (mrinf?.acq.includes(code)) {
-					mrinf.acq.push(code)
-					await prisma.user.update({
-						where: {
-							nickname: req.body.nickname
-						},
-						data: {
-							balance: mrinf.balance-price,
-							acq: mrinf.acq
-						},
-					})
-					res.status(200).json({ "code": 2, "added": true });
-				} else {
-					mrinf.acq.splice(mrinf.acq.indexOf(code), 1)
-					await prisma.user.update({
-						where: {
-							nickname: req.body.nickname
-						},
-						data: {
-							balance: mrinf.balance-price,
-							acq: mrinf.acq
-						},
-					})
-					res.status(200).json({ "code": 2, "added": false });
-				}
+				mrinf.acq.push(code)
+				await prisma.user.update({
+					where: {
+						nickname: req.body.nickname
+					},
+					data: {
+						balance: mrinf.balance - price,
+						acq: mrinf.acq
+					},
+				})
+				res.status(200).json({ "code": 2, "added": true });
 			} else {
 				res.status(200).json({ "code": 1 });
 			}
