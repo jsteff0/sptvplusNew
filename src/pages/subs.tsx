@@ -6,11 +6,25 @@ import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
 import { getServerAuthSession } from "~/server/auth";
+import { useEffect } from "react";
 
 export default function Home() {
 
 	const { data: session } = useSession();
 	const { data } = api.user.main.useQuery();
+	useEffect(() => {
+		if (!data?.nickname || !session?.user.name) {
+			setTimeout(() => {
+				document.getElementById("sighoutredirect")?.classList.remove("hidden")
+				document.getElementById("sighoutredirect")?.classList.add("block")
+			}, 3000)
+		}
+		if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark');
+		} else {
+			document.documentElement.classList.remove('dark');
+		}
+	})
 	if (!data?.nickname || !session?.user.name) {
 		return (
 			<div className="flex justify-center items-center align-middle h-screen w-screen">
@@ -43,7 +57,7 @@ export default function Home() {
 								</div>
 								<div className="mt-4 flex justify-end gap-3">
 									<button id="alertButton1" onClick={() => switchWind("alert")} className="px-4 py-2 bg-[#373737] rounded-[15px] text-[#ffb300] font-bold">Назад</button>
-									<button id="alertButton2" className="px-4 py-2 bg-[#ffb300] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold hidden">Оплатить</button>
+									<button id="accept" className="px-4 py-2 bg-[#ffb300] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold">Оплатить</button>
 								</div>
 							</div>
 						</div>
@@ -79,19 +93,27 @@ export default function Home() {
 
 function purchaseSub(sub: string, nickname: string, balance: number, subNow: string) {
 	if (typeof window === "object") {
+		
 		const alertTitle = document.getElementById(`alertTitle`);
 		const alertContect = document.getElementById(`alertContect`);
 		const alertButton1 = document.getElementById(`alertButton1`) as HTMLButtonElement;
-		const alertButton2 = document.getElementById(`alertButton2`) as HTMLButtonElement;
+		const alertButton2 = document.getElementById(`accept`) as HTMLButtonElement;
+
+		console.log(alertButton2)
 		if (alertTitle && alertContect && alertButton1 && alertButton2) {
 			if(balance < (sub === "ONE" ? 16 : sub === "MULTI" ? 24 : 32)){
+				alertButton2.classList.add("hidden")
 				alertTitle.innerHTML = "Недостаточно средств"
 				alertContect.innerHTML = `Недостаточно средств, пополните баланс`
+				
 				switchWind("alert")
 				//setTimeout(() => switchWind("alert"), 3000)
 			} else if (subNow.includes(sub)) {
 				alertTitle.innerHTML = "Уведомление"
 				alertContect.innerHTML = `Вы уже имеете подписку ${sub}`
+				if(!alertButton2.classList.contains("hidden")){
+					alertButton2.classList.add("hidden")
+				}
 				switchWind("alert")
 				//setTimeout(() => switchWind("alert"), 3000)
 			} else {
@@ -115,7 +137,7 @@ function purchaseSub(sub: string, nickname: string, balance: number, subNow: str
 						if (data.code === 1) {
 							location.reload()
 						} else {
-							alertButton1.disabled = false
+							//alertButton1.disabled = false
 							alertTitle.innerHTML = "Ошибка"
 							alertContect.innerHTML = `Сообщите drdro20. Извините за неудобства`
 

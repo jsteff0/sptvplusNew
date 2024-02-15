@@ -229,6 +229,7 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 			const url = await request.text()
 			res.status(200).json({ "url": url });
 		} else if (req.query.action === "moneywebhook") {
+			console.log(req)
 		} else if (req.query.action === "getfavnaqv") {
 			const favcodes: string[] = req.body.favcodes
 			const acqcodes: string[] = req.body.acqcodes

@@ -20,6 +20,7 @@ export default function Footer() {
 					<Link href={"/more/partners"} className="hover:text-white ease-out duration-100">Партнёрам</Link>
 				</div>
 				<div className="h-[143px] flex-col justify-start items-start gap-[25px] inline-flex">
+					<Link href={"/subs"} className="hover:text-white ease-out duration-100">Подписки</Link>
 					<Link href={"/spcreates"} className="hover:text-white ease-out duration-100">СПtv Creators</Link>
 					<Link href={"https://discord.gg/sn4dgnH"} className="hover:text-white ease-out duration-100">Дискорд</Link>
 					<div className="justify-start items-start gap-3 inline-flex">

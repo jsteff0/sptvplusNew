@@ -37,6 +37,11 @@ export default function Home(props: { typeFilms: filmmakers[], news: news }) {
 				document.getElementById("sighoutredirect")?.classList.add("block")
 			}, 3000)
 		}
+		if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark');
+		} else {
+			document.documentElement.classList.remove('dark');
+		}
 	})
 	if (!data?.nickname || !session?.user.name) {
 		return (
