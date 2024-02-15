@@ -61,31 +61,7 @@ export default function Home(props: { typeFilms: filmmakers[], news: news }) {
 				<div className="min-h-screen flex flex-col bg-[#E1E1E1] dark:bg-[#000000]">
 					<Header balance={data.balance} subscription={data.subscription} UUID={data.UUID ? `https://api.mineatar.io/face/${data.UUID}` : "/randomguy.png"} nickname={data.nickname} />
 
-					<section id="addMoney" className="fixed inset-0 overflow-y-auto z-20 hidden">
-						<div className="flex min-h-full items-center justify-center p-4 text-center">
-							<div className="fixed inset-0 bg-black bg-opacity-25"></div>
-							<div className="w-full max-w-md transform  overflow-hidden rounded-2xl bg-[#272727] p-6 text-left align-middle shadow-xl transition-all z-22">
-								<b className=" text-white text-[20px] font-['Montserrat']">Пополнить баланс</b><br />
-								<div className="mt-2"><span className="text-white font-['Montserrat']">Баланс: <b>{data.balance} <span className="text-[#FFE400]">AP</span></b></span></div>
-								<div className="mt-4">
-									<label htmlFor="money" className="text-white font-['Montserrat']">Добавить на баланс:</label><br />
-									<input pattern="[0-9]+" type="number" id="money" onChange={(e) => {
-										const val = e.currentTarget.value;
-										if (parseInt(val) > 500)
-											e.currentTarget.value = "500"
-										if (!parseInt(val))
-											e.currentTarget.value = "0"
-										if (val[0] === "0" && val.length > 1 && val[1] !== undefined)
-											e.currentTarget.value = val[1]
-									}} className="mt-2 rounded-[15px] bg-[#373737] text-white w-full h-[40px] p-4" />
-								</div>
-								<div className="mt-4 flex justify-end gap-3">
-									<button onClick={() => switchWind("addMoney")} className="px-4 py-2 bg-[#373737] rounded-[15px]"><span className="text-[#FFE400] font-bold">Отмена</span></button>
-									{/* <button onClick={() => { const element2: HTMLInputElement | null = document.querySelector("#money"); element2 !== null ? AddMoney(parseInt(element2.value), User.nickname) : console.log("noElement2") }} className="w-[100px] h-[40px] bg-[#FFE400] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold" id="mbtn" > Оплатить</button> */}
-								</div>
-							</div>
-						</div>
-					</section>
+					
 					<main className="flex align-middle justify-center flex-auto">
 						<div className="flex tablet:flex-row flex-col-reverse w-screen ">
 							<nav className="fixed bottom-0 tablet:z-0 z-10 flex justify-center tablet:w-[190px] w-screen tablet:min-h-screen h-[62px] bg-white dark:bg-[#0a0a0a] dark:border-[#383838] tablet:border-r-[1px] border-[#E1E1E1] transition-all duration-500 ease-in-out">
@@ -359,18 +335,6 @@ export default function Home(props: { typeFilms: filmmakers[], news: news }) {
 		)
 	}
 
-}
-function switchWind(BlockId: string) {
-	if (typeof window === "object") {
-		const element = document.getElementById(`${BlockId}`);
-		if (element) {
-			if (element.className.includes("hidden")) {
-				element.classList.remove("hidden");
-			} else {
-				element.classList.add("hidden");
-			}
-		}
-	}
 }
 export const getServerSideProps: GetServerSideProps = async (
 	ctx: GetServerSidePropsContext

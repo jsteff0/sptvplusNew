@@ -11,7 +11,9 @@ export interface NewApiRequest extends NextApiRequest {
 		amount: number;
 		nicknameAdder: string;
 		payer: string,
-		redirect: string
+		redirect: string,
+		favcodes: string[],
+		acqcodes: string[],
 	};
 	json: {
 		data: string;
@@ -223,12 +225,42 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 				res.status(200).json({ "code": 1 });
 			}
 		} else if (req.query.action === "getMoneyUrl") {
-			// console.log(req.body.nickname +"::"+ (new Date().toISOString()), req.body.amount,)
-			// console.log(req.body.redirect)
-			const request = await fetch(`http://82.97.243.67:8080/getUrlToPay?amount=${req.body.amount}&data=${req.body.nickname +"::"+ (new Date().toISOString())}&redirect=${req.body.redirect}`, { method: 'GET' })
+			const request = await fetch(`http://82.97.243.67:8080/getUrlToPay?amount=${req.body.amount}&data=${req.body.nickname + "::" + (new Date().toISOString())}&redirect=${req.body.redirect}`, { method: 'GET' })
 			const url = await request.text()
 			res.status(200).json({ "url": url });
 		} else if (req.query.action === "moneywebhook") {
+		} else if (req.query.action === "getfavnaqv") {
+			const favcodes: string[] = req.body.favcodes
+			const acqcodes: string[] = req.body.acqcodes
+			const fav = await prisma.film.findMany({
+				where: {
+					code: {
+						in: favcodes
+					}
+				},
+				select: {
+					imgID: true,
+					code: true,
+					subscription: true,
+					show: true,
+				}
+			})
+			const acq = await prisma.film.findMany({
+				where: {
+					code: {
+						in: acqcodes
+					}
+				},
+				select: {
+					imgID: true,
+					code: true,
+					subscription: true,
+					show: true,
+				}
+			})
+			
+			
+			res.status(200).json({ "fav": fav, "acq": acq });
 		}
 	}
 	catch (error) {

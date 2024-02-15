@@ -284,31 +284,7 @@ export default function Home(props: {
 							</div>
 						</div>
 					</section>
-					<section id="addMoney" className="fixed inset-0 overflow-y-auto z-30 hidden">
-						<div className="flex min-h-full items-center justify-center p-4 text-center">
-							<div className="fixed inset-0 bg-black bg-opacity-25"></div>
-							<div className="w-full max-w-md transform  overflow-hidden rounded-2xl bg-[#272727] p-6 text-left align-middle shadow-xl transition-all z-22">
-								<b className=" text-white text-[20px] font-['Montserrat']">Пополнить баланс</b><br />
-								<div className="mt-2"><span className="text-white font-['Montserrat']">Баланс: <b>{data.balance} <span className="text-[#FFE400]">AP</span></b></span></div>
-								<div className="mt-4">
-									<label htmlFor="money" className="text-white font-['Montserrat']">Добавить на баланс:</label><br />
-									<input pattern="[0-9]+" type="number" id="money" onChange={(e) => {
-										const val = e.currentTarget.value;
-										if (parseInt(val) > 500)
-											e.currentTarget.value = "500"
-										if (!parseInt(val))
-											e.currentTarget.value = "0"
-										if (val[0] === "0" && val.length > 1 && val[1] !== undefined)
-											e.currentTarget.value = val[1]
-									}} className="mt-2 rounded-[15px] bg-[#373737] text-white w-full h-[40px] p-4" />
-								</div>
-								<div className="mt-4 flex justify-end gap-3">
-									<button onClick={() => switchWind("addMoney")} className="px-4 py-2 bg-[#373737] rounded-[15px]"><span className="text-[#FFE400] font-bold">Отмена</span></button>
-									{/* <button onClick={() => { const element2: HTMLInputElement | null = document.querySelector("#money"); element2 !== null ? AddMoney(parseInt(element2.value), User.nickname) : console.log("noElement2") }} className="w-[100px] h-[40px] bg-[#FFE400] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold" id="mbtn" > Оплатить</button> */}
-								</div>
-							</div>
-						</div>
-					</section>
+
 					<section id="more" className="fixed inset-0 overflow-y-auto z-30 hidden">
 						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<div className="fixed inset-0 bg-black bg-opacity-25"></div>
@@ -435,7 +411,7 @@ export default function Home(props: {
 								<div className={`gap-2 font-['Montserrat'] flex`}>
 									{!props.content.youtube ?
 										!props.isBeforePremier ?
-											((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0) >= props.content.subscription || props.isAcq
+											((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0) >= props.content.subscription || data.acq.includes(props.content.code)
 												?
 												props.content.timing.length > 1
 													?
@@ -452,7 +428,7 @@ export default function Home(props: {
 												<div className="flex flex-col items-center gap-1">
 													<Link href={"/subs"} className="px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold">Оформить подписку</Link>
 													<p className="text-white text-[12px] opacity-75">или</p>
-													<button id="buyButton" onClick={() => buy({ "code": props.content.code, "show": props.content.show, "imgID": props.content.imgID, "subscription": props.content.subscription, "price": props.content.price }, data.nickname as string, data.balance)} className="text-white opacity-75 text-[14px] hover:underline">{props.content.price > 0 ? `Приобрести за ${props.content.price}АР` : `Бесплатный просмотр`}</button>
+													<button id="buyButton" onClick={(e) => { buy(props.content.code, props.content.price , data.nickname as string, data.balance).catch((err) => { console.log(err) }); e.currentTarget.disabled = true }} className="text-white opacity-75 text-[14px] hover:underline">{props.content.price > 0 ? `Приобрести за ${props.content.price}АР` : `Бесплатный просмотр`}</button>
 												</div>
 											:
 											<button onClick={() => startwatching(props.content.code, "TLR", data.nickname as string)} className="px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold">Смотреть трейлер</button>
@@ -460,14 +436,14 @@ export default function Home(props: {
 										<button onClick={() => location.href = props.content.youtube as string} className="px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold">Смотреть на YouTube</button>
 									}
 									<div className="flex">
-										<input type="checkbox" checked={props.isFav} className="peer hidden" id="saveButton" />
-										<label htmlFor="saveButton" onClick={() => save({ "code": props.content.code, "show": props.content.show, "imgID": props.content.imgID, "subscription": props.content.subscription, }, data.nickname as string)}
+										<input type="checkbox" checked={data.fav.includes(props.content.code)}  className="peer hidden" id="saveButton" />
+										<label htmlFor="saveButton" onClick={() => save(props.content.code, data.nickname as string)}
 											className="bg-[#171717] peer-checked:bg-[#ffb300] w-[40px] shadow h-[40px] rounded-[20px] mr-2 flex items-center justify-center ease-out duration-300 cursor-pointer disabled:cursor-default">
-											<img src="/buttons/saveICN.svg" alt="" className="absolute w-[20px] h-[20px]" />
+											<Image width={20} height={20} src="/buttons/saveICN.svg" alt="" className="absolute w-[20px] h-[20px]" />
 										</label>
 										<button id="moreButton" onClick={() => switchWind("more")}
 											className="bg-[#171717] w-[40px] shadow h-[40px] rounded-[20px] mr-2 flex items-center justify-center ease-out duration-300 cursor-pointer disabled:cursor-default">
-											<img src="/buttons/moreICN.svg" alt="" className="absolute w-[20px] h-[20px]" />
+											<Image width={20} height={20} src="/buttons/moreICN.svg" alt="" className="absolute w-[20px] h-[20px]" />
 										</button>
 
 
@@ -478,7 +454,8 @@ export default function Home(props: {
 														props.content.timing.length > 1 ?
 															<button id="markContent" onClick={() => switchWind("chooseSeriaWind")}
 																className="bg-[#171717] px-5 py-2 text-white font-semibold text-[12px] shadow h-[40px] rounded-[20px] flex items-center justify-center ease-out duration-300">
-																<img src="/buttons/episodes.svg" className="w-[20px] h-[20px]" alt="" />
+																<Image width={20} height={20} src="/buttons/episodes.svg" alt="" className="absolute w-[20px] h-[20px]" />
+
 															</button>
 															:
 															null
@@ -534,8 +511,7 @@ export default function Home(props: {
 													<>
 
 														<Link href={`/content/${item.content.code}`} className="relative flex-none px-[12px] last:pr-6">
-															<Image width={285} height={180} src={`/preview/${item.content.imgID}.png`} className="tablet:h-[180px] tablet:w-[285px] h-[100px] w-[160px] object-cover rounded-[10px] bg-center" alt="" />
-
+															<Image width={395} height={180} src={`/preview/${item.content.imgID}.png`} className="tablet:h-[180px] tablet:w-[310px] h-[100px] w-[160px] object-cover rounded-[10px] bg-center" alt="" />
 														</Link>
 													</>
 												)
@@ -684,12 +660,10 @@ async function startwatching(code: string, tag: string, nickname: string) {
 		})
 	}
 }
-async function save(content: { code: string, show: number, imgID: string, subscription: number }, nickname: string) {
-
+async function save(code: string, nickname: string) {
 	if (typeof window === "object") {
 		const button = document.getElementById("saveButton") as HTMLInputElement;
-		const data = { "content": content, "nickname": nickname }
-		button.disabled = true
+		const data = { "code": code, "nickname": nickname }
 		await fetch("/api/content/save", {
 			method: 'POST',
 			headers: {
@@ -710,18 +684,18 @@ async function save(content: { code: string, show: number, imgID: string, subscr
 		})
 	}
 }
-async function buy(content: { code: string, show: number, imgID: string, subscription: number, price: number }, nickname: string, balance: number) {
+async function buy(code: string, price: number, nickname: string, balance: number) {
 	if (typeof window === "object") {
 		const btn = document.getElementById("buyButton") as HTMLButtonElement;
-		if (content.price > balance) {
+		if (price > balance) {
 			btn.innerHTML = "Недостаточно средств"
 			btn.disabled = true;
 			setTimeout(() => {
-				btn.innerHTML = `Приобрести за ${content.price}АР`;
+				btn.innerHTML = `Приобрести за ${price}АР`;
 				btn.disabled = false;
 			}, 3000)
 		} else {
-			const data = { "content": content, "nickname": nickname }
+			const data = { "code": code, "price": price, "nickname": nickname }
 			await fetch("/api/content/buy", {
 				method: 'POST',
 				headers: {
@@ -870,7 +844,6 @@ export const getServerSideProps: GetServerSideProps = async (
 			const playKey = JSON.parse(atob(ctx.query.watch)) as { tag: string, code: string, nickname: string, key: string };
 			const timeKey = ctx.query.timeKey
 			const newUUID = randomUUID();
-
 			const oldKey = await prisma.view.findUnique({
 				where: {
 					id: btoa(playKey.nickname + playKey.code + playKey.tag),
@@ -904,41 +877,15 @@ export const getServerSideProps: GetServerSideProps = async (
 				}
 			}
 		} else {
-			if (
-				nickname?.fav &&
-				typeof nickname?.fav === 'object' &&
-				Array.isArray(nickname?.fav) &&
-				nickname?.acq &&
-				typeof nickname?.acq === 'object' &&
-				Array.isArray(nickname?.acq)
-			) {
+			if (nickname?.fav && nickname?.acq) {
 				let isFav = false
 				let isAcq = false
-				for (let i = 0; i < (nickname.fav.length > nickname.acq.length ? nickname.fav.length : nickname.acq.length) || (!isFav && !isAcq); i++) {
-					if(i < nickname.fav.length && i < nickname.acq.length) {
-						const elfav = nickname.fav[i] as { code: string, show: number, imgID: string, subscription: number }
-						if (elfav.code === content.code) {
-							isFav = true
-						}
-						const elacq = nickname.acq[i] as { code: string, show: number, imgID: string, subscription: number }
-						if (elacq.code === content.code) {
-							isAcq = true
-						}
-					} else if (i > nickname.fav.length && i < nickname.acq.length) {
-						const el = nickname.acq[i] as { code: string, show: number, imgID: string, subscription: number }
-						if (el.code === content.code) {
-							isAcq = true
-							break
-						}
-					} else if(i > nickname.acq.length && i < nickname.fav.length){
-						const el = nickname.fav[i] as { code: string, show: number, imgID: string, subscription: number }
-						if (el.code === content.code) {
-							isFav = true
-							break
-						}
-					}
+				if(nickname?.fav.includes(content.code)){
+					isFav = true
 				}
-
+				if(nickname?.acq.includes(content.code)){
+					isAcq = true
+				}
 				return {
 					props: {
 						content,

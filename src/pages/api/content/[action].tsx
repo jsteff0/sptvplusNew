@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import { Types, PrismaClient, Prisma } from '@prisma/client'
+import { Types, PrismaClient } from '@prisma/client'
 import { randomUUID } from 'crypto';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 const prisma = new PrismaClient()
@@ -51,65 +51,31 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 					fav: true
 				}
 			})
-			const mrflminf = req.body.content
-			if (mrflminf && mrinf) {
-				if (
-					mrinf?.fav &&
-					typeof mrinf?.fav === 'object' &&
-					Array.isArray(mrinf?.fav)
-				) {
-					let isFav = -1;
-					for (let i = 0; i < mrinf.fav.length; i++) {
-						const el = mrinf.fav[i] as { code: string, show: number, imgID: string, subscription: number }
-						if (el.code === mrflminf.code) {
-							isFav = i
-							break
-						}
-					}
-					if (isFav === -1) {
-						const json = [{
-							code: mrflminf.code,
-							show: mrflminf.show,
-							imgID: mrflminf.imgID,
-							subscription: mrflminf.subscription,
-						}, ...mrinf.fav] as Prisma.JsonArray
-						await prisma.user.update({
-							where: {
-								nickname: req.body.nickname
-							},
-							data: {
-								fav: json
-							},
-						})
-						res.status(200).json({ "code": 2, "added": true });
-					} else {
-						mrinf.fav.splice(isFav, 1)
-						await prisma.user.update({
-							where: {
-								nickname: req.body.nickname
-							},
-							data: {
-								fav: mrinf.fav
-							},
-						})
-						res.status(200).json({ "code": 2, "added": false });
-					}
-				} else {
-					const json = [{
-						code: req.body.code,
-						imgID: mrflminf.imgID,
-						subscription: mrflminf.subscription,
-						show: mrflminf.show,
-					}] as Prisma.JsonArray
+			const code = req.body.code
+			console.log(code, mrinf)
+			if (code && mrinf) {
+				if (!mrinf?.fav.includes(code)) {
+					mrinf.fav.push(code)
 					await prisma.user.update({
 						where: {
 							nickname: req.body.nickname
 						},
 						data: {
-							fav: json
+							fav: mrinf.fav
 						},
-					})
+					}).catch((_err) => res.status(200).json({ "code": 0}))
 					res.status(200).json({ "code": 2, "added": true });
+				} else {
+					mrinf.fav.splice(mrinf.fav.indexOf(code), 1)
+					prisma.user.update({
+						where: {
+							nickname: req.body.nickname
+						},
+						data: {
+							fav: mrinf.fav
+						},
+					}).catch((_err) => res.status(200).json({ "code": 0}))
+					res.status(200).json({ "code": 2, "added": false });
 				}
 			} else {
 				res.status(200).json({ "code": 1 });
@@ -121,138 +87,125 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 				},
 				select: {
 					acq: true,
-					balance: true
+					balance: true,
 				}
 			})
-			const mrflminf = req.body.content
-			if (mrflminf && mrinf) {
-				if (
-					mrinf?.acq &&
-					typeof mrinf?.acq === 'object' &&
-					Array.isArray(mrinf?.acq)
-				) {
-					const json = [{
-						code: mrflminf.code,
-						show: mrflminf.show,
-						imgID: mrflminf.imgID,
-						subscription: mrflminf.subscription,
-					}, ...mrinf.acq] as Prisma.JsonArray
+			const code = req.body.code
+			const price = req.body.price
+			if (code && mrinf) {
+				if (mrinf?.acq.includes(code)) {
+					mrinf.acq.push(code)
 					await prisma.user.update({
 						where: {
 							nickname: req.body.nickname
 						},
 						data: {
-							acq: json,
-							balance: {
-								decrement: mrflminf.price
-							}
+							balance: mrinf.balance-price,
+							acq: mrinf.acq
 						},
 					})
-					res.status(200).json({ "code": 2 });
+					res.status(200).json({ "code": 2, "added": true });
 				} else {
-					const json = [{
-						code: mrflminf.code,
-						show: mrflminf.show,
-						imgID: mrflminf.imgID,
-						subscription: mrflminf.subscription,
-					}] as Prisma.JsonArray
+					mrinf.acq.splice(mrinf.acq.indexOf(code), 1)
 					await prisma.user.update({
 						where: {
 							nickname: req.body.nickname
 						},
 						data: {
-							acq: json,
-							balance: {
-								decrement: mrflminf.price
-							}
+							balance: mrinf.balance-price,
+							acq: mrinf.acq
 						},
 					})
-					res.status(200).json({ "code": 2 });
+					res.status(200).json({ "code": 2, "added": false });
 				}
 			} else {
 				res.status(200).json({ "code": 1 });
 			}
 		} else if (req.query.action === "startwatching") {
-			const code = req.body.code
-			const newUUID = randomUUID();
-			const tag = req.body.tag
-			const content = await prisma.film.findFirst({
-				where: {
-					code: code,
-				},
-			})
-			const duration = tag.includes("EPS") ? content?.timing[parseInt(tag.split("EPS")[1] as string)] : content?.timing[0]
-			if (duration && content) {
-				const upsertView = await prisma.view.upsert({
+			if (!req.body.tag.includes("TRL")) {
+				const code = req.body.code
+				const newUUID = randomUUID();
+				const tag = req.body.tag
+				const content = await prisma.film.findFirst({
 					where: {
-						id: btoa(req.body.nickname + req.body.code + req.body.tag),
-						tag: req.body.tag,
-						nickname: req.body.nickname,
-						contentcode: req.body.code
-					},
-					create: {
-						id: btoa(req.body.nickname + req.body.code + req.body.tag),
-						tag: req.body.tag,
-						nickname: req.body.nickname,
-						contentcode: req.body.code,
-						key: newUUID,
-						timeKey: 0,
-						duration: duration,
-					},
-					update: {
-						key: newUUID,
-					},
-					select: {
-						timeKey: true,
+						code: code,
 					},
 				})
-				if (upsertView) {
-					const playKey = btoa(JSON.stringify({ "tag": req.body.tag, "code": req.body.code, "nickname": req.body.nickname, "key": newUUID }))
-					res.status(200).json({ "code": 2, "playKey": playKey, "timeKey": upsertView.timeKey });
+				const duration = tag.includes("EPS") ? content?.timing[parseInt(tag.split("EPS")[1] as string)] : content?.timing[0]
+				if (duration && content) {
+					const upsertView = await prisma.view.upsert({
+						where: {
+							id: btoa(req.body.nickname + req.body.code + req.body.tag),
+							tag: req.body.tag,
+							nickname: req.body.nickname,
+							contentcode: req.body.code
+						},
+						create: {
+							id: btoa(req.body.nickname + req.body.code + req.body.tag),
+							tag: req.body.tag,
+							nickname: req.body.nickname,
+							contentcode: req.body.code,
+							key: newUUID,
+							timeKey: 0,
+							duration: duration,
+						},
+						update: {
+							key: newUUID,
+						},
+						select: {
+							timeKey: true,
+						},
+					})
+					if (upsertView) {
+						const playKey = btoa(JSON.stringify({ "tag": req.body.tag, "code": req.body.code, "nickname": req.body.nickname, "key": newUUID }))
+						res.status(200).json({ "code": 2, "playKey": playKey, "timeKey": upsertView.timeKey });
+					} else {
+						res.status(200).json({ "code": 1 })
+					}
 				} else {
 					res.status(200).json({ "code": 1 })
 				}
-			} else {
-				res.status(200).json({ "code": 1 })
 			}
 		} else if (req.query.action === "savingupdata") {
-			await prisma.user.update({
-				where: {
-					nickname: req.body.nickname,
-				},
-				data: {
-					volume: req.body.volume,
-				}
-			})
-			if (req.body.watched) {
-				await prisma.film.update({
+			if (!req.body.tag.includes("TRL")) {
+				await prisma.user.update({
 					where: {
-						code: req.body.code,
+						nickname: req.body.nickname,
 					},
 					data: {
-						watched: {
-							increment: 1
+						volume: req.body.volume,
+					}
+				})
+				if (req.body.watched) {
+					await prisma.film.update({
+						where: {
+							code: req.body.code,
 						},
-					}
-				}).catch((err) => console.log(err))
-			} else {
-				await prisma.view.update({
-					where: {
-						id: btoa(req.body.nickname + req.body.code + req.body.tag),
-					},
-					data: {
-						timeKey: req.body.time,
-					}
-				}).catch((err) => console.log(err))
+						data: {
+							watched: {
+								increment: 1
+							},
+						}
+					}).catch((err) => console.log(err))
+				} else {
+					await prisma.view.update({
+						where: {
+							id: btoa(req.body.nickname + req.body.code + req.body.tag),
+						},
+						data: {
+							timeKey: req.body.time,
+						}
+					}).catch((err) => console.log(err))
+				}
+				res.status(200).json({ "code": 2 })
 			}
-			res.status(200).json({ "code": 2 })
 		} else if (req.query.action === "mark") {
 			if (req.body.rate && req.body.nickname && req.body.id) {
 				await prisma.rating.upsert({
 					where: {
 						id: req.body.id,
 						createdByNickname: req.body.nickname,
-						idrating: req.body.id+req.body.nickname
+						idrating: req.body.id + req.body.nickname
 					},
 					update: {
 						mark: req.body.rate,
@@ -261,7 +214,7 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 						mark: req.body.rate,
 						createdByNickname: req.body.nickname,
 						id: req.body.id,
-						idrating: req.body.id+req.body.nickname
+						idrating: req.body.id + req.body.nickname
 					},
 				})
 				const aggregations = await prisma.rating.aggregate({

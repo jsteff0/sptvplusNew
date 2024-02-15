@@ -63,8 +63,8 @@ model User {
     noSubscriptionOwnerYet String?
     addedPlayers           String[]
     noPlayersAddedYet      String[]
-    fav                    Json?
-    acq                    Json?
+    fav                    String []
+    acq                    String []
     expirydate             DateTime?
     volume                 Float        @default(0.5)
     accounts               Account[]

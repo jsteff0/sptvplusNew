@@ -10,9 +10,10 @@ import { api } from "~/utils/api";
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
 import { getServerAuthSession } from "~/server/auth";
 import { useRouter } from "next/router";
-import { PrismaClient } from '@prisma/client'
 import Footer from "../../app/components/footer";
 import Header from "../../app/components/header";
+import { useEffect, useState } from "react";
+
 
 interface filmmakers {
 	imgID: string;
@@ -21,21 +22,52 @@ interface filmmakers {
 	show: number;
 }
 
-export default function Home(props: { favorite: filmmakers[], acquired: filmmakers[] }) {
+export default function Home() {
 	const { data: session } = useSession();
 	const { data } = api.user.fulluserinfo.useQuery();
 	const router = useRouter().query.nick;
+	const [favdata, setFavData] = useState<filmmakers[] | null>(null)
+	const [acqdata, setAcqData] = useState<filmmakers[] | null>(null)
+	useEffect(() => {
+		if (!data?.nickname || !session?.user.name) {
+			setTimeout(() => {
+				document.getElementById("sighoutredirect")?.classList.remove("hidden")
+				document.getElementById("sighoutredirect")?.classList.add("block")
+			}, 3000)
+		} else if (!favdata && !acqdata) {
+			const fetchData = async () => {
+				const reqdata = { "favcodes": data.fav, "acqcodes": data.acq }
+				const response = await fetch("/api/player/getfavnaqv", {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(reqdata)
+				})
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`)
+				}
+				const result = await response.json() as { fav: filmmakers[], acq: filmmakers[] }
+				setFavData(result.fav)
+				setAcqData(result.acq)
+			}
+
+			fetchData().catch((e) => {
+				throw new Error(e as string)
+			})
+		}
+	})
 	if (!data?.nickname || !session?.user.name) {
 		return (
-			<div className="flex justify-center items-center align-middle h-screen w-screen">
+			<div className="flex flex-col justify-center items-center align-middle h-screen w-screen">
 				<svg className="animate-spin h-[50px] w-[50px] text-black dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
 					<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
 					<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
 				</svg>
+				<button id="sighoutredirect" onClick={() => location.href = "/auth/signout"} className="hidden hover:cursor-pointer">Если долго грузит, нажми на текст</button>
 			</div>
 		);
 	} else {
-		console.log(props.favorite)
 		return (
 			<>
 				<Head>
@@ -48,31 +80,7 @@ export default function Home(props: { favorite: filmmakers[], acquired: filmmake
 				<div className="min-h-screen flex flex-col bg-[#E1E1E1] dark:bg-[#000000]">
 					<Header balance={data.balance} subscription={data.subscription} UUID={data.UUID ? `https://api.mineatar.io/face/${data.UUID}` : "/randomguy.png"} nickname={data.nickname} />
 
-					<section id="addMoney" className="fixed inset-0 overflow-y-auto z-20 hidden">
-						<div className="flex min-h-full items-center justify-center p-4 text-center">
-							<div className="fixed inset-0 bg-black bg-opacity-25"></div>
-							<div className="w-full max-w-md transform  overflow-hidden rounded-2xl bg-[#272727] p-6 text-left align-middle shadow-xl transition-all z-22">
-								<b className=" text-white text-[20px] font-['Montserrat']">Пополнить баланс</b><br />
-								<div className="mt-2"><span className="text-white font-['Montserrat']">Баланс: <b>{data.balance} <span className="text-[#FFE400]">AP</span></b></span></div>
-								<div className="mt-4">
-									<label htmlFor="money" className="text-white font-['Montserrat']">Добавить на баланс:</label><br />
-									<input pattern="[0-9]+" type="number" id="money" onChange={(e) => {
-										const val = e.currentTarget.value;
-										if (parseInt(val) > 500)
-											e.currentTarget.value = "500"
-										if (!parseInt(val))
-											e.currentTarget.value = "0"
-										if (val[0] === "0" && val.length > 1 && val[1] !== undefined)
-											e.currentTarget.value = val[1]
-									}} className="mt-2 rounded-[15px] bg-[#373737] text-white w-full h-[40px] p-4" />
-								</div>
-								<div className="mt-4 flex justify-end gap-3">
-									<button onClick={() => switchWind("addMoney")} className="px-4 py-2 bg-[#373737] rounded-[15px]"><span className="text-[#ffe600d9] font-bold">Отмена</span></button>
-									{/* <button onClick={() => { const element2: HTMLInputElement | null = document.querySelector("#money"); element2 !== null ? AddMoney(parseInt(element2.value), User.nickname) : console.log("noElement2") }} className="w-[100px] h-[40px] bg-[#FFE400] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold" id="mbtn" > Оплатить</button> */}
-								</div>
-							</div>
-						</div>
-					</section>
+
 					<section id="addPlayer" className="fixed inset-0 overflow-y-auto z-20 hidden">
 						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<div onClick={() => switchWind("addPlayer")} className="fixed inset-0 bg-black bg-opacity-25"></div>
@@ -86,10 +94,10 @@ export default function Home(props: { favorite: filmmakers[], acquired: filmmake
 									}} className="w-full h-[40px] bg-[#313131] p-4 rounded-[15px]" />
 								</div>
 								<div className="mt-4 flex justify-end gap-3">
-									<button id="addPlayerButton1" onClick={() => switchWind("addPlayer")} className="px-4 py-2 bg-[#373737] rounded-[15px] text-[#ffe600d9] font-bold">Отмена</button>
+									<button id="addPlayerButton1" onClick={() => switchWind("addPlayer")} className="px-4 py-2 bg-[#373737] rounded-[15px] text-[#ffb300] font-bold">Отмена</button>
 									<button id="addPlayerButton2" onClick={() => {
 										addPlayer(data.nickname as string).catch(err => console.log(err));
-									}} className="px-4 py-2 bg-[#ffe600d9] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold">Добавить</button>
+									}} className="px-4 py-2 bg-[#ffb300] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold">Добавить</button>
 								</div>
 							</div>
 						</div>
@@ -217,24 +225,36 @@ export default function Home(props: { favorite: filmmakers[], acquired: filmmake
 											:
 											null
 										}
-										<>
-											{props.favorite && props.favorite.length > 0 ?
-												<Films items={props.favorite} sub={((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0)} name={"Избранное"} />
+										<section>
+											{favdata ?
+												favdata.length > 0 ?
+													<Films items={favdata} sub={((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0)} name={"Избранное"} />
+													:
+													<div className="w-full  pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
+														<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Избранное</div>
+														<span className="tablet:text-[18px] text-[14px]">Вы не откладывали в избранное наши проекты</span>
+													</div>
 												:
-												<div className="w-full  pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
-													<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Избранное</div>
-													<span className="tablet:text-[18px] text-[14px]">Вы не откладывали в избранное наши проекты</span>
-												</div>
+												<svg className="animate-spin h-[50px] w-[50px] text-black dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+													<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+													<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+												</svg>
 											}
-											{props.acquired && props.acquired.length > 0 ?
-												<Films items={props.acquired} sub={((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0)} name={"Приобретено"} />
+											{acqdata ?
+												acqdata.length > 0 ?
+													<Films items={acqdata} sub={((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0)} name={"Приобретено"} />
+													:
+													<div className="w-full  pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
+														<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Приобретено</div>
+														<span className="tablet:text-[18px] text-[14px]">Вы не покупали наши проекты</span>
+													</div>
 												:
-												<div className="w-full  pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
-													<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Преобретено</div>
-													<span className="tablet:text-[18px] text-[14px]">Вы не покупали наши проекты</span>
-												</div>
+												<svg className="animate-spin h-[50px] w-[50px] text-black dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+													<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+													<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+												</svg>
 											}
-										</>
+										</section>
 
 									</span>
 								</div>
@@ -261,7 +281,7 @@ async function addPlayer(nicknameAdder: string) {
 				alertTitle.innerHTML = "Ошибка"
 				alertContect.innerHTML = `Вы не можете добавить самого себя`
 				switchWind("alert")
-				setTimeout(() => switchWind("alert"), 2000)
+				//setTimeout(() => switchWind("alert"), 2000)
 			} else {
 				const data = { "nickname": inputnickname.value, "nicknameAdder": nicknameAdder }
 				await fetch("/api/player/add", {
@@ -278,19 +298,19 @@ async function addPlayer(nicknameAdder: string) {
 						alertTitle.innerHTML = "Ошибка"
 						alertContect.innerHTML = `У пользователя ${inputnickname.value} уже есть подписка`
 						switchWind("alert")
-						setTimeout(() => switchWind("alert"), 2000)
+						//setTimeout(() => switchWind("alert"), 2000)
 					} else if (data.code === 3) {
 						switchWind("addPlayer")
 						alertTitle.innerHTML = "Ошибка"
 						alertContect.innerHTML = `У пользователя ${inputnickname.value} уже есть приглашение`
 						switchWind("alert")
-						setTimeout(() => switchWind("alert"), 2000)
+						//setTimeout(() => switchWind("alert"), 2000)
 					} else if (data.code === 2) {
 						switchWind("addPlayer")
 						alertTitle.innerHTML = "Ошибка"
 						alertContect.innerHTML = `Пользователя ${inputnickname.value} не существует`
 						switchWind("alert")
-						setTimeout(() => switchWind("alert"), 2000)
+						//setTimeout(() => switchWind("alert"), 2000)
 					} else if (data.code === 1) {
 
 						switchWind("addPlayer")
@@ -298,7 +318,7 @@ async function addPlayer(nicknameAdder: string) {
 						alertContect.innerHTML = `Пользователю ${inputnickname.value} успешно отправлен запрос на добавление в подписку`
 						switchWind("alert")
 						setTimeout(() => {
-							switchWind("alert")
+							//switchWind("alert")
 							location.reload()
 						}, 2000)
 					} else {
@@ -306,7 +326,7 @@ async function addPlayer(nicknameAdder: string) {
 						alertTitle.innerHTML = "Ошибка"
 						alertContect.innerHTML = `Сообщите drdro20. Извините за неудобства`
 						switchWind("alert")
-						setTimeout(() => switchWind("alert"), 3000)
+						//setTimeout(() => switchWind("alert"), 3000)
 					}
 				})
 			}
@@ -335,19 +355,19 @@ async function cancelPlayer(nickname: string, nicknameAdder: string) {
 					alertTitle.innerHTML = "Ошибка"
 					alertContect.innerHTML = `Пользователя ${nickname} не существует`
 					switchWind("alert")
-					setTimeout(() => switchWind("alert"), 2000)
+					//setTimeout(() => switchWind("alert"), 2000)
 				} else if (data.code === 1) {
 					alertTitle.innerHTML = "Успешно"
 					alertContect.innerHTML = `Вы удалили пользователя ${nickname} из подписки`
 					switchWind("alert")
 					setTimeout(() => {
-						switchWind("alert")
+						//switchWind("alert")
 						location.reload()
 					}, 2000)
 				} else {
 					alertTitle.innerHTML = "Ошибка"
 					alertContect.innerHTML = `Сообщите drdro20. Извините за неудобства`
-					switchWind("alert")
+					//switchWind("alert")
 					setTimeout(() => switchWind("alert"), 3000)
 				}
 			})
@@ -376,20 +396,20 @@ async function deletePlayer(nickname: string, nicknameAdder: string) {
 					alertTitle.innerHTML = "Ошибка"
 					alertContect.innerHTML = `Пользователя ${nickname} не существует`
 					switchWind("alert")
-					setTimeout(() => switchWind("alert"), 2000)
+					//setTimeout(() => switchWind("alert"), 2000)
 				} else if (data.code === 1) {
 					alertTitle.innerHTML = "Успешно"
 					alertContect.innerHTML = `Пользователь ${nickname} успешно удалён из подписки`
 					switchWind("alert")
 					setTimeout(() => {
-						switchWind("alert")
+						//switchWind("alert")
 						location.reload()
 					}, 2000)
 				} else {
 					alertTitle.innerHTML = "Ошибка"
 					alertContect.innerHTML = `Сообщите drdro20. Извините за неудобства`
 					switchWind("alert")
-					setTimeout(() => switchWind("alert"), 3000)
+					//setTimeout(() => switchWind("alert"), 3000)
 				}
 			})
 		}
@@ -417,20 +437,20 @@ async function accept(nickname: string, nicknameAdder: string) {
 					alertTitle.innerHTML = "Ошибка"
 					alertContect.innerHTML = `Пользователя ${nickname} не существует`
 					switchWind("alert")
-					setTimeout(() => switchWind("alert"), 2000)
+					//setTimeout(() => switchWind("alert"), 2000)
 				} else if (data.code === 1) {
 					alertTitle.innerHTML = "Успешно"
 					alertContect.innerHTML = `С вами успешно поделились подпиской`
 					switchWind("alert")
 					setTimeout(() => {
-						switchWind("alert")
+						//switchWind("alert")
 						location.reload()
 					}, 2000)
 				} else {
 					alertTitle.innerHTML = "Ошибка"
 					alertContect.innerHTML = `Сообщите drdro20. Извините за неудобства`
 					switchWind("alert")
-					setTimeout(() => switchWind("alert"), 3000)
+					//setTimeout(() => switchWind("alert"), 3000)
 				}
 			})
 		}
@@ -458,20 +478,20 @@ async function decline(nickname: string, nicknameAdder: string) {
 					alertTitle.innerHTML = "Ошибка"
 					alertContect.innerHTML = `Пользователя ${nickname} не существует`
 					switchWind("alert")
-					setTimeout(() => switchWind("alert"), 2000)
+					//setTimeout(() => switchWind("alert"), 2000)
 				} else if (data.code === 1) {
 					alertTitle.innerHTML = "Успешно"
 					alertContect.innerHTML = `Вы отказались от подписки`
 					switchWind("alert")
 					setTimeout(() => {
-						switchWind("alert")
+						//switchWind("alert")
 						location.reload()
 					}, 2000)
 				} else {
 					alertTitle.innerHTML = "Ошибка"
 					alertContect.innerHTML = `Сообщите drdro20. Извините за неудобства`
 					switchWind("alert")
-					setTimeout(() => switchWind("alert"), 3000)
+					//setTimeout(() => switchWind("alert"), 3000)
 				}
 			})
 		}
@@ -499,20 +519,20 @@ async function cancelSub(nickname: string, nicknameAdder: string) {
 					alertTitle.innerHTML = "Ошибка"
 					alertContect.innerHTML = `Пользователя ${nickname} не существует`
 					switchWind("alert")
-					setTimeout(() => switchWind("alert"), 2000)
+					//setTimeout(() => switchWind("alert"), 2000)
 				} else if (data.code === 1) {
 					alertTitle.innerHTML = "Успешно"
 					alertContect.innerHTML = `Вы отказались от подписки`
 					switchWind("alert")
 					setTimeout(() => {
-						switchWind("alert")
+						//switchWind("alert")
 						location.reload()
 					}, 2000)
 				} else {
 					alertTitle.innerHTML = "Ошибка"
 					alertContect.innerHTML = `Сообщите drdro20. Извините за неудобства`
 					switchWind("alert")
-					setTimeout(() => switchWind("alert"), 3000)
+					//setTimeout(() => switchWind("alert"), 3000)
 				}
 			})
 		}
@@ -541,23 +561,6 @@ export const getServerSideProps: GetServerSideProps = async (
 		return {
 			redirect: { destination: "/auth/signin" },
 			props: {}
-		}
-	}
-	const prisma = new PrismaClient()
-	const ids = await prisma.user.findFirst({
-		where: {
-			id: session.user.id,
-		},
-		select: {
-			fav: true,
-			acq: true
-		},
-	})
-	if (ids) {
-		const favorite = ids.fav
-		const acquired = ids.acq
-		return {
-			props: { favorite, acquired }
 		}
 	}
 	return {

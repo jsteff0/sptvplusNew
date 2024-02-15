@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import Head from "next/head";
 import Footer from "../../app/components/footer"
@@ -8,7 +7,7 @@ export default function Home() {
 
 	return (
 		<>
-			<div className="Home bg-[#101010] h-full">
+			<div className="Home h-full">
 				<Head>
 					<title>СП Creators</title>
 					<link rel="icon" href="/favicon.ico" />
@@ -17,29 +16,48 @@ export default function Home() {
 					<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
 				</Head>
 				<div className="min-h-screen flex flex-col">
-					<header className="fixed flex justify-between items-center px-8 z-10 w-full h-[55px] bg-[#272727]">
+					<header className="fixed flex justify-between items-center px-8 z-10 w-full h-[55px] bg-[#0f0f0f]">
 						<Link href="/" className="w-auto h-auto">
 							<span className=" text-[#FFE400] font-['Montserrat'] text-[20px] font-extrabold">СП</span>
 							<span className=" text-white font-['Montserrat'] text-[20px] font-extrabold text italic">tv+</span>
 						</Link>
 					</header>
-					<main className=" mt-[75px] pb-[20px] flex flex-col items-center align-middle flex-auto gap-4">
-
-						<Image alt="" src={`/icons/creators.svg`} width={292} height={66} />
-						<div className="no-scroll-line tablet:w-[360px] tablet:h-[540px] tablet:m-0 m-4 text-black dark:text-white bg-white dark:bg-[#272727] p-8 overflow-scroll rounded-[35px] shadow-lg flex-none ">
-							СПtv Creators - это партнёрская программа для авторов, призванная обеспечить техническую и финансовую поддержку. Участники Партнерской программы СПtv Creators могут пользоваться нашими дополнительными ресурсами, монетизировать контент и обращаться за помощью к команде поддержки авторов. Кроме того, партнеры получают долю дохода от показа их контента. Ниже вы найдете подробную информацию о возможностях программы, критериях допуска, а также о том, как подать заявку.<br />
+					<main className="flex flex-col items-center flex-auto pt-[75px] px-[25px] gap-4">
+						<h1 className="dark:text-white text-[30px] font-['Montserrat'] font-extrabold">Вопросы и ответы</h1>
+						<div className="text-black dark:text-white text-wrap mb-[20px] font-['Montserrat']">
+							<h1 className="font-medium tablet:text-[20px] text-[14px] "><span className="text-[#FAC301]">{">"}</span> Зачем нужно платить за контент, если можно посмотреть на YouTube?</h1><br />
+							<p className="font-extralight tablet:text-[16px] text-[12px]">– В первую очередь подписка на наш сервис даёт возможность монетизировать
+								контент авторов в рамках СП5. Некоторые проекты на СПtv+ станут эксклюзивами, которые никогда не
+								появятся на YouTube. Так же будет вариант гибридного релиза, когда проект попадает в открытый
+								доступ для всех через определённое время после премьеры на нашем сервисе. Оплачивая одну из трёх
+								подписок на выбор, вы так же помогаете развитию других проектов различных студий и самого
+								стримингового сервиса.
+							</p>
 							<br />
-							Что нужно, чтобы стать участником?<br />
-							Вы должны соблюдать Правила сообщества #СП Чтобы заключить партнерское соглашение, вам необходимо следовать нашим правилам и требованиям, касающимся получения дохода от контента на СПtv+.<br />
-							1. Вам нужно проживать в стране подписчиков, где действует Партнерская программа СПtv Creators<br />
-							2. Запрещается использование оскорбительных выражений, призывов к действию в сторону реальных игроков/организаций/сообществ.<br />
-							3. Вы можете рекламировать в вашем контенте какой либо товар/услугу/объект. Запрещается рекламировать не государственные теллеграм-каналы, YouTube каналы и различные медиа площадки в том случае если эти площадки не относятся непосредственно к участникам вашего проекта. Так же, запрещено рекламировать любые продукты не связанные с СП5 и проекты за настоящую валюту.<br />
+							<br />
+							<h1 className="font-medium tablet:text-[20px] text-[14px] "><span className="text-[#FAC301]">{">"}</span> Как начать пользоваться сервисом?</h1><br />
+							<p className="font-extralight tablet:text-[16px] text-[12px]">– Для того что бы начать, вам необходимо авторизоваться через ваш Discord
+								аккаунт, (ВАЖНО: Вы должны быть игроком #СП5 и иметь доступ к spworlds.ru) после успешной
+								авторизации вам предложат доступ к бесплатному контенту. Что бы получить доктуп к эксклюзивному контенту, вам нужно оформить подписку
+							</p>
+							<br />
+							<br />
+							<h1 className="font-medium tablet:text-[20px] text-[14px] "><span className="text-[#FAC301]">{">"}</span> Как оформить подписку?</h1><br />
+							<p className="font-extralight tablet:text-[16px] text-[12px]">– Во время приобритения подписки, вам предложат пополнить баланс, после пополнения баланса вы сможете преобрести подписку, если баланс будет при нуле когда наступит время оплаты, у вас закроется доступ ко всему платному контенту если баланс будет на нуле
+							</p>
+							<br />
+							<br />
+							<h1 className="font-medium tablet:text-[20px] text-[14px] "><span className="text-[#FAC301]">{">"}</span> Зачем нужно платить за контент, если можно посмотреть на YouTube?</h1><br />
+							<p className="font-extralight tablet:text-[16px] text-[12px]">– В первую очередь подписка на наш сервис даёт возможность монетизировать
+								контент авторов в рамках СП5. Некоторые проекты на СПtv+ станут эксклюзивами, которые никогда не
+								появятся на YouTube. Так же будет вариант гибридного релиза, когда проект попадает в открытый
+								доступ для всех через определённое время после премьеры на нашем сервисе. Оплачивая одну из трёх
+								подписок на выбор, вы так же помогаете развитию других проектов различных студий и самого
+								стримингового сервиса.
+							</p>
 						</div>
-						<a href="https://docs.google.com/forms/d/e/1FAIpQLSelqiT10IZYGwVL6nOucPWnHi7WaVYZCnKdJ8YqXZThQlfwJg/viewform?usp=sf_link" className="px-7 py-[14px] tablet:px-10 tablet:py-[18px] bg-black dark:bg-white rounded-[40px] justify-center items-center gap-[10px] inline-flex ">
-							<div className="text-white dark:text-black text-[16px] tablet:text-[24px] font-medium" >Оставить заявку</div>
-						</a>
 					</main>
-					<Footer/>
+					<Footer />
 				</div>
 
 			</div>

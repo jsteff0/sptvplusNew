@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 export default function Footer() {
+
 	return (
 		<footer className="z-10 w-screen px-[15px] py-5 bg-[#0F0F0F] justify-between items-start hidden tablet:inline-flex relative">
 			<section className="h-full w-full smltp:max-w-[570px] smltp:min-w-[453px] mtablet:min-w-[320px] min-w-[258px] mtablet:px-[15px] px-[10px] justify-between items-start flex text-[#797979] smltp:text-[16px] mtablet:text-[12px] text-[10px] font-normal font-['Montserrat'] ">
@@ -14,15 +15,15 @@ export default function Footer() {
 				<div className="smltp:w-[183px] flex-col justify-start items-start gap-[25px] inline-flex">
 					<Link href={"/more/aboutus"} className="hover:text-white ease-out duration-100">О нас</Link>
 					<Link href={"/more/contacts"} className="hover:text-white ease-out duration-100">Контакты</Link>
-					<Link href={"/more/support"} className="hover:text-white ease-out duration-100">Служба поддержки</Link>
+					<Link href={"/more/termsofuse"} className="hover:text-white ease-out duration-100">Пользовательское соглашение</Link>
 					<Link href={"/more/QA"} className="hover:text-white ease-out duration-100">Вопросы и ответы</Link>
 					<Link href={"/more/partners"} className="hover:text-white ease-out duration-100">Партнёрам</Link>
 				</div>
 				<div className="h-[143px] flex-col justify-start items-start gap-[25px] inline-flex">
 					<Link href={"/spcreates"} className="hover:text-white ease-out duration-100">СПtv Creators</Link>
-					<Link href={"https://discord.gg/ea9ue92MmZ"} className="hover:text-white ease-out duration-100">Дискорд</Link>
+					<Link href={"https://discord.gg/sn4dgnH"} className="hover:text-white ease-out duration-100">Дискорд</Link>
 					<div className="justify-start items-start gap-3 inline-flex">
-						<Link href={"https://discord.gg/ea9ue92MmZ"} className="w-[29px] h-[29px] relative">
+						<Link href={"https://discord.gg/sn4dgnH"} className="w-[29px] h-[29px] relative">
 							<picture className="w-[29px] h-[29px] flex justify-center items-center bg-white bg-opacity-10 rounded-full">
 								<Image width={16} height={12} src="/icons/Discord.svg" alt="Иконка дискорд" />
 							</picture>

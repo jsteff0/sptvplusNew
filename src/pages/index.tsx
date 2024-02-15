@@ -73,9 +73,10 @@ export default function Home() {
             <div className="flex flex-col items-center gap-6 group/oneSub cursor-default">
               <span className="text-white text-[20px] font-['Montserrat'] font-medium">Раньше всех</span>
               <div className="border-0 hover:border-[2px] flex flex-col items-center border-[#01BEFA] transition-all duration-500 bg-gradient-to-t via-[#00000000] from-[#01c0fa91] bg-size-200 bg-pos-0 hover:bg-pos-100 z-10">
-                <div className="text-white text-[26px] font-['Montserrat'] mt-2 font-bold z-10">16 АР/месяц</div>
+                <h1 className="text-white text-[26px] font-['Montserrat'] mt-2 font-bold z-10">16 АР/месяц</h1>
                 <div className="h-4 w-0 group-hover/oneSub:w-[200px] bg-[#01BEFA] absolute z-0 mt-[20.5px] ease-out duration-150"></div>
-                <div className="text-white text-[16px] font-['Montserrat'] font-normal w-[200px] text-center pt-2 mx-4 mb-8">Доступ к каталогу фильмов, сериалов и шоу, а также к новым видео раньше всех.</div>
+                <h2 className="text-white text-[16px] font-['Montserrat'] font-semibold">Подписка: One</h2>
+                <p className="text-white text-[16px] font-['Montserrat'] font-normal w-[200px] text-center pt-2 mx-4 mb-8">Доступ к каталогу фильмов, сериалов и шоу, а также к новым видео раньше всех.</p>
               </div>
               <div className="group/oneSubB">
                 <Link href="/subs" className="text-[#01BEFA] group/oneSubB cursor-pointer text-[0px] font-['Montserrat'] font-bold  z-10 ease-out duration-300  group-hover/oneSub:text-[20px] group-hover/oneSub:block">Подключить</Link>
@@ -85,9 +86,10 @@ export default function Home() {
             <div className="flex flex-col items-center gap-6 group/multiSub cursor-default">
               <span className="text-white text-[20px] font-['Montserrat'] font-medium">Делись подпиской</span>
               <div className="border-0 hover:border-[2px] flex flex-col items-center border-[#FAC301] transition-all duration-500 bg-gradient-to-t via-[#00000000] from-[#fac40192] bg-size-200 bg-pos-0 hover:bg-pos-100 z-10">
-                <div className="text-white text-[26px] font-['Montserrat'] mt-2 font-bold z-10">24 АР/месяц</div>
+                <h1 className="text-white text-[26px] font-['Montserrat'] mt-2 font-bold z-10">24 АР/месяц</h1>
                 <div className="h-4 w-0 group-hover/multiSub:w-[200px] bg-[#FAC301] absolute z-0 mt-[20.5px] ease-out duration-150"></div>
-                <div className="text-white text-[16px] font-['Montserrat'] font-normal w-[200px] text-center pt-2 mx-4 mb-8">Поделитесь эмоциями со своими друзьями. Подключите аккаунты своих 3-х знакомых, и смотрите вместе.</div>
+                <h2 className="text-white text-[16px] font-['Montserrat'] font-semibold">Подписка: Multi</h2>
+                <p className="text-white text-[16px] font-['Montserrat'] font-normal w-[200px] text-center pt-2 mx-4 mb-8">Поделитесь эмоциями со своими друзьями. Подключите аккаунты своих 3-х знакомых, и смотрите вместе.</p>
               </div>
               <div className="group/multiSubB">
                 <Link href="/subs" className="text-[#FAC301] group/multiSubB cursor-pointer text-[0px] font-['Montserrat'] font-bold  z-10 ease-out duration-300  group-hover/multiSub:text-[20px] group-hover/multiSub:block">Подключить</Link>
@@ -97,9 +99,10 @@ export default function Home() {
             <div className="flex flex-col items-center gap-6 group/maxSub cursor-default">
               <span className="text-white text-[20px] font-['Montserrat'] font-medium">Эксклюзивы</span>
               <div className="border-0 hover:border-[2px] flex flex-col items-center border-[#FA7801] transition-all duration-500 bg-gradient-to-t via-[#00000000] from-[#fa790190] bg-size-200 bg-pos-0 hover:bg-pos-100 z-10">
-                <div className="text-white text-[26px] font-['Montserrat'] mt-2 font-bold z-10">32 АР/месяц</div>
+                <h1 className="text-white text-[26px] font-['Montserrat'] mt-2 font-bold z-10">32 АР/месяц</h1>
+                <h2 className="text-white text-[16px] font-['Montserrat'] font-semibold">Подписка: Max</h2>
                 <div className="h-4 w-0 group-hover/maxSub:w-[200px] bg-[#FA7801] absolute z-0 mt-[20.5px] ease-out duration-150"></div>
-                <div className="text-white text-[16px] font-['Montserrat'] font-normal w-[200px] text-center pt-2 mx-4 mb-8">Все функции предыдущих подписок, а также эксклюзивы со съёмок и моменты невошедшие в видео.</div>
+                <p className="text-white text-[16px] font-['Montserrat'] font-normal w-[200px] text-center pt-2 mx-4 mb-8">Все функции предыдущих подписок, а также эксклюзивы со съёмок и моменты невошедшие в видео. </p>
               </div>
               <div className="group/maxSubB">
                 <Link href="/subs" className="text-[#FA7801] group/maxSubB cursor-pointer text-[0px] font-['Montserrat'] font-bold  z-10 ease-out duration-300  group-hover/maxSub:text-[20px] group-hover/maxSub:block">Подключить</Link>
@@ -113,36 +116,36 @@ export default function Home() {
             <input type="checkbox" className="hidden peer/QAB" id="QAB" />
             <div className="h-[4px] w-0 peer-hover/QAB:w-[100px] peer-checked/QAB:w-[100px] bg-[#FAC301] ease-out duration-200"></div>
             <div className="text-white font-['Montserrat'] w-screen h-0 overflow-hidden group peer/QAB smltp:peer-checked/QAB:h-[800px] tablet:peer-checked/QAB:h-[1200px] peer-checked/QAB:h-[1500px] ease-in-out duration-700 px-10 mt-20">
-              <span className="font-medium tablet:text-[20px] text-[14px] "><span className="text-[#FAC301]">{">"}</span> Зачем нужно платить за контент, если можно посмотреть на YouTube?</span><br />
-              <span className="font-extralight tablet:text-[16px] text-[12px]">– В первую очередь подписка на наш сервис даёт возможность монетизировать
+              <h1 className="font-medium tablet:text-[20px] text-[14px] "><span className="text-[#FAC301]">{">"}</span> Зачем нужно платить за контент, если можно посмотреть на YouTube?</h1><br />
+              <p className="font-extralight tablet:text-[16px] text-[12px]">– В первую очередь подписка на наш сервис даёт возможность монетизировать
                 контент авторов в рамках СП5. Некоторые проекты на СПtv+ станут эксклюзивами, которые никогда не
                 появятся на YouTube. Так же будет вариант гибридного релиза, когда проект попадает в открытый
                 доступ для всех через определённое время после премьеры на нашем сервисе. Оплачивая одну из трёх
                 подписок на выбор, вы так же помогаете развитию других проектов различных студий и самого
                 стримингового сервиса.
-              </span>
+              </p>
               <br />
               <br />
-              <span className="font-medium tablet:text-[20px] text-[14px] "><span className="text-[#FAC301]">{">"}</span> Как начать пользоваться сервисом?</span><br />
-              <span className="font-extralight tablet:text-[16px] text-[12px]">– Для того что бы начать, вам необходимо авторизоваться через ваш Discord
+              <h1 className="font-medium tablet:text-[20px] text-[14px] "><span className="text-[#FAC301]">{">"}</span> Как начать пользоваться сервисом?</h1><br />
+              <p className="font-extralight tablet:text-[16px] text-[12px]">– Для того что бы начать, вам необходимо авторизоваться через ваш Discord
                 аккаунт, (ВАЖНО: Вы должны быть игроком #СП5 и иметь доступ к spworlds.ru) после успешной
                 авторизации вам предложат доступ к бесплатному контенту. Что бы получить доктуп к эксклюзивному контенту, вам нужно оформить подписку
-              </span>
+              </p>
               <br />
               <br />
-              <span className="font-medium tablet:text-[20px] text-[14px] "><span className="text-[#FAC301]">{">"}</span> Как оформить подписку?</span><br />
-              <span className="font-extralight tablet:text-[16px] text-[12px]">– Во время приобритения подписки, вам предложат пополнить баланс, после пополнения баланса вы сможете преобрести подписку, если баланс будет при нуле когда наступит время оплаты, у вас закроется доступ ко всему платному контенту если баланс будет на нуле
-              </span>
+              <h1 className="font-medium tablet:text-[20px] text-[14px] "><span className="text-[#FAC301]">{">"}</span> Как оформить подписку?</h1><br />
+              <p className="font-extralight tablet:text-[16px] text-[12px]">– Во время приобритения подписки, вам предложат пополнить баланс, после пополнения баланса вы сможете преобрести подписку, если баланс будет при нуле когда наступит время оплаты, у вас закроется доступ ко всему платному контенту если баланс будет на нуле
+              </p>
               <br />
               <br />
-              <span className="font-medium tablet:text-[20px] text-[14px] "><span className="text-[#FAC301]">{">"}</span> Зачем нужно платить за контент, если можно посмотреть на YouTube?</span><br />
-              <span className="font-extralight tablet:text-[16px] text-[12px]">– В первую очередь подписка на наш сервис даёт возможность монетизировать
+              <h1 className="font-medium tablet:text-[20px] text-[14px] "><span className="text-[#FAC301]">{">"}</span> Зачем нужно платить за контент, если можно посмотреть на YouTube?</h1><br />
+              <p className="font-extralight tablet:text-[16px] text-[12px]">– В первую очередь подписка на наш сервис даёт возможность монетизировать
                 контент авторов в рамках СП5. Некоторые проекты на СПtv+ станут эксклюзивами, которые никогда не
                 появятся на YouTube. Так же будет вариант гибридного релиза, когда проект попадает в открытый
                 доступ для всех через определённое время после премьеры на нашем сервисе. Оплачивая одну из трёх
                 подписок на выбор, вы так же помогаете развитию других проектов различных студий и самого
                 стримингового сервиса.
-              </span>
+              </p>
             </div>
           </section>
           <section className="flex flex-col items-center font-['Montserrat']">

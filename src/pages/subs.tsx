@@ -32,31 +32,7 @@ export default function Home() {
 				</Head>
 				<div className="min-h-screen flex flex-col bg-[#E1E1E1] dark:bg-[#000000]">
 					<Header balance={data.balance} subscription={data.subscription} UUID={data.UUID ? `https://api.mineatar.io/face/${data.UUID}` : "/randomguy.png"} nickname={data.nickname}/>
-					<section id="addMoney" className="fixed inset-0 overflow-y-auto z-20 hidden">
-						<div className="flex min-h-full items-center justify-center p-4 text-center">
-							<div onClick={() => switchWind("alert")} className="fixed inset-0 bg-black bg-opacity-25"></div>
-							<div className="w-full max-w-md transform  overflow-hidden rounded-2xl bg-[#272727] p-6 text-left align-middle shadow-xl transition-all z-22">
-								<b className=" text-white text-[20px] font-['Montserrat']">Пополнить баланс</b><br />
-								<div className="mt-2"><span className="text-white font-['Montserrat']">Баланс: <b>{data.balance} <span className="text-[#FFE400]">AP</span></b></span></div>
-								<div className="mt-4">
-									<label htmlFor="money" className="text-white font-['Montserrat']">Добавить на баланс:</label><br />
-									<input pattern="[0-9]+" type="number" id="money" onChange={(e) => {
-										const val = e.currentTarget.value;
-										if (parseInt(val) > 500)
-											e.currentTarget.value = "500"
-										if (!parseInt(val))
-											e.currentTarget.value = "0"
-										if (val[0] === "0" && val.length > 1 && val[1] !== undefined)
-											e.currentTarget.value = val[1]
-									}} className="mt-2 rounded-[15px] bg-[#373737] text-white w-full h-[40px] p-4" />
-								</div>
-								<div className="mt-4 flex justify-end gap-3">
-									<button onClick={() => switchWind("addMoney")} className="px-4 py-2 bg-[#373737] rounded-[15px]"><span className="text-[#FFE400] font-bold">Отмена</span></button>
-									{/* <button onClick={() => { const element2: HTMLInputElement | null = document.querySelector("#money"); element2 !== null ? AddMoney(parseInt(element2.value), User.nickname) : console.log("noElement2") }} className="w-[100px] h-[40px] bg-[#FFE400] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold" id="mbtn" > Оплатить</button> */}
-								</div>
-							</div>
-						</div>
-					</section>
+					
 					<section id="alert" className="fixed inset-0 overflow-y-auto z-20 hidden">
 						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<div onClick={() => switchWind("alert")} className="fixed inset-0 bg-black bg-opacity-25"></div>
@@ -66,8 +42,8 @@ export default function Home() {
 
 								</div>
 								<div className="mt-4 flex justify-end gap-3">
-									<button id="alertButton1" onClick={() => switchWind("alert")} className="px-4 py-2 bg-[#373737] rounded-[15px] text-[#FFE400] font-bold">Отмена</button>
-									<button id="alertButton2" className="px-4 py-2 bg-[#FFE400] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold hidden">Оплатить</button>
+									<button id="alertButton1" onClick={() => switchWind("alert")} className="px-4 py-2 bg-[#373737] rounded-[15px] text-[#ffb300] font-bold">Назад</button>
+									<button id="alertButton2" className="px-4 py-2 bg-[#ffb300] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold hidden">Оплатить</button>
 								</div>
 							</div>
 						</div>
@@ -75,22 +51,23 @@ export default function Home() {
 					<main className="flex flex-col justify-center items-center flex-auto dark:text-white mt-[55px]">
 						<span className="font-['Montserrat'] laptop:text-[30px] text-[18px] font-bold  dark:text-white">Подписки СПTV+</span>
 						<div className=" flex tablet:flex-row p-10 flex-col laptop:gap-[40px] gap-[15px] items-center ">
-							<div className="laptop:w-[250px] laptop:h-[325px] w-[161px] h-[210px] bg-white dark:bg-[#0F0F0F] shadow-lg laptop:rounded-[40px] rounded-[22px] flex flex-col align-center items-center justify-between laptop:p-[40px]  p-[25px]">
-								<span className="font-['Montserrat'] laptop:text-[25px] text-[16px] font-bold relative flex flex-col align-center items-center dark:text-white">One</span>
-								<span className="font-['Montserrat'] laptop:text-[14px] text-[10px] font-light text-center dark:text-white">С этой подпиской, вам будет доступен католог фильмов, сериалов и шоу, раньше остальных</span>
-								<button onClick={() => purchaseSub("ONE", data.nickname as string, data.balance, data.subscription as string)} className="text-white dark:text-black laptop:px-[25px] px-[15px] laptop:py-[10px] py-[7.5px] laptop:text-[16px] text-[10px] bg-black dark:bg-white hover:bg-[#ffd000] dark:hover:text-white laptop:hover:px-[30px] hover:px-[17.5px] rounded-full transition-all duration-300 ease-in-out">Приобрести за 16АР</button>
+							<div className="font-['Montserrat'] laptop:w-[270px] laptop:h-[325px] w-[161px] h-[210px] bg-white dark:bg-[#0F0F0F] shadow-lg laptop:rounded-[40px] rounded-[22px] flex flex-col align-center items-center justify-between laptop:p-[40px]  p-[25px]">
+								<span className="laptop:text-[25px] text-[16px] font-bold relative flex flex-col align-center items-center dark:text-white">One</span>
+								<span className="laptop:text-[14px] text-[10px] font-light text-center dark:text-white">С этой подпиской, вам будет доступен католог фильмов, сериалов и шоу, раньше остальных</span>
+								<button onClick={() => purchaseSub("ONE", data.nickname as string, data.balance, data.subscription as string)} className="text-white dark:text-black w-full py-2 laptop:text-[15px] text-[10px] bg-black dark:bg-white dark:hover:bg-[#ffd000] hover:bg-[#ffd000] dark:hover:text-[#000000] rounded-full transition-all duration-300 ease-in-out">Приобрести за 16АР</button>
 							</div>
-							<div className="laptop:w-[300px] laptop:h-[375px] w-[192px] h-[241px] bg-white dark:bg-[#0F0F0F] shadow-lg laptop:rounded-[40px] rounded-[22px] flex flex-col align-center items-center laptop:p-[40px] gap-1 p-[25px] justify-between">
-								<span className="font-['Montserrat'] laptop:text-[30px] text-[19px] font-bold relative dark:text-white">Max</span>
-								<span className="font-['Montserrat'] laptop:text-[17px] text-[11px] font-light text-center dark:text-white">Эксклюзивный контент, только в подписке. Вам будет доступен эксклюзивный контент и так же добавление 3 аккаунтов знакомых</span>
-								<button onClick={() => purchaseSub("MAX", data.nickname as string, data.balance, data.subscription as string)} className="text-white dark:text-black laptop:px-[25px] px-[15px] laptop:py-[10px] py-[7.5px] laptop:text-[16px] text-[10px] bg-black dark:bg-white hover:bg-[#ffd000] dark:hover:text-white laptop:hover:px-[30px] hover:px-[17.5px] rounded-full transition-all duration-300 ease-in-out">Приобрести за 24АР</button>
+							<div className="font-['Montserrat'] laptop:w-[300px] laptop:h-[375px] w-[192px] h-[241px] bg-white dark:bg-[#0F0F0F] shadow-lg laptop:rounded-[40px] rounded-[22px] flex flex-col align-center items-center laptop:p-[40px] gap-1 p-[25px] justify-between">
+								<span className="laptop:text-[30px] text-[19px] font-bold relative dark:text-white">Max</span>
+								<span className="laptop:text-[17px] text-[11px] font-light text-center dark:text-white">Эксклюзивный контент, только в подписке. Вам будет доступен эксклюзивный контент и так же добавление 3 аккаунтов знакомых</span>
+								<button onClick={() => purchaseSub("MAX", data.nickname as string, data.balance, data.subscription as string)} className="text-white dark:text-black w-full py-2 laptop:text-[16px] text-[10px] bg-black dark:bg-white dark:hover:bg-[#ffd000] hover:bg-[#ffd000] dark:hover:text-[#000000] rounded-full transition-all duration-300 ease-in-out">Приобрести за 32АР</button>
 							</div>
-							<div className="laptop:w-[250px] laptop:h-[325px] w-[161px] h-[210px] bg-white dark:bg-[#0F0F0F] shadow-lg laptop:rounded-[40px] rounded-[22px] flex flex-col align-center items-center laptop:p-[40px] gap-1 p-[25px] justify-between">
-								<span className="font-['Montserrat'] laptop:text-[25px] text-[16px] font-bold relative flex flex-col align-center items-center dark:text-white">Multi</span>
-								<span className="font-['Montserrat'] laptop:text-[14px] text-[9.5px] font-light text-center dark:text-white">Поделитесь эмоциями со своими друзьями. Подключите аккаунты своих 3 знакомых, и смотрите вместе</span>
-								<button onClick={() => purchaseSub("MULTI", data.nickname as string, data.balance, data.subscription as string)} className=" text-white dark:text-black laptop:px-[25px] px-[15px] laptop:py-[10px] py-[7.5px] laptop:text-[16px] text-[10px] bg-black dark:bg-white hover:bg-[#ffd000] dark:hover:text-white laptop:hover:px-[30px] hover:px-[17.5px] rounded-full transition-all duration-300 ease-in-out">Приобрести за 32АР</button>
+							<div className="font-['Montserrat'] laptop:w-[270px] laptop:h-[325px] w-[161px] h-[210px] bg-white dark:bg-[#0F0F0F] shadow-lg laptop:rounded-[40px] rounded-[22px] flex flex-col align-center items-center laptop:p-[40px] gap-1 p-[25px] justify-between">
+								<span className="laptop:text-[25px] text-[16px] font-bold relative flex flex-col align-center items-center dark:text-white">Multi</span>
+								<span className="laptop:text-[14px] text-[9.5px] font-light text-center dark:text-white">Поделитесь эмоциями со своими друзьями. Подключите аккаунты своих 3 знакомых, и смотрите вместе</span>
+								<button onClick={() => purchaseSub("MULTI", data.nickname as string, data.balance, data.subscription as string)} className=" text-white dark:text-black w-full py-2 laptop:text-[15px] text-[10px] bg-black dark:bg-white dark:hover:bg-[#ffd000] hover:bg-[#ffd000] dark:hover:text-[#000000] rounded-full transition-all duration-300 ease-in-out">Приобрести за 24АР</button>
 							</div>
 						</div>
+						{/*  */}
 					</main>
 					<Footer/>
 				</div>
@@ -111,12 +88,12 @@ function purchaseSub(sub: string, nickname: string, balance: number, subNow: str
 				alertTitle.innerHTML = "Недостаточно средств"
 				alertContect.innerHTML = `Недостаточно средств, пополните баланс`
 				switchWind("alert")
-				setTimeout(() => switchWind("alert"), 3000)
+				//setTimeout(() => switchWind("alert"), 3000)
 			} else if (subNow.includes(sub)) {
 				alertTitle.innerHTML = "Уведомление"
 				alertContect.innerHTML = `Вы уже имеете подписку ${sub}`
 				switchWind("alert")
-				setTimeout(() => switchWind("alert"), 3000)
+				//setTimeout(() => switchWind("alert"), 3000)
 			} else {
 				alertTitle.innerHTML = "Уведомление"
 				alertContect.innerHTML = `Вы уверены что хотите приобрести подписку ${sub}</br>После покупки подписки с вашего баланса снимутся ${sub === "ONE" ? 16 : sub === "MULTI" ? 24 : 32} АР`
@@ -142,7 +119,7 @@ function purchaseSub(sub: string, nickname: string, balance: number, subNow: str
 							alertTitle.innerHTML = "Ошибка"
 							alertContect.innerHTML = `Сообщите drdro20. Извините за неудобства`
 
-							setTimeout(() => switchWind("alert"), 3000)
+							//setTimeout(() => switchWind("alert"), 3000)
 						}
 					})
 				}
