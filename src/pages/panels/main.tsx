@@ -533,15 +533,15 @@ export const getServerSideProps: GetServerSideProps = async (
 						"img": "cptvpreates.png"
 					},
 					{
-						"text": "АБОБА",
-						"img": "undefined.png"
+						"text": "Испытания шлема дополненной реальности Mine Vision Pro",
+						"img": "lolo.jpg"
 					}
 				],
 				"newsVideo": [
 					{
 						"url": "https://youtu.be/eq_78xANfPA",
 						"name": "Выпуст от 3.6.2023",
-						"png": "news2.png"
+						"png": "news0.png"
 					}
 				],
 				"mainNews": {
@@ -608,15 +608,15 @@ export const getServerSideProps: GetServerSideProps = async (
 							"img": "cptvpreates.png"
 						},
 						{
-							"text": "АБОБА",
-							"img": "undefined.png"
+							"text": "Испытания шлема дополненной реальности Mine Vision Pro",
+							"img": "lolo.jpg"
 						}
 					],
 					"newsVideo": [
 						{
 							"url": "https://youtu.be/eq_78xANfPA",
 							"name": "Выпуст от 3.6.2023",
-							"png": "news2.png"
+							"png": "news0.png"
 						}
 					],
 					"mainNews": {
