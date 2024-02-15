@@ -39,7 +39,7 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 	try {
 		console.log(req.query)
 		if (req.body.nickname) {
-			
+
 			await prisma.user.findFirst({
 				where: {
 					nickname: req.body.nickname,
@@ -49,7 +49,7 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 				}
 			}).then((resp) => {
 				console.log(resp)
-				if(resp?.management === "NO"){
+				if (resp?.management === "NO") {
 					res.status(200).json({ "code": 0 })
 				}
 			})
@@ -176,6 +176,87 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 				} else {
 					res.status(200).json({ "code": 1 })
 				}
+			} else if (req.query.action === "loadmainpage") {
+				const shows = await prisma.film.findMany({
+					where: {
+						content: "shows",
+						show: 1
+					},
+					select: {
+						imgID: true,
+						code: true,
+						subscription: true,
+						show: true
+					},
+				})
+				const recomendtosee = await prisma.film.findMany({
+					where: {
+						OR: [
+							{
+								mark: {
+									gte: 3.8,
+								},
+							},
+							{
+								mark: {
+									equals: 0,
+								},
+							},
+						],
+						datePremiere: {
+							lte: new Date()
+						},
+						show: 1,
+					},
+					select: {
+						imgID: true,
+						code: true,
+						subscription: true,
+						show: true,
+						describe: true,
+					},
+				})
+
+				const comingOut = await prisma.film.findMany({
+					where: {
+						datePremiere: {
+							gt: new Date()
+						},
+						show: 1
+					},
+					select: {
+						imgID: true,
+						code: true,
+						subscription: true,
+						show: true
+					},
+				})
+				const day21before = new Date()
+				day21before.setDate(day21before.getDay() - 21)
+				const newest = await prisma.film.findMany({
+					where: {
+						AND: [
+							{
+								datePremiere: {
+									lte: new Date()
+								},
+							},
+							{
+								datePremiere: {
+									gt: day21before
+								},
+							},
+						],
+						show: 1
+					},
+					select: {
+						imgID: true,
+						code: true,
+						subscription: true,
+						show: true
+					},
+				})
+				res.status(200).json({ "newest": newest, "comingOut": comingOut, "recomendtosee": recomendtosee, "shows": shows })
 			} else {
 				res.status(200).json({ "code": 0 })
 			}

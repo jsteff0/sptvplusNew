@@ -8,12 +8,12 @@ import { api } from "~/utils/api";
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
 import { getServerAuthSession } from "~/server/auth";
 // import fsPromises from 'fs/promises';
-import { PrismaClient } from '@prisma/client'
+// import { PrismaClient } from '@prisma/client'
 // import { env } from "~/env.mjs";
 // import { SPWorlds } from 'spworlds';
 import Header from "../app/components/header";
 import Footer from "../app/components/footer";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 // const apiSP = new SPWorlds(env.NEXT_PUBLIC_CARD_ID, env.NEXT_PUBLIC_CARD_TOKEN);
 
 
@@ -25,15 +25,44 @@ interface filmmakers {
 	describe: string | null;
 }
 
-export default function Home(props: { newest: filmmakers[], recomendtosee: filmmakers[], shows: filmmakers[], comingOut: filmmakers[], newsVideo: Array<{ url: string, name: string, png: string }> }) {
+export default function Home(props: { newsVideo: Array<{ url: string, name: string, png: string }> }) {
 	const { data: session } = useSession();
 	const { data } = api.user.main.useQuery();
+	const [newest, setNewest] = useState<filmmakers[] | null>(null)
+	const [recomendtosee, setRecomendtosee] = useState<filmmakers[] | null>(null)
+	const [shows, setShows] = useState<filmmakers[] | null>(null)
+	const [comingOut, setComingOut] = useState<filmmakers[] | null>(null)
 	useEffect(() => {
 		if (!data?.nickname || !session?.user.name) {
 			setTimeout(() => {
 				document.getElementById("sighoutredirect")?.classList.remove("hidden")
 				document.getElementById("sighoutredirect")?.classList.add("block")
 			}, 3000)
+		} else if(!newest && !recomendtosee && !shows && !comingOut) {
+
+			const fetchData = async () => {
+				const response = await fetch("/api/private/content/loadmainpage", {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({nickname: "DrDro20"})
+				}
+				)
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`)
+				}
+				const result = await response.json() as { newest: filmmakers[], recomendtosee: filmmakers[], shows: filmmakers[], comingOut: filmmakers[] }
+				setNewest(result.newest)
+				setRecomendtosee(result.recomendtosee)
+				setShows(result.shows)
+				setComingOut(result.comingOut)
+				console.log(1234)
+			}
+
+			fetchData().catch((e) => {
+				throw new Error(e as string)
+			})
 		}
 		if (localStorage.getItem('dark-mode') === 'true' || (!('dark-mode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
 			document.documentElement.classList.add('dark');
@@ -52,7 +81,8 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 			</div>
 		);
 	} else {
-		const randomMainPageNum = Math.floor(Math.random() * ((props.recomendtosee.length - 1) - 0 + 1) + 0);
+
+		const randomMainPageNum = 0
 
 		return (
 			<>
@@ -151,24 +181,76 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 							</nav>
 							<section id="leftcontent" className="tablet:ml-[190px] ml-0 w-full transition-all duration-500 ease-in-out">
 								<div className="py-20 bg-white dark:bg-[#0a0a0a] flex flex-col min-h-screen items-center gap-[40px]">
-									<div className="m-4 hidden smltp:flex">
-										<section className="flex flex-col justify-center gap-12 p-8 absolute bg-gradient-to-r from-[#000000f7] from-40% to-[#fff0] smltp:w-[560px] smltp:h-[315px] w-[255px] h-[143px] rounded-[20px]  ">
-											<Image width={168} height={0} src={`/preview/${props.recomendtosee[randomMainPageNum]?.imgID}_m.png`} className="rounded-[20px] object-cover" alt="" />
-											<section className="flex flex-col gap-4 w-[35%]">
-												<p className="text-white font-['Montserrat'] font-light text-[12px]">{props.recomendtosee[randomMainPageNum]?.describe}</p>
-												<a className="px-4 py-2 w-[102px] bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold" href={`/content/${props.recomendtosee[randomMainPageNum]?.code}`}>Смотреть</a>
+									{recomendtosee ?
+										<div className="m-4 hidden smltp:flex">
+
+											<section className="flex flex-col justify-center gap-12 p-8 absolute bg-gradient-to-r from-[#000000f7] from-40% to-[#fff0] smltp:w-[560px] smltp:h-[315px] w-[255px] h-[143px] rounded-[20px]  ">
+
+												<Image width={168} height={0} src={`/preview/${recomendtosee[randomMainPageNum]?.imgID}_m.png`} className="rounded-[20px] object-cover" alt="" />
+
+
+												<section className="flex flex-col gap-4 w-[35%]">
+													<p className="text-white font-['Montserrat'] font-light text-[12px]">{recomendtosee[randomMainPageNum]?.describe}</p>
+													<a className="px-4 py-2 w-[102px] bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold" href={`/content/${recomendtosee[randomMainPageNum]?.code}`}>Смотреть</a>
+												</section>
 											</section>
-										</section>
-										<Image width={560} height={315} src={`/preview/${props.recomendtosee[randomMainPageNum]?.imgID}.png`} className="rounded-[20px] object-cover smltp:w-[560px] smltp:h-[315px] w-[255px] h-[143px]" alt="" />
-									</div>
+											<Image width={560} height={315} src={`/preview/${recomendtosee[randomMainPageNum]?.imgID}.png`} className="rounded-[20px] object-cover smltp:w-[560px] smltp:h-[315px] w-[255px] h-[143px]" alt="" />
+
+										</div>
+										:
+										<svg className="animate-spin h-[30px] w-[30px] text-black dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+											<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+											<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+										</svg>
+									}
 									<div className="m-4 flex smltp:hidden">
 										<video src={`/videos/index.mp4`} className="rounded-[10px] object-cover w-full" autoPlay muted loop playsInline />
 									</div>
 
-									{props.newest.length > 0 && props ? <Films items={props.newest} sub={((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0)} name={"Новинки"} /> : null}
-									{props.recomendtosee.length > 0 ? <Films items={props.recomendtosee} sub={((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0)} name={"Что посмотреть"} /> : null}
-									{props.comingOut.length > 0 ? <Films items={props.comingOut} sub={((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0)} name={"Будущие проекты"} /> : null}
-									{props.shows.length > 0 ? <Films items={props.shows} sub={((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0)} name={"Шоу"} /> : null}
+									{newest ?
+										newest.length > 0 ? <Films items={newest} sub={((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0)} name={"Новинки"} /> : null
+										:
+										<div className=" max-w-full w-full h-[201px] tablet:h-[282px] pl-5 py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
+											<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Новинки</div>
+											<svg className="animate-spin h-[30px] w-[30px] text-black dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+												<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+												<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+											</svg>
+										</div>
+									}
+									{recomendtosee ?
+										recomendtosee.length > 0 ? <Films items={recomendtosee} sub={((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0)} name={"Что посмотреть"} /> : null
+										:
+										<div className=" max-w-full w-full h-[201px] tablet:h-[282px] pl-5 py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
+											<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Что посмотреть</div>
+											<svg className="animate-spin h-[30px] w-[30px] text-black dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+												<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+												<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+											</svg>
+										</div>
+									}
+									{comingOut ?
+										comingOut.length > 0 ? <Films items={comingOut} sub={((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0)} name={"Будущие проекты"} /> : null
+										:
+										<div className=" max-w-full w-full h-[201px] tablet:h-[282px] pl-5 py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
+											<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Будущие проекты</div>
+											<svg className="animate-spin h-[30px] w-[30px] text-black dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+												<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+												<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+											</svg>
+										</div>
+									}
+									{shows ?
+										shows.length > 0 ? <Films items={shows} sub={((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0)} name={"Шоу"} /> : null
+										:
+										<div className=" max-w-full w-full h-[201px] tablet:h-[282px] pl-5 py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
+											<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Шоу</div>
+											<svg className="animate-spin h-[30px] w-[30px] text-black dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+												<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+												<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+											</svg>
+										</div>
+									}
 									{props.newsVideo.length > 0 ?
 										<div className="max-w-full w-full pl-5 py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
 											<div className="tablet:text-[32px] font-['Montserrat'] font-bold dark:text-white">Последние выпуски новостей</div>
@@ -238,7 +320,7 @@ export default function Home(props: { newest: filmmakers[], recomendtosee: filmm
 
 							</section>
 						</div>
-						
+
 					</main>
 
 					<Footer />
@@ -291,86 +373,86 @@ export const getServerSideProps: GetServerSideProps = async (
 		}
 	}
 
-	const prisma = new PrismaClient()
-	const shows = await prisma.film.findMany({
-		where: {
-			content: "shows",
-			show: 1
-		},
-		select: {
-			imgID: true,
-			code: true,
-			subscription: true,
-			show: true
-		},
-	})
-	const recomendtosee = await prisma.film.findMany({
-		where: {
-			OR: [
-				{
-					mark: {
-						gte: 3.8,
-					},
-				},
-				{
-					mark: {
-						equals: 0,
-					},
-				},
-			],
-			datePremiere: {
-				lte: new Date()
-			},
-			show: 1,
-		},
-		select: {
-			imgID: true,
-			code: true,
-			subscription: true,
-			show: true,
-			describe: true,
-		},
-	})
+	//const prisma = new PrismaClient()
+	// const shows = await prisma.film.findMany({
+	// 	where: {
+	// 		content: "shows",
+	// 		show: 1
+	// 	},
+	// 	select: {
+	// 		imgID: true,
+	// 		code: true,
+	// 		subscription: true,
+	// 		show: true
+	// 	},
+	// })
+	// const recomendtosee = await prisma.film.findMany({
+	// 	where: {
+	// 		OR: [
+	// 			{
+	// 				mark: {
+	// 					gte: 3.8,
+	// 				},
+	// 			},
+	// 			{
+	// 				mark: {
+	// 					equals: 0,
+	// 				},
+	// 			},
+	// 		],
+	// 		datePremiere: {
+	// 			lte: new Date()
+	// 		},
+	// 		show: 1,
+	// 	},
+	// 	select: {
+	// 		imgID: true,
+	// 		code: true,
+	// 		subscription: true,
+	// 		show: true,
+	// 		describe: true,
+	// 	},
+	// })
 
-	const comingOut = await prisma.film.findMany({
-		where: {
-			datePremiere: {
-				gt: new Date()
-			},
-			show: 1
-		},
-		select: {
-			imgID: true,
-			code: true,
-			subscription: true,
-			show: true
-		},
-	})
-	const day21before = new Date()
-	day21before.setDate(day21before.getDay() - 21)
-	const newest = await prisma.film.findMany({
-		where: {
-			AND: [
-				{
-					datePremiere: {
-						lte: new Date()
-					},
-				},
-				{
-					datePremiere: {
-						gt: day21before
-					},
-				},
-			],
-			show: 1
-		},
-		select: {
-			imgID: true,
-			code: true,
-			subscription: true,
-			show: true
-		},
-	})
+	// const comingOut = await prisma.film.findMany({
+	// 	where: {
+	// 		datePremiere: {
+	// 			gt: new Date()
+	// 		},
+	// 		show: 1
+	// 	},
+	// 	select: {
+	// 		imgID: true,
+	// 		code: true,
+	// 		subscription: true,
+	// 		show: true
+	// 	},
+	// })
+	// const day21before = new Date()
+	// day21before.setDate(day21before.getDay() - 21)
+	// const newest = await prisma.film.findMany({
+	// 	where: {
+	// 		AND: [
+	// 			{
+	// 				datePremiere: {
+	// 					lte: new Date()
+	// 				},
+	// 			},
+	// 			{
+	// 				datePremiere: {
+	// 					gt: day21before
+	// 				},
+	// 			},
+	// 		],
+	// 		show: 1
+	// 	},
+	// 	select: {
+	// 		imgID: true,
+	// 		code: true,
+	// 		subscription: true,
+	// 		show: true
+	// 	},
+	// })
 	//const prmsParse2 = await fsPromises.readFile(process.cwd()+"/newsinfo.json")
 	// const news = await JSON.parse((prmsParse2).toString()) as {
 	// 	newsVideo: Array<{ url: string, name: string, png: string }>;
@@ -404,6 +486,7 @@ export const getServerSideProps: GetServerSideProps = async (
 	const newsVideo = news.newsVideo;
 
 	return {
-		props: { newest, recomendtosee, shows, comingOut, newsVideo }
+		//props: { newest, recomendtosee, shows, comingOut, newsVideo }
+		props: { newsVideo }
 	}
 }
