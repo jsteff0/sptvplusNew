@@ -230,7 +230,7 @@ export default function Home(props: {
 								const m = element.value.split(":")[1] as string
 								const s = element.value.split(":")[2] as string
 								if (h && m && s) {
-									duration.push(parseInt(h)+parseInt(m)+parseInt(s))
+									duration.push((parseInt(h)*60*60)+(parseInt(m)*60)+parseInt(s))
 								}
 							}
 							setDurations(duration)
@@ -458,7 +458,7 @@ export default function Home(props: {
 															const m = e.currentTarget.value.split(":")[1] as string
 															const s = e.currentTarget.value.split(":")[2] as string
 															if (h && m && s) {
-																setDurations([parseInt(h)+parseInt(m)+parseInt(s)])
+																setDurations([(parseInt(h)*60*60)+(parseInt(m)*60)+parseInt(s)])
 															}
 														}
 
