@@ -27,9 +27,9 @@ export default function Header({ balance, subscription, UUID, nickname }: {
 					</button>
 					<div className="flex items-center tablet:gap-2 gap-1">
 						<span className="font-['Montserrat'] font-normal tablet:text-[18px] text-[15px] text-white text-center">Баланс: <b>{balance}<span className="text-[#ffb300] font-bold"> AP</span></b></span>
-						<button onClick={() => switchWind("addMoney")}>
+						{/* <button onClick={() => switchWind("addMoney")}>
 							<Image alt="" src={`/buttons/addbtn.svg`} width={18} height={19}></Image>
-						</button>
+						</button> */}
 					</div>
 					{/* <span className="font-['Montserrat'] font-normal tablet:text-[18px] text-[15px] text-white text-center mt-[2px]">Баланс: <b>{balance}<span className="text-[#FFE400] font-bold"> AP</span></b></span> */}
 

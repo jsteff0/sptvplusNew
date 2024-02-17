@@ -259,7 +259,6 @@ export default function Home(props: {
 
 			}
 		}
-
 		const datePremiere = new Date(props.content.datePremiere)
 		return (
 			<>
