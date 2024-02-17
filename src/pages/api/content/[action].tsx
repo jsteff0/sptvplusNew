@@ -108,7 +108,7 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 				res.status(200).json({ "code": 1 });
 			}
 		} else if (req.query.action === "startwatching") {
-			if (!req.body.tag.includes("TRL")) {
+			if (!req.body.tag.includes("TLR")) {
 				const code = req.body.code
 				const newUUID = randomUUID();
 				const tag = req.body.tag
@@ -151,6 +151,9 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 				} else {
 					res.status(200).json({ "code": 1 })
 				}
+			} else {
+				const playKey = btoa(JSON.stringify({ "tag": req.body.tag, "code": req.body.code, "nickname": req.body.nickname, "key": "newUUID" }))
+				res.status(200).json({ "code": 2, "playKey": playKey, "timeKey": 0 });
 			}
 		} else if (req.query.action === "savingupdata") {
 			if (!req.body.tag.includes("TRL")) {

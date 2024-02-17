@@ -852,7 +852,7 @@ export const getServerSideProps: GetServerSideProps = async (
 					key: true,
 				}
 			})
-			if (oldKey?.key === playKey.key) {
+			if (oldKey?.key === playKey.key && playKey.tag !== "TLR") {
 				await prisma.view.update({
 					where: {
 						id: btoa(playKey.nickname + playKey.code + playKey.tag),
@@ -861,6 +861,16 @@ export const getServerSideProps: GetServerSideProps = async (
 						key: newUUID,
 					}
 				})
+				const encodedCode = btoa(playKey.tag + "::" + playKey.code)
+				return {
+					props: {
+						content,
+						isBeforePremier,
+						encodedCode,
+						timeKey,
+					}
+				}
+			} else if(playKey.tag === "TLR") {
 				const encodedCode = btoa(playKey.tag + "::" + playKey.code)
 				return {
 					props: {

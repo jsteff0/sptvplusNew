@@ -83,7 +83,7 @@ export default function Home() {
 		);
 	} else {
 
-		const randomMainPageNum = 0
+		const randomMainPageNum = 1
 		const newsjson = newsimport as {
 			newsVideo: Array<{ url: string, name: string, png: string }>;
 		}

@@ -383,7 +383,7 @@ export default function Home(props: { newContent: filmmakers[], management: Mana
 												return (
 													<Link href={`${item.url}`} key={""} className="flex-none px-[12px] last:pr-6">
 														<div className="flex flex-col items-center justify-center gap-3">
-															<Image width={285} height={180} src={`/preview/${item.png}`} className="tablet:h-[180px] tablet:w-[285px] h-[100px] w-[160px] object-cover rounded-[10px] bg-center" alt="" />
+															<Image width={285} height={180} src={`/news/${item.png}`} className="tablet:h-[180px] tablet:w-[285px] h-[100px] w-[160px] object-cover rounded-[10px] bg-center" alt="" />
 														</div>
 														<div className="text-black dark:text-white tablet:text-[16px] text-[12px]">{item.name}</div>
 													</Link>
