@@ -4,11 +4,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import Head from "next/head";
+import newsimport from 'newsinfo.json';
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
 import { getServerAuthSession } from "~/server/auth";
-import fsPromises from 'fs/promises';
+// import fsPromises from 'fs/promises';
 import { PrismaClient, type Management } from '@prisma/client'
 import { useEffect } from "react";
 
@@ -37,7 +38,7 @@ interface news {
 	mainNews: { title: string, text: string, img: string }
 }
 
-export default function Home(props: { newContent: filmmakers[], news: news, management: Management }) {
+export default function Home(props: { newContent: filmmakers[], management: Management }) {
 	const { data: session } = useSession();
 	const { data } = api.user.management.useQuery();
 	const managementRole = props.management
@@ -60,6 +61,7 @@ export default function Home(props: { newContent: filmmakers[], news: news, mana
 			</div>
 		);
 	} else {
+		const newsjson = newsimport as news
 		return (
 			<>
 				<Head>
@@ -221,7 +223,7 @@ export default function Home(props: { newContent: filmmakers[], news: news, mana
 														Цена: {item.price}<hr />
 														Студия: {item.studio}<hr />
 														Подписка: {item.subscription === 3 ? "Max" : item.subscription === 2 ? "Multi" : item.subscription === 1 ? "One" : "никакой"}<hr />
-														Время эпизода/фильма{item.timing}<hr />
+														Время эпизода/фильма {item.timing}<hr />
 														Жанр контенка: {item.types}<hr />
 														Просмотры: {item.watched}<hr />
 														Ссылка на youtube: {item.youtube ? item.youtube : "нету"}<hr />
@@ -229,8 +231,8 @@ export default function Home(props: { newContent: filmmakers[], news: news, mana
 															if (e.currentTarget.hasChildNodes()) {
 																const input = e.currentTarget.children[0] as HTMLInputElement
 																if (input.value) {
-																	const fstdata = { "name": item.name, "key": input.value }
-																	await fetch("/api/content/delete", {
+																	const fstdata = { "code": item.code, "key": input.value, "nickname": data.nickname }
+																	await fetch("/api/private/content/delete", {
 																		method: 'POST',
 																		headers: {
 																			'Content-Type': 'application/json'
@@ -254,7 +256,7 @@ export default function Home(props: { newContent: filmmakers[], news: news, mana
 																	alert(`Код не введён`)
 																}
 															}
-														}}>УДАЛИТЬ <input required type="text" placeholder="Ключ безопасности" id="securityKey" /></button>
+														}}>УДАЛИТЬ <input autoComplete="off" required type="text" placeholder="Ключ безопасности" id="securityKey" /></button>
 													</div>
 												)
 											})}
@@ -280,141 +282,146 @@ export default function Home(props: { newContent: filmmakers[], news: news, mana
 							<div className="text-black dark:text-white">No content</div>
 						}
 						{
-							managementRole === "NEWS" || managementRole === "FULL" && props.news ?
-								<>
-									<div className="w-full pl-5 py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
-										<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Новости</div>
-										<div className="relative flex w-full group">
-											<div
-												onScroll={(e) => {
-													if (e.currentTarget.scrollLeft > 12) {
-														e.currentTarget.children[0]?.classList.replace("group-hover:opacity-0", "group-hover:opacity-100")
-													} else {
-														e.currentTarget.children[0]?.classList.replace("group-hover:opacity-100", "group-hover:opacity-0")
-													}
-													if (e.currentTarget.scrollLeft + e.currentTarget.offsetWidth < e.currentTarget.scrollWidth - 100) {
-														e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:opacity-0", "group-hover:opacity-100")
-													} else {
-														e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:opacity-100", "group-hover:opacity-0")
-													}
-												}} className="no-scroll-line overflow-x-scroll flex scroll-smooth group ">
-												<div onClick={(e) => {
-													const parentEl = e.currentTarget.parentNode as HTMLDivElement
-													if (parentEl.scrollLeft > 450)
-														parentEl.scrollLeft -= 450
-													else
-														parentEl.scrollLeft = 0
-												}} className="absolute w-[75px] h-full bg-gradient-to-r from-[#000000b2] to-[#ffffff00] flex items-center duration-300 ease-in-out group-hover:opacity-0 opacity-0">
-													<div className="p-2">
-														<svg className="w-[23px] h-[45px] hover:w-[26px]" viewBox="0 0 23 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-															<path d="M18.5105 38.9583L0.958446 21.4583C0.750113 21.25 0.602197 21.0243 0.514697 20.7812C0.427197 20.5382 0.384142 20.2777 0.385531 20C0.385531 19.7222 0.428586 19.4618 0.514697 19.2187C0.600808 18.9757 0.748724 18.75 0.958446 18.5416L18.5105 0.989542C18.9966 0.503431 19.6043 0.260376 20.3334 0.260376C21.0626 0.260376 21.6876 0.520793 22.2084 1.04163C22.7293 1.56246 22.9897 2.1701 22.9897 2.86454C22.9897 3.55899 22.7293 4.16663 22.2084 4.68746L6.89595 20L22.2084 35.3125C22.6946 35.7986 22.9376 36.3979 22.9376 37.1104C22.9376 37.8229 22.6772 38.4388 22.1564 38.9583C21.6355 39.4791 21.0279 39.7395 20.3334 39.7395C19.639 39.7395 19.0314 39.4791 18.5105 38.9583Z" fill="white" />
-														</svg>
-													</div>
+							managementRole === "NEWS" || managementRole === "FULL" && newsjson ?
+							<>
+							{newsjson.news.length > 0 ?
+								<div className="w-full pl-5 py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
+									<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Новости</div>
+									<div className="relative flex w-full group">
+										<div
+											onScroll={(e) => {
+												if (e.currentTarget.scrollLeft > 12) {
+													e.currentTarget.children[0]?.classList.replace("group-hover:opacity-0", "group-hover:opacity-100")
+												} else {
+													e.currentTarget.children[0]?.classList.replace("group-hover:opacity-100", "group-hover:opacity-0")
+												}
+												if (e.currentTarget.scrollLeft + e.currentTarget.offsetWidth < e.currentTarget.scrollWidth - 100) {
+													e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:opacity-0", "group-hover:opacity-100")
+												} else {
+													e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:opacity-100", "group-hover:opacity-0")
+												}
+											}} className="no-scroll-line overflow-x-scroll flex scroll-smooth group ">
+											<div onClick={(e) => {
+												const parentEl = e.currentTarget.parentNode as HTMLDivElement
+												if (parentEl.scrollLeft > 450)
+													parentEl.scrollLeft -= 450
+												else
+													parentEl.scrollLeft = 0
+											}} className="absolute w-[75px] h-full bg-gradient-to-r from-[#000000b2] to-[#ffffff00] flex items-center duration-300 ease-in-out group-hover:opacity-0 opacity-0">
+												<div className="p-2">
+													<svg className="w-[23px] h-[45px] hover:w-[26px]" viewBox="0 0 23 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M18.5105 38.9583L0.958446 21.4583C0.750113 21.25 0.602197 21.0243 0.514697 20.7812C0.427197 20.5382 0.384142 20.2777 0.385531 20C0.385531 19.7222 0.428586 19.4618 0.514697 19.2187C0.600808 18.9757 0.748724 18.75 0.958446 18.5416L18.5105 0.989542C18.9966 0.503431 19.6043 0.260376 20.3334 0.260376C21.0626 0.260376 21.6876 0.520793 22.2084 1.04163C22.7293 1.56246 22.9897 2.1701 22.9897 2.86454C22.9897 3.55899 22.7293 4.16663 22.2084 4.68746L6.89595 20L22.2084 35.3125C22.6946 35.7986 22.9376 36.3979 22.9376 37.1104C22.9376 37.8229 22.6772 38.4388 22.1564 38.9583C21.6355 39.4791 21.0279 39.7395 20.3334 39.7395C19.639 39.7395 19.0314 39.4791 18.5105 38.9583Z" fill="white" />
+													</svg>
 												</div>
-												{props.news.news.map((item: { text: string, img: string }) => {
-													return (
-														<>
-															<div className="flex-none px-[12px] first:pl-6 last:pr-6 ">
-																<div className="flex flex-col items-center justify-center">
-																	<Image width={285} height={180} src={`/news/${item.img}`} className="dark:border-[1px] tablet:h-[180px] tablet:w-[285px] h-[100px] w-[160px] object-cover rounded-t-[10px] bg-center" alt="" />
-																	<div className="relative bottom-0 tablet:w-[285px] w-[160px] tablet:h-[60px] h-[33px] bg-[#0000007b] dark:bg-[#7a7a7a7b] rounded-b-[10px] flex flex-col justify-center items-center">
-																		<div className="text-white font-['Montserrat'] font-medium tablet:text-[14px] text-[9px] w-auto tablet:p-3 p-1 h-auto">{item.text}</div>
-																	</div>
+											</div>
+											{newsjson.news.map((item: { text: string, img: string }) => {
+												return (
+													<>
+														<div className="flex-none px-[12px] first:pl-6 last:pr-6 ">
+															<div className="flex flex-col items-center justify-center">
+																<Image width={285} height={160} src={`/news/${item.img}`} className="dark:border-[1px] tablet:w-[285px] tablet:h-[160px] w-[160px] h-[90px] object-cover rounded-t-[10px] bg-center" alt="" />
+																<div className="relative bottom-0 tablet:w-[285px] w-[160px] tablet:h-[60px] h-[33px] bg-[#0000007b] dark:bg-[#7a7a7a7b] rounded-b-[10px] flex flex-col justify-center items-center">
+																	<div className="text-white font-['Montserrat'] font-medium tablet:text-[13px] text-[9px] w-auto tablet:p-3 p-1 h-auto">{item.text}</div>
 																</div>
 															</div>
-														</>
-													)
-												})}
-												<div onClick={(e) => {
-													const parentEl = e.currentTarget.parentNode as HTMLDivElement
-													if (parentEl.scrollLeft + parentEl.offsetWidth < parentEl.scrollWidth - 450)
-														parentEl.scrollLeft += 450
-													else
-														parentEl.scrollLeft = parentEl.scrollWidth - parentEl.offsetWidth
-												}} className={`absolute float-right right-0 w-[75px] h-full bg-gradient-to-l from-[#000000b2] to-[#ffffff00] flex justify-end items-center duration-300 ease-in-out group-hover:opacity-100 opacity-0 `}>
-													<div className="p-2">
-														<svg className="w-[23px] h-[45px] hover:w-[26px]" viewBox="0 0 23 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-															<path d="M4.86472 1.04158L22.4168 18.5416C22.6251 18.7499 22.773 18.9756 22.8605 19.2187C22.948 19.4617 22.9911 19.7221 22.9897 19.9999C22.9897 20.2777 22.9467 20.5381 22.8605 20.7812C22.7744 21.0242 22.6265 21.2499 22.4168 21.4583L4.86472 39.0103C4.3786 39.4964 3.77097 39.7395 3.0418 39.7395C2.31263 39.7395 1.68763 39.4791 1.1668 38.9583C0.645966 38.4374 0.38555 37.8298 0.38555 37.1353C0.38555 36.4409 0.645967 35.8333 1.1668 35.3124L16.4793 19.9999L1.1668 4.68742C0.680692 4.20131 0.437635 3.602 0.437635 2.8895C0.437636 2.177 0.698052 1.56103 1.21889 1.04158C1.73972 0.52075 2.34736 0.260333 3.0418 0.260333C3.73625 0.260334 4.34389 0.52075 4.86472 1.04158Z" fill="white" />
-														</svg>
-													</div>
+														</div>
+													</>
+												)
+											})}
+											<div onClick={(e) => {
+												const parentEl = e.currentTarget.parentNode as HTMLDivElement
+												if (parentEl.scrollLeft + parentEl.offsetWidth < parentEl.scrollWidth - 450)
+													parentEl.scrollLeft += 450
+												else
+													parentEl.scrollLeft = parentEl.scrollWidth - parentEl.offsetWidth
+											}} className={`absolute float-right right-0 w-[75px] h-full bg-gradient-to-l from-[#000000b2] to-[#ffffff00] flex justify-end items-center duration-300 ease-in-out group-hover:opacity-100 opacity-0 `}>
+												<div className="p-2">
+													<svg className="w-[23px] h-[45px] hover:w-[26px]" viewBox="0 0 23 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M4.86472 1.04158L22.4168 18.5416C22.6251 18.7499 22.773 18.9756 22.8605 19.2187C22.948 19.4617 22.9911 19.7221 22.9897 19.9999C22.9897 20.2777 22.9467 20.5381 22.8605 20.7812C22.7744 21.0242 22.6265 21.2499 22.4168 21.4583L4.86472 39.0103C4.3786 39.4964 3.77097 39.7395 3.0418 39.7395C2.31263 39.7395 1.68763 39.4791 1.1668 38.9583C0.645966 38.4374 0.38555 37.8298 0.38555 37.1353C0.38555 36.4409 0.645967 35.8333 1.1668 35.3124L16.4793 19.9999L1.1668 4.68742C0.680692 4.20131 0.437635 3.602 0.437635 2.8895C0.437636 2.177 0.698052 1.56103 1.21889 1.04158C1.73972 0.52075 2.34736 0.260333 3.0418 0.260333C3.73625 0.260334 4.34389 0.52075 4.86472 1.04158Z" fill="white" />
+													</svg>
 												</div>
 											</div>
 										</div>
 									</div>
-									<div className="w-full h-[201px] tablet:h-[282px] pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
-										<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Последние выпуски новостей</div>
-										<div className="relative flex w-full group">
-											<div
-												onScroll={(e) => {
-													if (e.currentTarget.scrollLeft > 12) {
-														e.currentTarget.children[0]?.classList.replace("group-hover:opacity-0", "group-hover:opacity-100")
-														e.currentTarget.children[0]?.classList.replace("group-hover:w-0", "group-hover:w-[75px]")
-													} else {
-														e.currentTarget.children[0]?.classList.replace("group-hover:opacity-100", "group-hover:opacity-0")
-														e.currentTarget.children[0]?.classList.replace("group-hover:w-[75px]", "group-hover:w-0")
-													}
-													if (e.currentTarget.scrollLeft + e.currentTarget.offsetWidth < e.currentTarget.scrollWidth - 100) {
-														e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:opacity-0", "group-hover:opacity-100")
-														e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:w-0", "group-hover:w-[75px]")
-													} else {
-														e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:opacity-100", "group-hover:opacity-0")
-														e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:w-[75px]", "group-hover:w-0")
-													}
-												}} className="no-scroll-line overflow-x-scroll flex scroll-smooth group ">
-												<div onClick={(e) => {
-													const parentEl = e.currentTarget.parentNode as HTMLDivElement
-													if (parentEl.scrollLeft > 450)
-														parentEl.scrollLeft -= 450
-													else
-														parentEl.scrollLeft = 0
-												}} className="absolute w-0 h-full bg-gradient-to-r from-[#000000b2] to-[#ffffff00] flex items-center duration-300 ease-in-out group-hover:opacity-0 group-hover:w-0 opacity-0">
-													<div className="p-2">
-														<svg className="w-[23px] h-[45px] hover:w-[26px]" viewBox="0 0 23 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-															<path d="M18.5105 38.9583L0.958446 21.4583C0.750113 21.25 0.602197 21.0243 0.514697 20.7812C0.427197 20.5382 0.384142 20.2777 0.385531 20C0.385531 19.7222 0.428586 19.4618 0.514697 19.2187C0.600808 18.9757 0.748724 18.75 0.958446 18.5416L18.5105 0.989542C18.9966 0.503431 19.6043 0.260376 20.3334 0.260376C21.0626 0.260376 21.6876 0.520793 22.2084 1.04163C22.7293 1.56246 22.9897 2.1701 22.9897 2.86454C22.9897 3.55899 22.7293 4.16663 22.2084 4.68746L6.89595 20L22.2084 35.3125C22.6946 35.7986 22.9376 36.3979 22.9376 37.1104C22.9376 37.8229 22.6772 38.4388 22.1564 38.9583C21.6355 39.4791 21.0279 39.7395 20.3334 39.7395C19.639 39.7395 19.0314 39.4791 18.5105 38.9583Z" fill="white" />
-														</svg>
-													</div>
-												</div>
-												{props.news.newsVideo.map((item: { url: string, name: string, png: string }) => {
-													return (
-														<Link href={`${item.url}`} key={""} className="flex-none px-[12px] last:pr-6">
-															<div className="flex flex-col items-center justify-center gap-3">
-																<Image width={285} height={180} src={`/news/${item.png}`} className="tablet:h-[180px] tablet:w-[285px] h-[100px] w-[160px] object-cover rounded-[10px] bg-center" alt="" />
-															</div>
-															<div className="text-black dark:text-white tablet:text-[16px] text-[12px]">{item.name}</div>
-														</Link>
-													)
-												})}
-												<div onClick={(e) => {
-													const parentEl = e.currentTarget.parentNode as HTMLDivElement
-													if (parentEl.scrollLeft + parentEl.offsetWidth < parentEl.scrollWidth - 450)
-														parentEl.scrollLeft += 450
-													else
-														parentEl.scrollLeft = parentEl.scrollWidth - parentEl.offsetWidth
-												}} className={`absolute float-right right-0 w-0 h-full bg-gradient-to-l from-[#000000b2] to-[#ffffff00] flex justify-end items-center duration-300 ease-in-out group-hover:opacity-100 group-hover:w-[75px] opacity-0 `}>
-													<div className="p-2">
-														<svg className="w-[23px] h-[45px] hover:w-[26px]" viewBox="0 0 23 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-															<path d="M4.86472 1.04158L22.4168 18.5416C22.6251 18.7499 22.773 18.9756 22.8605 19.2187C22.948 19.4617 22.9911 19.7221 22.9897 19.9999C22.9897 20.2777 22.9467 20.5381 22.8605 20.7812C22.7744 21.0242 22.6265 21.2499 22.4168 21.4583L4.86472 39.0103C4.3786 39.4964 3.77097 39.7395 3.0418 39.7395C2.31263 39.7395 1.68763 39.4791 1.1668 38.9583C0.645966 38.4374 0.38555 37.8298 0.38555 37.1353C0.38555 36.4409 0.645967 35.8333 1.1668 35.3124L16.4793 19.9999L1.1668 4.68742C0.680692 4.20131 0.437635 3.602 0.437635 2.8895C0.437636 2.177 0.698052 1.56103 1.21889 1.04158C1.73972 0.52075 2.34736 0.260333 3.0418 0.260333C3.73625 0.260334 4.34389 0.52075 4.86472 1.04158Z" fill="white" />
-														</svg>
-													</div>
+								</div>
+								: null}
+							{newsjson.newsVideo.length > 0 ?
+								<div className="w-full h-[201px] tablet:h-[282px] pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
+									<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Последние выпуски новостей</div>
+									<div className="relative flex w-full group">
+										<div
+											onScroll={(e) => {
+												if (e.currentTarget.scrollLeft > 12) {
+													e.currentTarget.children[0]?.classList.replace("group-hover:opacity-0", "group-hover:opacity-100")
+													e.currentTarget.children[0]?.classList.replace("group-hover:w-0", "group-hover:w-[75px]")
+												} else {
+													e.currentTarget.children[0]?.classList.replace("group-hover:opacity-100", "group-hover:opacity-0")
+													e.currentTarget.children[0]?.classList.replace("group-hover:w-[75px]", "group-hover:w-0")
+												}
+												if (e.currentTarget.scrollLeft + e.currentTarget.offsetWidth < e.currentTarget.scrollWidth - 100) {
+													e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:opacity-0", "group-hover:opacity-100")
+													e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:w-0", "group-hover:w-[75px]")
+												} else {
+													e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:opacity-100", "group-hover:opacity-0")
+													e.currentTarget.children[e.currentTarget.children.length - 1]?.classList.replace("group-hover:w-[75px]", "group-hover:w-0")
+												}
+											}} className="no-scroll-line overflow-x-scroll flex scroll-smooth group ">
+											<div onClick={(e) => {
+												const parentEl = e.currentTarget.parentNode as HTMLDivElement
+												if (parentEl.scrollLeft > 450)
+													parentEl.scrollLeft -= 450
+												else
+													parentEl.scrollLeft = 0
+											}} className="absolute w-0 h-full bg-gradient-to-r from-[#000000b2] to-[#ffffff00] flex items-center duration-300 ease-in-out group-hover:opacity-0 group-hover:w-0 opacity-0">
+												<div className="p-2">
+													<svg className="w-[23px] h-[45px] hover:w-[26px]" viewBox="0 0 23 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M18.5105 38.9583L0.958446 21.4583C0.750113 21.25 0.602197 21.0243 0.514697 20.7812C0.427197 20.5382 0.384142 20.2777 0.385531 20C0.385531 19.7222 0.428586 19.4618 0.514697 19.2187C0.600808 18.9757 0.748724 18.75 0.958446 18.5416L18.5105 0.989542C18.9966 0.503431 19.6043 0.260376 20.3334 0.260376C21.0626 0.260376 21.6876 0.520793 22.2084 1.04163C22.7293 1.56246 22.9897 2.1701 22.9897 2.86454C22.9897 3.55899 22.7293 4.16663 22.2084 4.68746L6.89595 20L22.2084 35.3125C22.6946 35.7986 22.9376 36.3979 22.9376 37.1104C22.9376 37.8229 22.6772 38.4388 22.1564 38.9583C21.6355 39.4791 21.0279 39.7395 20.3334 39.7395C19.639 39.7395 19.0314 39.4791 18.5105 38.9583Z" fill="white" />
+													</svg>
 												</div>
 											</div>
+											{newsjson.newsVideo.map((item: { url: string, name: string, png: string }) => {
+												return (
+													<Link href={`${item.url}`} key={""} className="flex-none px-[12px] last:pr-6">
+														<div className="flex flex-col items-center justify-center gap-3">
+															<Image width={285} height={180} src={`/preview/${item.png}`} className="tablet:h-[180px] tablet:w-[285px] h-[100px] w-[160px] object-cover rounded-[10px] bg-center" alt="" />
+														</div>
+														<div className="text-black dark:text-white tablet:text-[16px] text-[12px]">{item.name}</div>
+													</Link>
+												)
+											})}
+											<div onClick={(e) => {
+												const parentEl = e.currentTarget.parentNode as HTMLDivElement
+												if (parentEl.scrollLeft + parentEl.offsetWidth < parentEl.scrollWidth - 450)
+													parentEl.scrollLeft += 450
+												else
+													parentEl.scrollLeft = parentEl.scrollWidth - parentEl.offsetWidth
+											}} className={`absolute float-right right-0 w-0 h-full bg-gradient-to-l from-[#000000b2] to-[#ffffff00] flex justify-end items-center duration-300 ease-in-out group-hover:opacity-100 group-hover:w-[75px] opacity-0 `}>
+												<div className="p-2">
+													<svg className="w-[23px] h-[45px] hover:w-[26px]" viewBox="0 0 23 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M4.86472 1.04158L22.4168 18.5416C22.6251 18.7499 22.773 18.9756 22.8605 19.2187C22.948 19.4617 22.9911 19.7221 22.9897 19.9999C22.9897 20.2777 22.9467 20.5381 22.8605 20.7812C22.7744 21.0242 22.6265 21.2499 22.4168 21.4583L4.86472 39.0103C4.3786 39.4964 3.77097 39.7395 3.0418 39.7395C2.31263 39.7395 1.68763 39.4791 1.1668 38.9583C0.645966 38.4374 0.38555 37.8298 0.38555 37.1353C0.38555 36.4409 0.645967 35.8333 1.1668 35.3124L16.4793 19.9999L1.1668 4.68742C0.680692 4.20131 0.437635 3.602 0.437635 2.8895C0.437636 2.177 0.698052 1.56103 1.21889 1.04158C1.73972 0.52075 2.34736 0.260333 3.0418 0.260333C3.73625 0.260334 4.34389 0.52075 4.86472 1.04158Z" fill="white" />
+													</svg>
+												</div>
+											</div>
+										</div>
 
+									</div>
+								</div>
+								: null}
+							{newsjson.mainNews ? <>
+								<div className="w-full h-auto tablet:h-[468px] pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
+									<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Новость недели</div>
+									<div className="flex laptop:flex-row flex-col gap-4">
+										<Image alt="" src={`/news/${newsjson.mainNews.img}`} width={420} height={236} className=" laptop:w-[420px] w-[300px] laptop:h-[236px] h-[170px] object-cover rounded-[30px]" />
+										<div className="flex flex-col justify-center gap-6">
+											<span className="font-['Montserrat'] font-bold text-[20px] dark:text-white">{newsjson.mainNews.title}</span>
+											<span className="font-['Montserrat'] font-light text-[16px] w-[70%] dark:text-white">{newsjson.mainNews.text}</span>
 										</div>
 									</div>
-									<div className="w-full h-auto tablet:h-[468px] pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
-										<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Новость недели</div>
-										<div className="flex laptop:flex-row flex-col gap-4">
-											<Image alt="" src={`/news/${props.news.mainNews.img}`} width={420} height={236} className=" laptop:w-[420px] w-[300px] laptop:h-[236px] h-[170px] object-cover rounded-[30px]" />
-											<div className="flex flex-col justify-center gap-6">
-												<span className="font-['Montserrat'] font-bold text-[20px] dark:text-white">{props.news.mainNews.title}</span>
-												<span className="font-['Montserrat'] font-light text-[16px] w-[70%] dark:text-white">{props.news.mainNews.text}</span>
-											</div>
-										</div>
-									</div>
-								</>
-								:
-								<div className="text-black dark:text-white">No news</div>
-						}
+								</div>
+							</>
+								: null}
+						</>
+							: <div className="text-black dark:text-white">No news</div>} 
 					</main>
 					<footer className="relative z-10 left-0 bottom-0 w-full h-[105px] bg-[#272727] hidden tablet:block">
 						<div className="flex justify-between ">
@@ -522,37 +529,8 @@ export const getServerSideProps: GetServerSideProps = async (
 			}
 
 		} else if (management === "NEWS") {
-			//const prmsParse2 = await fsPromises.readFile(process.cwd()+"/newsinfo.json")
-			// const news = await JSON.parse((prmsParse2).toString()) as {
-			// 	newsVideo: Array<{ url: string, name: string, png: string }>;
-			// };
-			const news = {
-				"news": [
-					{
-						"text": "Телеканал СПtv открыл холдинг платформу для создателей контента",
-						"img": "cptvpreates.png"
-					},
-					{
-						"text": "Испытания шлема дополненной реальности Mine Vision Pro",
-						"img": "lolo.jpg"
-					}
-				],
-				"newsVideo": [
-					{
-						"url": "https://youtu.be/eq_78xANfPA",
-						"name": "Выпуст от 3.6.2023",
-						"png": "news0.png"
-					}
-				],
-				"mainNews": {
-					"title": "Открытие СПtv+",
-					"text": "Телеканал СПtv открыл холдинг платформу для создателей контента",
-					"img": "cptvpreates.png"
-				}
-			}
 			return {
 				props: {
-					news,
 					management
 				}
 			}
@@ -583,52 +561,16 @@ export const getServerSideProps: GetServerSideProps = async (
 						}
 					}
 				};
-				const prmsParse2 = await fsPromises.readFile("/news.json")
-				const news = await JSON.parse((prmsParse2).toString()) as {
-					news: Array<{ title: string, text: string, img: string }>;
-					newsVideo: Array<{ url: string, name: string, png: string }>;
-				};
 				return {
 					props: {
 						newContent,
-						news,
 						management,
 					}
 				}
 
 			} else {
-				//const prmsParse2 = await fsPromises.readFile(process.cwd()+"/newsinfo.json")
-				// const news = await JSON.parse((prmsParse2).toString()) as {
-				// 	newsVideo: Array<{ url: string, name: string, png: string }>;
-				// };
-				const news = {
-					"news": [
-						{
-							"text": "Телеканал СПtv открыл холдинг платформу для создателей контента",
-							"img": "cptvpreates.png"
-						},
-						{
-							"text": "Испытания шлема дополненной реальности Mine Vision Pro",
-							"img": "lolo.jpg"
-						}
-					],
-					"newsVideo": [
-						{
-							"url": "https://youtu.be/eq_78xANfPA",
-							"name": "Выпуст от 3.6.2023",
-							"png": "news0.png"
-						}
-					],
-					"mainNews": {
-						"title": "Открытие СПtv+",
-						"text": "Телеканал СПtv открыл холдинг платформу для создателей контента",
-						"img": "cptvpreates.png"
-					}
-				}
 				return {
 					props: {
-
-						news,
 						management,
 					}
 				}

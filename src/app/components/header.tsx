@@ -53,7 +53,7 @@ export default function Header({ balance, subscription, UUID, nickname }: {
 						<div className="mt-2"><span className="text-white font-['Montserrat']">Баланс: <b>{balance} <span className="text-[#ffb300]">AP</span></b></span></div>
 						<div className="mt-4">
 							<label htmlFor="money" className="text-white font-['Montserrat']">Добавить на баланс:</label><br />
-							<input pattern="[0-9]+" type="number" id="money" required onChange={(e) => {
+							<input pattern="[0-9]+" type="number" id="money" placeholder="Кол-во АР" autoComplete="off" required onChange={(e) => {
 								const val = e.currentTarget.value;
 								if (parseInt(val) > 500)
 									e.currentTarget.value = "500"

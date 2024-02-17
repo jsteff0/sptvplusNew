@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Head from "next/head";
 import Films from "../app/components/filmline"
+import newsimport from 'newsinfo.json';
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
@@ -25,7 +26,7 @@ interface filmmakers {
 	describe: string | null;
 }
 
-export default function Home(props: { newsVideo: Array<{ url: string, name: string, png: string }> }) {
+export default function Home() {
 	const { data: session } = useSession();
 	const { data } = api.user.main.useQuery();
 	const [newest, setNewest] = useState<filmmakers[] | null>(null)
@@ -57,7 +58,7 @@ export default function Home(props: { newsVideo: Array<{ url: string, name: stri
 				setRecomendtosee(result.recomendtosee)
 				setShows(result.shows)
 				setComingOut(result.comingOut)
-				console.log(1234)
+				
 			}
 
 			fetchData().catch((e) => {
@@ -83,7 +84,9 @@ export default function Home(props: { newsVideo: Array<{ url: string, name: stri
 	} else {
 
 		const randomMainPageNum = 0
-
+		const newsjson = newsimport as {
+			newsVideo: Array<{ url: string, name: string, png: string }>;
+		}
 		return (
 			<>
 				<Head>
@@ -96,37 +99,7 @@ export default function Home(props: { newsVideo: Array<{ url: string, name: stri
 				<div className="min-h-screen flex flex-col bg-[#E1E1E1] dark:bg-[#000000]">
 					<Header balance={data.balance} subscription={data.subscription} UUID={data.UUID ? `https://api.mineatar.io/face/${data.UUID}` : "/randomguy.png"} nickname={data.nickname} />
 
-					<section id="addMoney" className="fixed inset-0 overflow-y-auto z-20 hidden">
-						<div className="flex min-h-full items-center justify-center p-4 text-center">
-							<div onClick={() => switchWind("addMoney")} className="fixed inset-0 bg-black bg-opacity-25"></div>
-							<div className="w-full max-w-md transform  overflow-hidden rounded-2xl bg-[#272727] p-6 text-left align-middle shadow-xl transition-all z-22">
-								<b className=" text-white text-[20px] ">Пополнить баланс</b><br />
-								<div className="mt-2"><span className="text-white font-['Montserrat']">Баланс: <b>{data.balance} <span className="text-[#ffb300]">AP</span></b></span></div>
-								<div className="mt-4">
-									<label htmlFor="money" className="text-white font-['Montserrat']">Добавить на баланс:</label><br />
-									<input pattern="[0-9]+" type="number" id="money" required onChange={(e) => {
-										const val = e.currentTarget.value;
-										if (parseInt(val) > 500)
-											e.currentTarget.value = "500"
-										if (!parseInt(val))
-											e.currentTarget.value = "0"
-										if (val[0] === "0" && val.length > 1 && val[1] !== undefined)
-											e.currentTarget.value = val[1]
-									}} className="mt-2 rounded-[15px] bg-[#373737] text-white w-full h-[40px] p-4" />
-								</div>
-								<div className="mt-4 flex justify-end gap-3">
-									<button onClick={() => switchWind("addMoney")} className="px-4 py-2 bg-[#373737] rounded-[15px]"><span className="text-[#ffb300] font-bold">Отмена</span></button>
-									<button onClick={() => {
-										const money = document.getElementById("money") as HTMLInputElement;
-										const moneyVal = parseInt(money.value);
-										if (moneyVal > 0) {
-											addMoney(moneyVal, data.nickname as string,).catch((err) => console.log(err));
-										}
-									}} id="alertButton2" className="px-4 py-2 bg-[#ffb300] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold">Оплатить</button>
-								</div>
-							</div>
-						</div>
-					</section>
+					
 					<main className="flex align-middle justify-center flex-auto">
 						<div className="flex tablet:flex-row flex-col-reverse w-screen ">
 							<nav className="fixed bottom-0 tablet:z-0 z-10 flex justify-center tablet:w-[190px] w-screen tablet:min-h-screen h-[62px] bg-white dark:bg-[#0a0a0a] dark:border-[#383838] tablet:border-r-[1px] border-[#E1E1E1] transition-all duration-500 ease-in-out">
@@ -251,7 +224,7 @@ export default function Home(props: { newsVideo: Array<{ url: string, name: stri
 											</svg>
 										</div>
 									}
-									{props.newsVideo.length > 0 ?
+									{newsjson.newsVideo.length > 0 ?
 										<div className="max-w-full w-full pl-5 py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
 											<div className="tablet:text-[32px] font-['Montserrat'] font-bold dark:text-white">Последние выпуски новостей</div>
 											<div className="relative flex w-full group">
@@ -285,7 +258,7 @@ export default function Home(props: { newsVideo: Array<{ url: string, name: stri
 															</svg>
 														</div>
 													</div>
-													{props.newsVideo.map((item: { url: string, name: string, png: string }) => {
+													{newsjson.newsVideo.map((item: { url: string, name: string, png: string }) => {
 														return (
 															<Link href={`${item.url}`} key={item.url} className="flex-none px-[12px] last:pr-6">
 																<div className="flex flex-col items-center justify-center gap-3">
@@ -331,35 +304,6 @@ export default function Home(props: { newsVideo: Array<{ url: string, name: stri
 
 }
 
-async function addMoney(_amount: number, _nickname: string) {
-	const data = { "amount": _amount, "nickname": _nickname, "redirect": location.href }
-	await fetch("/api/player/getMoneyUrl", {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(data)
-	}).then((response) => {
-		return response.json();
-	}).then((data: { url: string }) => {
-		location.href = data.url
-	})
-}
-
-
-function switchWind(BlockId: string) {
-	if (typeof window === "object") {
-		const element = document.getElementById(`${BlockId}`);
-		if (element) {
-			if (element.className.includes("hidden")) {
-				element.classList.remove("hidden");
-			} else {
-				element.classList.add("hidden");
-			}
-
-		}
-	}
-}
 export const getServerSideProps: GetServerSideProps = async (
 	ctx: GetServerSidePropsContext
 ) => {
@@ -372,121 +316,7 @@ export const getServerSideProps: GetServerSideProps = async (
 			props: {}
 		}
 	}
-
-	//const prisma = new PrismaClient()
-	// const shows = await prisma.film.findMany({
-	// 	where: {
-	// 		content: "shows",
-	// 		show: 1
-	// 	},
-	// 	select: {
-	// 		imgID: true,
-	// 		code: true,
-	// 		subscription: true,
-	// 		show: true
-	// 	},
-	// })
-	// const recomendtosee = await prisma.film.findMany({
-	// 	where: {
-	// 		OR: [
-	// 			{
-	// 				mark: {
-	// 					gte: 3.8,
-	// 				},
-	// 			},
-	// 			{
-	// 				mark: {
-	// 					equals: 0,
-	// 				},
-	// 			},
-	// 		],
-	// 		datePremiere: {
-	// 			lte: new Date()
-	// 		},
-	// 		show: 1,
-	// 	},
-	// 	select: {
-	// 		imgID: true,
-	// 		code: true,
-	// 		subscription: true,
-	// 		show: true,
-	// 		describe: true,
-	// 	},
-	// })
-
-	// const comingOut = await prisma.film.findMany({
-	// 	where: {
-	// 		datePremiere: {
-	// 			gt: new Date()
-	// 		},
-	// 		show: 1
-	// 	},
-	// 	select: {
-	// 		imgID: true,
-	// 		code: true,
-	// 		subscription: true,
-	// 		show: true
-	// 	},
-	// })
-	// const day21before = new Date()
-	// day21before.setDate(day21before.getDay() - 21)
-	// const newest = await prisma.film.findMany({
-	// 	where: {
-	// 		AND: [
-	// 			{
-	// 				datePremiere: {
-	// 					lte: new Date()
-	// 				},
-	// 			},
-	// 			{
-	// 				datePremiere: {
-	// 					gt: day21before
-	// 				},
-	// 			},
-	// 		],
-	// 		show: 1
-	// 	},
-	// 	select: {
-	// 		imgID: true,
-	// 		code: true,
-	// 		subscription: true,
-	// 		show: true
-	// 	},
-	// })
-	//const prmsParse2 = await fsPromises.readFile(process.cwd()+"/newsinfo.json")
-	// const news = await JSON.parse((prmsParse2).toString()) as {
-	// 	newsVideo: Array<{ url: string, name: string, png: string }>;
-	// };
-	const news = {
-		"news": [
-			{
-				"text": "Телеканал СПtv открыл холдинг платформу для создателей контента",
-				"img": "cptvpreates.png"
-			},
-			{
-				"text": "Испытания шлема дополненной реальности Mine Vision Pro",
-				"img": "lolo.jpg"
-			}
-		],
-		"newsVideo": [
-			{
-				"url": "https://youtu.be/eq_78xANfPA",
-				"name": "Выпуст от 3.6.2023",
-				"png": "news0.png"
-			}
-		],
-		"mainNews": {
-			"title": "Открытие СПtv+",
-			"text": "Телеканал СПtv открыл холдинг платформу для создателей контента",
-			"img": "cptvpreates.png"
-		}
-	}
-
-
-	const newsVideo = news.newsVideo;
-
 	return {
-		//props: { newest, recomendtosee, shows, comingOut, newsVideo }
-		props: { newsVideo }
+		props: {  }
 	}
 }

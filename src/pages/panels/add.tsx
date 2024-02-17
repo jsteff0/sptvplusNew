@@ -47,7 +47,8 @@ export default function Home(props: {
 	}
 	const { data: session } = useSession();
 	const { data } = api.user.management.useQuery();
-	//console.log(data?.nickname)
+
+
 	const [formData, setFormData] = useState<{
 		nickname: string;
 		name: string;
@@ -77,6 +78,8 @@ export default function Home(props: {
 			youtube: null,
 		}
 	);
+
+
 	const [formDataNews, setFormDataNews] = useState<{
 		nickname: string;
 		text: string | null
@@ -94,6 +97,8 @@ export default function Home(props: {
 			imgName: '',
 		}
 	);
+
+
 	const [formDataShow, setFormDataShow] = useState<{ nickname: string, name: string, isshow: number }>(
 		{
 			nickname: data?.nickname as string,
@@ -101,6 +106,8 @@ export default function Home(props: {
 			isshow: 1,
 		}
 	);
+
+
 	const [formDataNewEps, setFormDataNewEps] = useState<{ nickname: string, name: string, timing: number }>(
 		{
 			nickname: data?.nickname as string,
@@ -119,8 +126,9 @@ export default function Home(props: {
 			const date = new Date(e.target.value)
 			setFormDataNews({
 				...formDataNews,
-				name: "Выпуст от " + date.getDay() + "." + date.getMonth() + "." + date.getFullYear(),
+				name: "Выпуск от " + (date.getDate().toString().length < 2 ? "0"+date.getDate() : date.getDate()) + "." + ((date.getMonth()+1).toString().length < 2 ? ("0"+(date.getMonth()+1)) : (date.getMonth()+1)) + "." + date.getFullYear(),
 			});
+			console.log(formDataNews.name)
 		}
 	};
 
@@ -137,19 +145,21 @@ export default function Home(props: {
 			});
 		}
 	};
+
 	const handleChangeShow = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
 		setFormDataShow({
 			...formDataShow,
 			[e.target.name]: e.target.value,
 		});
 	};
+
 	const handleChangeEps = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
 		setFormDataNewEps({
 			...formDataNewEps,
 			[e.target.name]: e.target.value,
 		});
 	};
-
+//----------------------------------------------------ДОБАВЛЕНИЕ НОВОСТЕЙ-------------------------------------------------
 	const handleSubmitNews = async (e: FormEvent) => {
 		e.preventDefault();
 		const dataForm = new FormData()
@@ -199,6 +209,8 @@ export default function Home(props: {
 		alert("Контент успешно добавлен")
 	}
 
+//----------------------------------------------------ДОБАВЛЕНИЕ КОНТЕНТА-------------------------------------------------
+
 	const handleSubmitContent = async (e: FormEvent) => {
 		e.preventDefault();
 		if (genreCheck.length === 0) {
@@ -213,7 +225,14 @@ export default function Home(props: {
 						console.log(element, element.value)
 						if (element.name.includes("duration")) {
 							const duration = durations
-							duration.push(parseInt(element.value))
+							if (element.value.split(":").length === 3) {
+								const h = element.value.split(":")[0] as string
+								const m = element.value.split(":")[1] as string
+								const s = element.value.split(":")[2] as string
+								if (h && m && s) {
+									duration.push(parseInt(h)+parseInt(m)+parseInt(s))
+								}
+							}
 							setDurations(duration)
 						}
 					}
@@ -270,9 +289,13 @@ export default function Home(props: {
 			})
 			if (!res2.ok) throw new Error(await res2.text())
 			alert("Контент успешно добавлен")
-			setDurations([])
+			location.reload()
 		};
 	}
+
+	//----------------------------------------------------ДОБАВЛЕНИЕ ЭПИЗОДА-------------------------------------------------
+
+
 	const handleSubmitNewEps = async (e: FormEvent) => {
 		e.preventDefault();
 		const fstdata = { "timing": formDataNewEps.timing, "name": formDataNewEps.name, "nickname": data?.nickname as string }
@@ -294,6 +317,9 @@ export default function Home(props: {
 			}
 		})
 	}
+
+	//----------------------------------------------------ИЗМЕНЕНИЕ ПОКАЗЫВАНИЯ-------------------------------------------------
+
 	const handleSubmitShow = async (e: FormEvent) => {
 		e.preventDefault();
 		const fstdata = { "change": formDataShow.isshow, "name": formDataShow.name, "nickname": data?.nickname as string }
@@ -338,7 +364,7 @@ export default function Home(props: {
 					<link rel="preconnect" href="https://fonts.googleapis.com" />
 					<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
 				</Head>
-				<div className="min-h-screen flex flex-col bg-[#E1E1E1] dark:bg-[#000000]">
+				<div className="min-h-screen flex flex-col bg-[#000000]">
 					<Header balance={data.balance} subscription={data.subscription} UUID={data.UUID ? `https://api.mineatar.io/face/${data.UUID}` : "/randomguy.png"} nickname={data.nickname} />
 
 					<section id="alert" className="fixed inset-0 overflow-y-auto z-20 hidden">
@@ -365,13 +391,13 @@ export default function Home(props: {
 
 										<form className="text-white" onSubmit={handleSubmitContent}>
 											<div className="flex flex-col">
-												<input onChange={handleChange} type="text" placeholder="Название" maxLength={50} className="w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" name="name" required />
+												<input autoComplete="off" onChange={handleChange} type="text" placeholder="Название" maxLength={50} className="w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" name="name" required />
 
-												<label className="text-white my-4">Картинка <input onChange={(e) => setPicture(e.target.files?.[0])} type="file" name="picture" required /></label>
-												<label className="text-white my-4">Постер <input onChange={(e) => setPoster(e.target.files?.[0])} type="file" name="poster" required /></label>
-												<label className="text-white my-4">Текст <input onChange={(e) => setPostertext(e.target.files?.[0])} type="file" name="postertext" required /></label>
+												<label className="text-white my-4">Картинка <input autoComplete="off" onChange={(e) => setPicture(e.target.files?.[0])} type="file" name="picture" required /></label>
+												<label className="text-white my-4">Постер <input autoComplete="off" onChange={(e) => setPoster(e.target.files?.[0])} type="file" name="poster" required /></label>
+												<label className="text-white my-4">Текст <input autoComplete="off" onChange={(e) => setPostertext(e.target.files?.[0])} type="file" name="postertext" required /></label>
 
-												<input onChange={handleChange} type="text" placeholder="Студия производства" className="w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" name="studio" required />
+												<input autoComplete="off" onChange={handleChange} type="text" placeholder="Студия производства" className="w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" name="studio" required />
 
 
 												<select onChange={handleChange} className="w-full bg-[#313131] p-2 my-4 rounded-[15px]" name="type" required >
@@ -384,18 +410,18 @@ export default function Home(props: {
 												<textarea onChange={handleChange} className="w-full h-[160px] bg-[#313131] p-6 my-4 rounded-[15px] " name="smdescribe" placeholder="Не большое описание" cols={30} rows={10} required ></textarea>
 
 												<div className="text-[18px]">Выберите хотя бы один жанр</div>
-												<label htmlFor="comedy">Комедия <input type="checkbox" name="comedy" onChange={(e) => checking(e)} /></label>
-												<label htmlFor="drama">Драма <input type="checkbox" name="drama" onChange={(e) => checking(e)} /></label>
-												<label htmlFor="thriler">Триллер <input type="checkbox" name="thriler" onChange={(e) => checking(e)} /></label>
-												<label htmlFor="romance">Романс <input type="checkbox" name="romance" onChange={(e) => checking(e)} /></label>
-												<label htmlFor="horror">Хорор <input type="checkbox" name="horror" onChange={(e) => checking(e)} /></label>
-												<label htmlFor="fantasy">Фэнтэзи <input type="checkbox" name="fantasy" onChange={(e) => checking(e)} /></label>
-												<label htmlFor="historical">Исторический <input type="checkbox" name="historical" onChange={(e) => checking(e)} /></label>
-												<label htmlFor="darkcomedy">Чёрная комедия <input type="checkbox" name="darkcomedy" onChange={(e) => checking(e)} /></label>
-												<label htmlFor="musicals">Мьюзикл <input type="checkbox" name="musicals" onChange={(e) => checking(e)} /></label>
-												<label htmlFor="action">Экшн <input type="checkbox" name="action" onChange={(e) => checking(e)} /></label>
-												<label htmlFor="animated">Анимационный <input type="checkbox" name="animated" onChange={(e) => checking(e)} /></label>
-												<label className="text-white">Много серийный контент </label><input type="checkbox" className="peer" onChange={(e) => {
+												<label htmlFor="comedy">Комедия <input autoComplete="off" type="checkbox" name="comedy" onChange={(e) => checking(e)} /></label>
+												<label htmlFor="drama">Драма <input autoComplete="off" type="checkbox" name="drama" onChange={(e) => checking(e)} /></label>
+												<label htmlFor="thriler">Триллер <input autoComplete="off" type="checkbox" name="thriler" onChange={(e) => checking(e)} /></label>
+												<label htmlFor="romance">Романс <input autoComplete="off" type="checkbox" name="romance" onChange={(e) => checking(e)} /></label>
+												<label htmlFor="horror">Хорор <input autoComplete="off" type="checkbox" name="horror" onChange={(e) => checking(e)} /></label>
+												<label htmlFor="fantasy">Фэнтэзи <input autoComplete="off" type="checkbox" name="fantasy" onChange={(e) => checking(e)} /></label>
+												<label htmlFor="historical">Исторический <input autoComplete="off" type="checkbox" name="historical" onChange={(e) => checking(e)} /></label>
+												<label htmlFor="darkcomedy">Чёрная комедия <input autoComplete="off" type="checkbox" name="darkcomedy" onChange={(e) => checking(e)} /></label>
+												<label htmlFor="musicals">Мьюзикл <input autoComplete="off" type="checkbox" name="musicals" onChange={(e) => checking(e)} /></label>
+												<label htmlFor="action">Экшн <input autoComplete="off" type="checkbox" name="action" onChange={(e) => checking(e)} /></label>
+												<label htmlFor="animated">Анимационный <input autoComplete="off" type="checkbox" name="animated" onChange={(e) => checking(e)} /></label>
+												<label className="text-white">Много серийный контент </label><input autoComplete="off" type="checkbox" className="peer" onChange={(e) => {
 													if (e.currentTarget.checked)
 														setIsEpisods(true)
 													else
@@ -403,7 +429,7 @@ export default function Home(props: {
 												}} />
 												{isEpisods ?
 													<div id="durations" className="peer-checked:block hidden">
-														<input type="number" className="w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" min={1} name="cntEps" placeholder="Количество эпизодов" required onChange={(e) => {
+														<input autoComplete="off" type="number" className="w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" min={1} name="cntEps" placeholder="Количество эпизодов" required onChange={(e) => {
 															const parentNode = e.currentTarget.parentElement as HTMLDivElement
 															const value = !e.currentTarget.value || parseInt(e.currentTarget.value) < 0 ? 0 : parseInt(e.currentTarget.value)
 															if (value < parentNode.children.length - 1) {
@@ -416,9 +442,9 @@ export default function Home(props: {
 															} else {
 																for (let i = value - (parentNode.children.length - 1); i > 0; i--) {
 																	const newInput = document.createElement("input")
-																	newInput.type = "number"
+																	newInput.type = "text"
 																	newInput.className = "w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]"
-																	newInput.placeholder = "Длительность в секундах " + (value - i + 1)
+																	newInput.placeholder = "Длина контента в hh:mm:ss " + (value - i + 1)
 																	newInput.required = true
 																	newInput.name = (value - i + 1) + "duration"
 																	parentNode.appendChild(newInput)
@@ -426,7 +452,17 @@ export default function Home(props: {
 															}
 														}} />
 													</div> :
-													<input onChange={(e) => setDurations([parseInt(e.currentTarget.value)])} type="number" placeholder="Длительность контента в секундах" className="peer-checked:hidden block w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" name="1duration" />
+													<input autoComplete="off" onChange={(e) => {
+														if (e.currentTarget.value.split(":").length === 3) {
+															const h = e.currentTarget.value.split(":")[0] as string
+															const m = e.currentTarget.value.split(":")[1] as string
+															const s = e.currentTarget.value.split(":")[2] as string
+															if (h && m && s) {
+																setDurations([parseInt(h)+parseInt(m)+parseInt(s)])
+															}
+														}
+
+													}} type="text" placeholder="Длина контента в hh:mm:ss" className="peer-checked:hidden block w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" name="1duration" />
 
 												}
 
@@ -439,15 +475,15 @@ export default function Home(props: {
 													<option value={0}>Никакой</option>
 												</select>
 
-												<label htmlFor="date" className="text-white ">Дата премьеры <br /><input onChange={handleChange} className="text-white w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" type="date" name="date" id="date" /></label><br />
+												<label htmlFor="date" className="text-white ">Дата премьеры <br /><input autoComplete="off" onChange={handleChange} className="text-white w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" type="date" name="date" id="date" /></label><br />
 
-												<input onChange={handleChange} type="number" placeholder="Цена" className="w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" name="prise" required />
+												<input autoComplete="off" onChange={handleChange} type="number" placeholder="Цена" className="w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" name="prise" required />
 
 												<textarea onChange={handleChange} className="w-full h-[160px] bg-[#313131] p-6 my-4 rounded-[15px] " name="more" placeholder="Подробнее" cols={30} rows={10} required></textarea>
 
-												<input onChange={handleChange} type="text" placeholder="Ссылка на YouTube" name="youtube" className="w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" />
+												<input autoComplete="off" onChange={handleChange} type="text" placeholder="Ссылка на YouTube" name="youtube" className="w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" />
 											</div>
-											<input type="submit" className="hover:cursor-pointer px-4 py-2 bg-[#ffbb00] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold m-2" />
+											<input autoComplete="off" type="submit" className="hover:cursor-pointer px-4 py-2 bg-[#ffbb00] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold m-2" />
 										</form>
 									</div>
 									<div className="bg-[#1c1c1c] p-4 rounded-[15px]">
@@ -463,10 +499,10 @@ export default function Home(props: {
 													})}
 												</select>
 												Время в секундах
-												<input onChange={handleChangeEps} type="number" placeholder="Длительность контента в секундах" className="peer-checked:hidden block w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" name="timing" />
+												<input autoComplete="off" onChange={handleChangeEps} type="number" placeholder="Длительность контента в секундах" className="peer-checked:hidden block w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" name="timing" />
 
 											</div>
-											<input type="submit" className="hover:cursor-pointer px-4 py-2 bg-[#ffbb00] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold m-2" />
+											<input autoComplete="off" type="submit" className="hover:cursor-pointer px-4 py-2 bg-[#ffbb00] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold m-2" />
 										</form>
 									</div>
 									{data.management === "FULL" ?
@@ -488,7 +524,7 @@ export default function Home(props: {
 														<option value="0">Нет</option>
 													</select>
 												</div>
-												<input type="submit" className="hover:cursor-pointer px-4 py-2 bg-[#ffbb00] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold m-2" />
+												<input autoComplete="off" type="submit" className="hover:cursor-pointer px-4 py-2 bg-[#ffbb00] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold m-2" />
 											</form>
 										</div>
 										: null}
@@ -504,11 +540,11 @@ export default function Home(props: {
 										<form className="text-white" onSubmit={handleSubmitNews}>
 											<div className="flex flex-col">
 												{/* Текст */}
-												<input name="text" type="text" placeholder="Текст" maxLength={64} className="w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px] " onChange={handleChangeNews} />
+												<input autoComplete="off" name="text" type="text" placeholder="Текст" maxLength={64} className="w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px] " onChange={handleChangeNews} />
 												{/* Картинка */}
-												<label className="text-white">Картинка <input name="picture" onChange={(e) => setFile(e.target.files?.[0])} type="file" /></label>
+												<label className="text-white">Картинка <input autoComplete="off" name="picture" onChange={(e) => setFile(e.target.files?.[0])} type="file" /></label>
 											</div>
-											<input type="submit" className="hover:cursor-pointer px-4 py-2 bg-[#ffbb00] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold m-2" />
+											<input autoComplete="off" type="submit" className="hover:cursor-pointer px-4 py-2 bg-[#ffbb00] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold m-2" />
 										</form>
 									</div>
 									<div className="bg-[#1c1c1c] p-4 rounded-[15px]">
@@ -516,13 +552,13 @@ export default function Home(props: {
 										<form className="text-white" onSubmit={handleSubmitNews}>
 											<div className="flex flex-col">
 												{/* Ссылка */}
-												<input type="text" name="youtube" placeholder="Ссылка" className="w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" onChange={handleChangeNews} />
+												<input autoComplete="off" type="text" name="youtube" placeholder="Ссылка" className="w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" onChange={handleChangeNews} />
 												{/* Дата */}
-												<label htmlFor="date" className="text-white ">Дата выпуска <br /><input className="text-white w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" type="date" name="date" id="date" onChange={handleChangeNews} /></label><br />
+												<label htmlFor="date" className="text-white ">Дата выпуска <br /><input autoComplete="off" className="text-white w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" type="date" name="date" id="date" onChange={handleChangeNews} /></label><br />
 												{/* Картинка */}
-												<label className="text-white">Картинка <input name="picture" onChange={(e) => setFile(e.target.files?.[0])} type="file" /></label>
+												<label className="text-white">Картинка <input autoComplete="off" name="picture" onChange={(e) => setFile(e.target.files?.[0])} type="file" /></label>
 											</div>
-											<input type="submit" className="hover:cursor-pointer px-4 py-2 bg-[#ffbb00] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold m-2" />
+											<input autoComplete="off" type="submit" className="hover:cursor-pointer px-4 py-2 bg-[#ffbb00] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold m-2" />
 										</form>
 									</div>
 									<div className="bg-[#1c1c1c] p-4 rounded-[15px]">
@@ -530,13 +566,13 @@ export default function Home(props: {
 										<form className="text-white" onSubmit={handleSubmitNews}>
 											<div className="flex flex-col">
 												{/* Заголовок */}
-												<input name="title" type="text" placeholder="Заголовок" className="w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" required onChange={handleChangeNews} />
+												<input autoComplete="off" name="title" type="text" placeholder="Заголовок" className="w-full h-[40px] bg-[#313131] p-6 my-4 rounded-[15px]" required onChange={handleChangeNews} />
 												{/* Текст */}
 												<textarea onChange={handleChangeNews} className="w-full h-[160px] bg-[#313131] p-6 my-4 rounded-[15px]" name="text" placeholder="Подробнее" cols={30} rows={10} required></textarea>
 												{/* Картинка */}
-												<label htmlFor="" className="text-white">Картинка <input name="picture" onChange={(e) => setFile(e.target.files?.[0])} required type="file" /></label>
+												<label htmlFor="" className="text-white">Картинка <input autoComplete="off" name="picture" onChange={(e) => setFile(e.target.files?.[0])} required type="file" /></label>
 											</div>
-											<input type="submit" className="hover:cursor-pointer px-4 py-2 bg-[#ffbb00] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold m-2" />
+											<input autoComplete="off" type="submit" className="hover:cursor-pointer px-4 py-2 bg-[#ffbb00] rounded-[15px] disabled:text-[#c6c6c6] text-white font-bold m-2" />
 
 										</form>
 									</div>

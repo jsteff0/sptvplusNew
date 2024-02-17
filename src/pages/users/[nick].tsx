@@ -363,7 +363,7 @@ async function cancelPlayer(nickname: string, nicknameAdder: string) {
 			}).then((response) => {
 				return response.json();
 			}).then((data: { code: number }) => {
-				console.log(data.code)
+				//console.log(data.code)
 				if (data.code === 2) {
 					alertTitle.innerHTML = "Ошибка"
 					alertContect.innerHTML = `Пользователя ${nickname} не существует`
@@ -404,7 +404,7 @@ async function deletePlayer(nickname: string, nicknameAdder: string) {
 			}).then((response) => {
 				return response.json();
 			}).then((data: { code: number }) => {
-				console.log(data.code)
+				//console.log(data.code)
 				if (data.code === 2) {
 					alertTitle.innerHTML = "Ошибка"
 					alertContect.innerHTML = `Пользователя ${nickname} не существует`
@@ -445,7 +445,7 @@ async function accept(nickname: string, nicknameAdder: string) {
 			}).then((response) => {
 				return response.json();
 			}).then((data: { code: number }) => {
-				console.log(data.code)
+				//console.log(data.code)
 				if (data.code === 2) {
 					alertTitle.innerHTML = "Ошибка"
 					alertContect.innerHTML = `Пользователя ${nickname} не существует`
@@ -486,7 +486,7 @@ async function decline(nickname: string, nicknameAdder: string) {
 			}).then((response) => {
 				return response.json();
 			}).then((data: { code: number }) => {
-				console.log(data.code)
+				//console.log(data.code)
 				if (data.code === 2) {
 					alertTitle.innerHTML = "Ошибка"
 					alertContect.innerHTML = `Пользователя ${nickname} не существует`
@@ -527,7 +527,7 @@ async function cancelSub(nickname: string, nicknameAdder: string) {
 			}).then((response) => {
 				return response.json();
 			}).then((data: { code: number }) => {
-				console.log(data.code)
+				//console.log(data.code)
 				if (data.code === 2) {
 					alertTitle.innerHTML = "Ошибка"
 					alertContect.innerHTML = `Пользователя ${nickname} не существует`

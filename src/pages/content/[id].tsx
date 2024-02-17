@@ -586,7 +586,7 @@ function Render(idFilm: { idFilm: string; }) {
 		if (video && !video.currentSrc) {
 			document.addEventListener("keypress", async (e) => {
 				if (e.key === " ") {
-					console.log("sdasdas")
+					//console.log("sdasdas")
 					if (video.paused) {
 						await video.play()
 					} else {

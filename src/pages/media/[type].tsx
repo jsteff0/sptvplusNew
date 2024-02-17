@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Head from "next/head";
+import newsimport from 'newsinfo.json';
 import { useSession } from "next-auth/react";
 //import fsPromises from 'fs/promises';
 import { api } from "~/utils/api";
@@ -26,7 +27,7 @@ interface news {
 	mainNews: { title: string, text: string, img: string }
 }
 
-export default function Home(props: { typeFilms: filmmakers[], news: news }) {
+export default function Home(props: { typeFilms: filmmakers[] }) {
 	const { data: session } = useSession();
 	const { data } = api.user.main.useQuery();
 	const router = useRouter()
@@ -54,6 +55,7 @@ export default function Home(props: { typeFilms: filmmakers[], news: news }) {
 			</div>
 		);
 	} else {
+		const newsjson = newsimport as news
 		return (
 			<>
 				<Head>
@@ -189,7 +191,7 @@ export default function Home(props: { typeFilms: filmmakers[], news: news }) {
 											: <div className="w-full pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex"><div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Упс, кажется ничего нет(</div></div>
 										:
 										<>
-											{props.news.news.length > 0 ?
+											{newsjson.news.length > 0 ?
 												<div className="w-full pl-5 py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
 													<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Новости</div>
 													<div className="relative flex w-full group">
@@ -219,7 +221,7 @@ export default function Home(props: { typeFilms: filmmakers[], news: news }) {
 																	</svg>
 																</div>
 															</div>
-															{props.news.news.map((item: { text: string, img: string }) => {
+															{newsjson.news.map((item: { text: string, img: string }) => {
 																return (
 																	<>
 																		<div className="flex-none px-[12px] first:pl-6 last:pr-6 ">
@@ -250,7 +252,7 @@ export default function Home(props: { typeFilms: filmmakers[], news: news }) {
 													</div>
 												</div>
 												: null}
-											{props.news.newsVideo.length > 0 ?
+											{newsjson.newsVideo.length > 0 ?
 												<div className="w-full h-[201px] tablet:h-[282px] pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
 													<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Последние выпуски новостей</div>
 													<div className="relative flex w-full group">
@@ -284,7 +286,7 @@ export default function Home(props: { typeFilms: filmmakers[], news: news }) {
 																	</svg>
 																</div>
 															</div>
-															{props.news.newsVideo.map((item: { url: string, name: string, png: string }) => {
+															{newsjson.newsVideo.map((item: { url: string, name: string, png: string }) => {
 																return (
 																	<Link href={`${item.url}`} key={""} className="flex-none px-[12px] last:pr-6">
 																		<div className="flex flex-col items-center justify-center gap-3">
@@ -312,14 +314,14 @@ export default function Home(props: { typeFilms: filmmakers[], news: news }) {
 													</div>
 												</div>
 												: null}
-											{props.news.mainNews ? <>
+											{newsjson.mainNews ? <>
 												<div className="w-full h-auto tablet:h-[468px] pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
 													<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Новость недели</div>
 													<div className="flex laptop:flex-row flex-col gap-4">
-														<Image alt="" src={`/news/${props.news.mainNews.img}`} width={420} height={236} className=" laptop:w-[420px] w-[300px] laptop:h-[236px] h-[170px] object-cover rounded-[30px]" />
+														<Image alt="" src={`/news/${newsjson.mainNews.img}`} width={420} height={236} className=" laptop:w-[420px] w-[300px] laptop:h-[236px] h-[170px] object-cover rounded-[30px]" />
 														<div className="flex flex-col justify-center gap-6">
-															<span className="font-['Montserrat'] font-bold text-[20px] dark:text-white">{props.news.mainNews.title}</span>
-															<span className="font-['Montserrat'] font-light text-[16px] w-[70%] dark:text-white">{props.news.mainNews.text}</span>
+															<span className="font-['Montserrat'] font-bold text-[20px] dark:text-white">{newsjson.mainNews.title}</span>
+															<span className="font-['Montserrat'] font-light text-[16px] w-[70%] dark:text-white">{newsjson.mainNews.text}</span>
 														</div>
 													</div>
 												</div>
@@ -366,41 +368,12 @@ export const getServerSideProps: GetServerSideProps = async (
 				subscription: true
 			},
 		})
-		console.log(typeFilms)
 		return {
 			props: { typeFilms }
 		}
 	} else {
-		//const prmsParse = await fsPromises.readFile(process.cwd()+"/newsinfo.json")
-		// const news = await JSON.parse((prmsParse2).toString()) as {
-		// 	newsVideo: Array<{ url: string, name: string, png: string }>;
-		// };
-		const news = {
-			"news": [
-				{
-					"text": "Телеканал СПtv открыл холдинг платформу для создателей контента",
-					"img": "cptvpreates.png"
-				},
-				{
-					"text": "Испытания шлема дополненной реальности Mine Vision Pro",
-					"img": "lolo.jpg"
-				}
-			],
-			"newsVideo": [
-				{
-					"url": "https://youtu.be/eq_78xANfPA",
-					"name": "Выпуст от 3.6.2023",
-					"png": "news0.png"
-				}
-			],
-			"mainNews": {
-				"title": "Открытие СПtv+",
-				"text": "Телеканал СПtv открыл холдинг платформу для создателей контента",
-				"img": "cptvpreates.png"
-			}
-		}
 		return {
-			props: { news }
+			props: { }
 		}
 	}
 

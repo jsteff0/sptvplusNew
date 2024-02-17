@@ -1,6 +1,7 @@
 import { writeFile } from 'fs/promises'
 import { NextRequest, NextResponse } from 'next/server'
 
+
 export async function POST(request: NextRequest) {
 	const data = await request.formData()
 	const type: string = data.get('type') as string
@@ -19,6 +20,7 @@ export async function POST(request: NextRequest) {
 
 		return NextResponse.json({ success: true })
 	} else if (type === "news") {
+
 		const file: File | null = data.get('file') as unknown as File
 
 		if (!file) {

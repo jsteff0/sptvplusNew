@@ -99,7 +99,7 @@ function purchaseSub(sub: string, nickname: string, balance: number, subNow: str
 		const alertButton1 = document.getElementById(`alertButton1`) as HTMLButtonElement;
 		const alertButton2 = document.getElementById(`accept`) as HTMLButtonElement;
 
-		console.log(alertButton2)
+		//console.log(alertButton2)
 		if (alertTitle && alertContect && alertButton1 && alertButton2) {
 			if(balance < (sub === "ONE" ? 16 : sub === "MULTI" ? 24 : 32)){
 				alertButton2.classList.add("hidden")

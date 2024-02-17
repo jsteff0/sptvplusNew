@@ -3,10 +3,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { ContentTypes, Types, PrismaClient } from '@prisma/client'
-import { readFile, writeFile } from 'fs/promises'
+
+import { writeFile } from 'fs/promises' //readFile,
+import newsimport from 'newsinfo.json';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 const prisma = new PrismaClient()
-interface news {
+interface newsint {
 	news: Array<{ text: string, img: string }>;
 	newsVideo: Array<{ url: string, name: string, png: string }>;
 	mainNews: { title: string, text: string, img: string }
@@ -28,11 +30,12 @@ export interface NewApiRequest extends NextApiRequest {
 		text: string | null,
 		title: string | null,
 		imgName: string | null,
-		id: string,
+		id: number,
 		change: string,
 		key: string,
 		timing: string,
 		rate: number,
+		code: string,
 	};
 }
 export default async function Page(req: NewApiRequest, res: NextApiResponse) {
@@ -102,8 +105,8 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 
 				res.status(200).json({ "code": 2 })
 			} else if (req.query.action === "addNews") {
-				const newsfile = await readFile("./news.json")
-				const news = await JSON.parse((newsfile).toString()) as news;
+				const news = newsimport as newsint
+
 				if (req.body.title && req.body.imgName && req.body.text) {
 					news.mainNews.img = req.body.imgName
 					news.mainNews.text = req.body.text
@@ -115,7 +118,7 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 				} else {
 					res.status(200).json({ "code": 1 })
 				}
-				await writeFile("./news.json", JSON.stringify(news, null, 2))
+				await writeFile("./newsinfo.json", JSON.stringify(news, null, 2))
 				res.status(200).json({ "code": 2 })
 			} else if (req.query.action === "isShows") {
 				if (req.body.name && req.body.change) {
@@ -158,12 +161,21 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 
 			} else if (req.query.action === "delete") {
 
-				if (req.body.name && req.body.key) {
+				if (req.body.code && req.body.key) {
 
 					if (atob(req.body.key) === "IASASALBIGBIGCHILEN") {
+						console.log(req.body.code)
+						await prisma.view.deleteMany({
+							where: {
+								contentcode: req.body.code
+							},
+						}).catch((err) => {
+							console.log(err);
+							res.status(200).json({ "code": 1 })
+						})
 						await prisma.film.delete({
 							where: {
-								name: req.body.name
+								code: req.body.code
 							},
 						}).catch((err) => {
 							console.log(err);

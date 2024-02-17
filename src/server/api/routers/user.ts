@@ -13,7 +13,7 @@ export const userRouter = createTRPCRouter({
 			where: { id: ctx.session.user.id },
 			select: { nickname: true, subscription: true, balance: true, addedPlayers: true, subscriptionOwner: true, noSubscriptionOwnerYet: true, noPlayersAddedYet: true, expirydate: true },
 		});
-		if (userAdded && userAdded.expirydate) {
+		if (userAdded && userAdded.expirydate && userAdded.subscription != "NO" &&  userAdded.expirydate.getTime() < new Date().getTime()) {
 			const date1 = new Date()
 			const date2 = userAdded.expirydate
 			if ((userAdded?.subscription === "MULTI" || userAdded?.subscription === "fMULTI" || userAdded?.subscription === "MAX" || userAdded?.subscription === "fMAX" || userAdded?.subscription === "ONE") && userAdded?.expirydate && userAdded.addedPlayers && date2.getTime() < date1.getTime()) {
