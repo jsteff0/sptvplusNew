@@ -227,7 +227,7 @@ export default function Home(props: { typeFilms: filmmakers[] }) {
 																		<div className="flex-none px-[12px] first:pl-6 last:pr-6 ">
 																			<div className="flex flex-col items-center justify-center">
 																				<Image width={285} height={160} src={`/news/${item.img}`} className="dark:border-[1px] tablet:w-[285px] tablet:h-[160px] w-[160px] h-[90px] object-cover rounded-t-[10px] bg-center" alt="" />
-																				<div className="relative bottom-0 tablet:w-[285px] w-[160px] tablet:h-[60px] h-[33px] bg-[#0000007b] dark:bg-[#7a7a7a7b] rounded-b-[10px] flex flex-col justify-center items-center">
+																				<div className="relative bottom-0 tablet:w-[285px] w-[160px] tablet:h-[59px] h-[32px] bg-[#0000007b] dark:bg-[#7a7a7a7b] rounded-b-[10px] flex flex-col justify-center items-center">
 																					<div className="text-white font-['Montserrat'] font-medium tablet:text-[13px] text-[9px] w-auto tablet:p-3 p-1 h-auto">{item.text}</div>
 																				</div>
 																			</div>

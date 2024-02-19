@@ -118,7 +118,7 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 				} else {
 					res.status(200).json({ "code": 1 })
 				}
-				await writeFile("./newsinfo.json", JSON.stringify(news, null, 2))
+				await writeFile("newsinfo.json", JSON.stringify(news, null, 2))
 				res.status(200).json({ "code": 2 })
 			} else if (req.query.action === "isShows") {
 				if (req.body.name && req.body.change) {

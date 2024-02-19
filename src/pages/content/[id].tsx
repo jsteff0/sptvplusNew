@@ -395,9 +395,10 @@ export default function Home(props: {
 						<section
 							className="z-10 laptop:bg-gradient-to-r min-h-[630px] relative bg-[#000000df] from-[#000000e8] from-[35%] to-transparent  w-full left-0 flex flex-col laptop:justify-normal justify-center">
 							<div className="laptop:max-w-[40%] max-w-screen px-10 py-20 flex flex-col items-center">
-								<img src={`/preview/${props.content.imgID}_m.png`} className="laptop:w-auto tablet:w-[50%] w-auto" alt="" />
+								{/* <img src={`/preview/${props.content.imgID}_m.png`} className="laptop:w-auto tablet:w-[50%] w-auto" alt="" /> */}
+								 <img src={`https://storage.yandexcloud.net/sptvplus/logoCBD.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=YCAJEDAEuDdFxX7nnNR3EBkAC%2F20240217%2Fru-central1%2Fs3%2Faws4_request&X-Amz-Date=20240217T180051Z&X-Amz-Expires=10086400&X-Amz-Signature=37EA4A4AAB0F98187A9F0399934CABD3E870AF7298FC6516A7990E041A88CBEB&X-Amz-SignedHeaders=host`} className="laptop:w-auto tablet:w-[50%] w-auto" alt="" />
 								<div className="font-medium smltp:text-[13px] text-[9px] text-[rgb(173,173,173)] flex smltp:gap-[8px] gap-[4px] justify-center font-['Montserrat']">
-									<span onClick={() => switchWind("mark")} className={`${props.content.mark !== 0.0 ? props.content.mark >= 2.5 ? props.content.mark >= 3.9 ? "text-[#00760C]" : "text-[#766300]" : "text-[#761500]" : "text-[#7c7c7c]"} cursor-pointer`}>{props.content.mark !== 0.0 ? (props.content.mark.toString().includes('.')) ? props.content.mark : `${props.content.mark}.0` : `Оценить`}</span>
+									<span onClick={() => switchWind("mark")} className={`${props.content.mark !== 0.0 ? props.content.mark >= 2.5 ? props.content.mark >= 3.9 ? "text-[#00760C]" : "text-[#766300]" : "text-[#761500]" : "text-[#7c7c7c]"} cursor-pointer`}>{props.content.mark !== 0.0 ? props.content.mark.toFixed(1) : `Оценить`}</span>
 									<span>{props.content.watched >= 1000000 ? `${(props.content.watched / 1000000).toFixed(1)}M` : props.content.watched > 1000 ? `${(props.content.watched / 1000).toFixed(1)}K` : props.content.watched}</span>
 									<span>{datePremiere.getFullYear()}</span>
 									<span>{props.content.types.map((item: string) => {

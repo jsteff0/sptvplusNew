@@ -14,7 +14,7 @@ export default function Home() {
 					<link rel="preconnect" href="https://fonts.googleapis.com" />
 					<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
 				</Head>
-				<div className="min-h-screen flex flex-col">
+				<div className="min-h-screen flex flex-col bg-[#E1E1E1] dark:bg-[#000000]">
 					<header className="fixed flex justify-between items-center px-8 z-10 w-full h-[55px] bg-[#0f0f0f] ">
 						<Link href="/" className="w-auto h-auto">
 							<span className=" text-[#FFE400] font-['Montserrat'] text-[20px] font-extrabold">СП</span>
