@@ -21,6 +21,6 @@ export function getStaticProps() {
   };
 }
 
-export default function Home(props: { data: newsint }) {
-  return <code>{props.data.news[0]?.text}</code>;
+export default function Home(props: { data: string }) {
+  return <code>{props.data}</code>;
 }
