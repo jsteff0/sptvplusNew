@@ -41,6 +41,9 @@ export const env = createEnv({
    */
   client: {
 
+    NEXT_PUBLIC_AWS_USER_KEY: z.string(),
+    NEXT_PUBLIC_AWS_USER_SECRET_KEY: z.string(),
+    NEXT_PUBLIC_AWS_REGION: z.string(),
     NEXT_PUBLIC_CARD_ID: z.string(),
     NEXT_PUBLIC_CARD_TOKEN: z.string(),
   },
@@ -58,6 +61,9 @@ export const env = createEnv({
     DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
     NEXT_PUBLIC_CARD_ID: process.env.NEXT_PUBLIC_CARD_ID,
     NEXT_PUBLIC_CARD_TOKEN: process.env.NEXT_PUBLIC_CARD_TOKEN,
+    NEXT_PUBLIC_AWS_USER_KEY: process.env.NEXT_PUBLIC_AWS_USER_KEY,
+    NEXT_PUBLIC_AWS_USER_SECRET_KEY: process.env.NEXT_PUBLIC_AWS_USER_SECRET_KEY,
+    NEXT_PUBLIC_AWS_REGION: process.env.NEXT_PUBLIC_AWS_REGION,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

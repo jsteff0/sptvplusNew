@@ -433,7 +433,7 @@ export default function Home(props: {
 											:
 											<button onClick={() => startwatching(props.content.code, "TLR", data.nickname as string)} className="px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold">Смотреть трейлер</button>
 										:
-										<button onClick={() => location.href = props.content.youtube as string} className="px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold">Смотреть на YouTube</button>
+										<button onClick={() => window.open(props.content.youtube as string)} className="px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold">Смотреть на YouTube</button>
 									}
 									<div className="flex">
 										<input type="checkbox" checked={data.fav.includes(props.content.code)}  className="peer hidden" id="saveButton" />

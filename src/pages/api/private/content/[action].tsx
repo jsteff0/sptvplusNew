@@ -4,11 +4,11 @@
 
 import { ContentTypes, Types, PrismaClient } from '@prisma/client'
 
-import { writeFile } from 'fs/promises' //readFile,
-import newsimport from 'newsinfo.json';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 const prisma = new PrismaClient()
-interface newsint {
+import EasyYandexS3 from 'easy-yandex-s3'
+import { env } from "~/env.mjs";
+interface news {
 	news: Array<{ text: string, img: string }>;
 	newsVideo: Array<{ url: string, name: string, png: string }>;
 	mainNews: { title: string, text: string, img: string }
@@ -40,6 +40,14 @@ export interface NewApiRequest extends NextApiRequest {
 }
 export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 	try {
+		const s3 = new EasyYandexS3({
+			auth: {
+				accessKeyId: env.NEXT_PUBLIC_AWS_USER_KEY,
+				secretAccessKey: env.NEXT_PUBLIC_AWS_USER_SECRET_KEY,
+			},
+			Bucket: 'sptv-storage', // например, "my-storage",
+			debug: true, // Дебаг в консоли, потом можете удалить в релизе
+		});
 		console.log(req.query)
 		if (req.body.nickname) {
 
@@ -105,20 +113,29 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 
 				res.status(200).json({ "code": 2 })
 			} else if (req.query.action === "addNews") {
-				const news = newsimport as newsint
-
+				const inf = await fetch("https://sptv-storage.storage.yandexcloud.net/newsinfo.json")
+				const ans = await inf.text()
+				const jsonnews = JSON.parse(ans) as news
 				if (req.body.title && req.body.imgName && req.body.text) {
-					news.mainNews.img = req.body.imgName
-					news.mainNews.text = req.body.text
-					news.mainNews.title = req.body.title
+					jsonnews.mainNews.img = req.body.imgName
+					jsonnews.mainNews.text = req.body.text
+					jsonnews.mainNews.title = req.body.title
 				} else if (req.body.youtube && req.body.imgName) {
-					news.newsVideo.push({ url: req.body.youtube, name: req.body.name, png: req.body.imgName })
+					jsonnews.newsVideo.push({ url: req.body.youtube, name: req.body.name, png: req.body.imgName })
 				} else if (req.body.text && req.body.imgName) {
-					news.news.push({ text: req.body.text, img: req.body.imgName })
+					jsonnews.news.push({ text: req.body.text, img: req.body.imgName })
 				} else {
 					res.status(200).json({ "code": 1 })
 				}
-				await writeFile("newsinfo.json", JSON.stringify(news, null, 2))
+				const buf = Buffer.from(JSON.stringify(jsonnews), 'utf8');
+				await s3.Upload(
+					{
+						buffer: buf,
+						name: "newsinfo.json"
+					},
+					'/'
+				).catch(error => console.error(error));
+				//await writeFile("newsinfo.json", JSON.stringify(jsonnews, null, 2))
 				res.status(200).json({ "code": 2 })
 			} else if (req.query.action === "isShows") {
 				if (req.body.name && req.body.change) {
@@ -268,7 +285,10 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 						show: true
 					},
 				})
-				res.status(200).json({ "newest": newest, "comingOut": comingOut, "recomendtosee": recomendtosee, "shows": shows })
+				const inf = await fetch("https://sptv-storage.storage.yandexcloud.net/newsinfo.json")
+				const ans = await inf.text()
+				const jsonans = JSON.parse(ans) as news
+				res.status(200).json({ "newest": newest, "comingOut": comingOut, "recomendtosee": recomendtosee, "shows": shows, "news": jsonans })
 			} else {
 				res.status(200).json({ "code": 0 })
 			}

@@ -27,6 +27,12 @@ const config = {
       },
       {
         protocol: 'https',
+        hostname: 'sptv-storage.storage.yandexcloud.net',
+        port: '',
+        pathname: '/images/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'visage.surgeplay.com',
         port: '',
         pathname: '/front/512/**',

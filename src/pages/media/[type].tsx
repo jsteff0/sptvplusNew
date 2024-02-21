@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Head from "next/head";
-import newsimport from 'newsinfo.json';
+// import newsimport from 'newsinfo.json';
 import { useSession } from "next-auth/react";
 //import fsPromises from 'fs/promises';
 import { api } from "~/utils/api";
@@ -27,7 +27,7 @@ interface news {
 	mainNews: { title: string, text: string, img: string }
 }
 
-export default function Home(props: { typeFilms: filmmakers[] }) {
+export default function Home(props: { typeFilms: filmmakers[], jsonnews: news }) {
 	const { data: session } = useSession();
 	const { data } = api.user.main.useQuery();
 	const router = useRouter()
@@ -55,7 +55,7 @@ export default function Home(props: { typeFilms: filmmakers[] }) {
 			</div>
 		);
 	} else {
-		const newsjson = newsimport as news
+		const newsjson = props.jsonnews
 		return (
 			<>
 				<Head>
@@ -68,7 +68,7 @@ export default function Home(props: { typeFilms: filmmakers[] }) {
 				<div className="min-h-screen flex flex-col bg-[#E1E1E1] dark:bg-[#000000]">
 					<Header balance={data.balance} subscription={data.subscription} UUID={data.UUID ? `https://api.mineatar.io/face/${data.UUID}` : "/randomguy.png"} nickname={data.nickname} />
 
-					
+
 					<main className="flex align-middle justify-center flex-auto">
 						<div className="flex tablet:flex-row flex-col-reverse w-screen ">
 							<nav className="fixed bottom-0 tablet:z-0 z-10 flex justify-center tablet:w-[190px] w-screen tablet:min-h-screen h-[62px] bg-white dark:bg-[#0a0a0a] dark:border-[#383838] tablet:border-r-[1px] border-[#E1E1E1] transition-all duration-500 ease-in-out">
@@ -372,8 +372,11 @@ export const getServerSideProps: GetServerSideProps = async (
 			props: { typeFilms }
 		}
 	} else {
+		const inf = await fetch("https://sptv-storage.storage.yandexcloud.net/newsinfo.json")
+		const ans = await inf.text()
+		const jsonnews = JSON.parse(ans) as news
 		return {
-			props: { }
+			props: {jsonnews}
 		}
 	}
 
