@@ -175,7 +175,7 @@ export default function Home(props: { typeFilms: filmmakers[], jsonnews: news })
 															return (
 																<>
 																	<Link href={`/content/${item.code}`} className="relative flex-none px-[12px] last:pr-6">
-																		<Image width={150} height={200} src={`/preview/${item.imgID}_a.png`} className="tablet:h-[200px] tablet:w-[150px] h-[132px] w-[99px] object-cover rounded-[10px] bg-center" alt="" />
+																		<Image width={150} height={200} src={`https://sptv-storage.storage.yandexcloud.net/images/preview/${item.imgID}_a.png`} className="tablet:h-[200px] tablet:w-[150px] h-[132px] w-[99px] object-cover rounded-[10px] bg-center" alt="" />
 																		{((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0) < item.subscription ?
 																			<Image width={150} height={200} src={`/subscriptions/only${item.subscription === 3 ? "Max" : item.subscription === 2 ? "Multi" : "One"}.svg`} className="absolute bottom-0 tablet:h-[200px] tablet:w-[150px] h-[20px] w-[99px] object-cover bg-center" alt="" />
 																			: null}
@@ -226,7 +226,7 @@ export default function Home(props: { typeFilms: filmmakers[], jsonnews: news })
 																	<>
 																		<div className="flex-none px-[12px] first:pl-6 last:pr-6 ">
 																			<div className="flex flex-col items-center justify-center">
-																				<Image width={285} height={160} src={`/news/${item.img}`} className="dark:border-[1px] tablet:w-[285px] tablet:h-[160px] w-[160px] h-[90px] object-cover rounded-t-[10px] bg-center" alt="" />
+																				<Image width={285} height={160} src={`https://sptv-storage.storage.yandexcloud.net/images/news/${item.img}`} className="dark:border-[1px] tablet:w-[285px] tablet:h-[160px] w-[160px] h-[90px] object-cover rounded-t-[10px] bg-center" alt="" />
 																				<div className="relative bottom-0 tablet:w-[285px] w-[160px] tablet:h-[59px] h-[32px] bg-[#0000007b] dark:bg-[#7a7a7a7b] rounded-b-[10px] flex flex-col justify-center items-center">
 																					<div className="text-white font-['Montserrat'] font-medium tablet:text-[13px] text-[9px] w-auto tablet:p-3 p-1 h-auto">{item.text}</div>
 																				</div>
@@ -290,7 +290,7 @@ export default function Home(props: { typeFilms: filmmakers[], jsonnews: news })
 																return (
 																	<Link href={`${item.url}`} key={""} className="flex-none px-[12px] last:pr-6">
 																		<div className="flex flex-col items-center justify-center gap-3">
-																			<Image width={285} height={180} src={`/news/${item.png}`} className="tablet:h-[180px] tablet:w-[285px] h-[100px] w-[160px] object-cover rounded-[10px] bg-center" alt="" />
+																			<Image width={285} height={180} src={`https://sptv-storage.storage.yandexcloud.net/images/news/${item.png}`} className="tablet:h-[180px] tablet:w-[285px] h-[100px] w-[160px] object-cover rounded-[10px] bg-center" alt="" />
 																		</div>
 																		<div className="text-black dark:text-white tablet:text-[16px] text-[12px]">{item.name}</div>
 																	</Link>
@@ -318,7 +318,7 @@ export default function Home(props: { typeFilms: filmmakers[], jsonnews: news })
 												<div className="w-full h-auto tablet:h-[468px] pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
 													<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Новость недели</div>
 													<div className="flex laptop:flex-row flex-col gap-4">
-														<Image alt="" src={`/news/${newsjson.mainNews.img}`} width={420} height={236} className=" laptop:w-[420px] w-[300px] laptop:h-[236px] h-[170px] object-cover rounded-[30px]" />
+														<Image alt="" src={`https://sptv-storage.storage.yandexcloud.net/images/news/${newsjson.mainNews.img}`} width={420} height={236} className=" laptop:w-[420px] w-[300px] laptop:h-[236px] h-[170px] object-cover rounded-[30px]" />
 														<div className="flex flex-col justify-center gap-6">
 															<span className="font-['Montserrat'] font-bold text-[20px] dark:text-white">{newsjson.mainNews.title}</span>
 															<span className="font-['Montserrat'] font-light text-[16px] w-[70%] dark:text-white">{newsjson.mainNews.text}</span>

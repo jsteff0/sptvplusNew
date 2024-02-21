@@ -28,12 +28,9 @@ export const getServerSideProps: GetServerSideProps = async () => {
 		Bucket: 'sptv-storage', // например, "my-storage",
 		debug: true, // Дебаг в консоли, потом можете удалить в релизе
 	});
-	const inf = await fetch("https://sptv-storage.storage.yandexcloud.net/newsinfo.json")
-	const ans = await inf.text()
-	const jsonans = JSON.parse(ans) as news
-	jsonans.news.push({
-		"text":"Телеканал СПtv открыл холдинг платформу для создателей контента","img":"cptvpreates.png"
-	})
+	// const inf = await fetch("https://sptv-storage.storage.yandexcloud.net/newsinfo.json")
+	// const ans = await inf.text()
+	const jsonans = {"news":[{"text":"Телеканал СПtv открыл холдинг платформу для создателей контента","img":"cptvpreates.png"}],"newsVideo":[{"url":"https://youtu.be/eq_78xANfPA","name":"Выпуск от 22.01.2023","png":"news0.png"},{"url":"https://youtu.be/ib9hK46L6H0?si=T_sHdfWDr6DjO9Kz","name":"Выпуск от 07.07.2023","png":"news2.png"}],"mainNews":{"title":"Открытие СПtv+","text":"Телеканал СПtv открыл холдинг платформу для создателей контента","img":"cptvpreates.png"}} as news
 	const buf = Buffer.from(JSON.stringify(jsonans), 'utf8');
 	await s3.Upload(
 		{
