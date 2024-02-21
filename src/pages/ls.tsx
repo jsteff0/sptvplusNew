@@ -22,8 +22,8 @@ export default function Home() {
 export const getServerSideProps: GetServerSideProps = async () => {
 	const s3 = new EasyYandexS3({
 		auth: {
-			accessKeyId: env.NEXT_PUBLIC_AWS_USER_KEY,
-			secretAccessKey: env.NEXT_PUBLIC_AWS_USER_SECRET_KEY,
+			accessKeyId: env.AWS_USER_KEY,
+			secretAccessKey: env.AWS_USER_SECRET_KEY,
 		},
 		Bucket: 'sptv-storage', // например, "my-storage",
 		debug: true, // Дебаг в консоли, потом можете удалить в релизе
