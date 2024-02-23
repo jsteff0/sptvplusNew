@@ -59,12 +59,22 @@ export default function Home(props: {
 	const [rated, setRated] = useState<number>(5)
 	if (!data?.nickname || !session?.user.name) {
 		return (
-			<div className="flex justify-center items-center align-middle h-screen w-screen">
-				<svg className="animate-spin h-[50px] w-[50px] text-black dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-					<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-					<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-				</svg>
-			</div>
+			<>
+				<Head>
+					<title>{props.content.name}</title>
+					<link rel="icon" href="/favicon.ico" />
+					<meta name="description" content={props.content.describe} />
+					<meta name="og:image" content={`https://sptv-storage.storage.yandexcloud.net/images/preview/${props.content.imgID}_a.png`} />
+					<link rel="preconnect" href="https://fonts.googleapis.com" />
+					<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+				</Head>
+				<div className="flex justify-center items-center align-middle h-screen w-screen">
+					<svg className="animate-spin h-[50px] w-[50px] text-black dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+						<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+						<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+					</svg>
+				</div>
+			</>
 		);
 	} else if (props.encodedCode) {
 		let isHover = false;
@@ -74,8 +84,8 @@ export default function Home(props: {
 				<Head>
 					<title>{props.content.name}</title>
 					<link rel="icon" href="/favicon.ico" />
-					<meta name="description" content={props.content.name} />
-					<meta name="og:image" content={`/preview/${props.content.imgID}_a.png`} />
+					<meta name="description" content={props.content.describe} />
+					<meta name="og:image" content={`https://sptv-storage.storage.yandexcloud.net/images/preview/${props.content.imgID}_a.png`} />
 					<link rel="preconnect" href="https://fonts.googleapis.com" />
 					<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
 				</Head>
@@ -265,8 +275,8 @@ export default function Home(props: {
 				<Head>
 					<title>{props.content.name}</title>
 					<link rel="icon" href="/favicon.ico" />
-					<meta name="description" content={props.content.name} />
-					<meta name="og:image" content={`/preview/${props.content.imgID}_a.png`} />
+					<meta name="description" content={props.content.describe} />
+					<meta name="og:image" content={`https://sptv-storage.storage.yandexcloud.net/images/preview/${props.content.imgID}_a.png`} />
 					<link rel="preconnect" href="https://fonts.googleapis.com" />
 					<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
 				</Head>
@@ -395,8 +405,7 @@ export default function Home(props: {
 						<section
 							className="z-10 laptop:bg-gradient-to-r min-h-[630px] relative bg-[#000000df] from-[#000000e8] from-[35%] to-transparent  w-full left-0 flex flex-col laptop:justify-normal justify-center">
 							<div className="laptop:max-w-[40%] max-w-screen px-10 py-20 flex flex-col items-center">
-								{/* <img src={`/preview/${props.content.imgID}_m.png`} className="laptop:w-auto tablet:w-[50%] w-auto" alt="" /> */}
-								 <img src={`https://storage.yandexcloud.net/sptvplus/logoCBD.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=YCAJEDAEuDdFxX7nnNR3EBkAC%2F20240217%2Fru-central1%2Fs3%2Faws4_request&X-Amz-Date=20240217T180051Z&X-Amz-Expires=10086400&X-Amz-Signature=37EA4A4AAB0F98187A9F0399934CABD3E870AF7298FC6516A7990E041A88CBEB&X-Amz-SignedHeaders=host`} className="laptop:w-auto tablet:w-[50%] w-auto" alt="" />
+								<img src={`https://sptv-storage.storage.yandexcloud.net/images/preview/${props.content.imgID}_m.png`} className="laptop:w-auto tablet:w-[50%] w-auto" alt="" />
 								<div className="font-medium smltp:text-[13px] text-[9px] text-[rgb(173,173,173)] flex smltp:gap-[8px] gap-[4px] justify-center font-['Montserrat']">
 									<span onClick={() => switchWind("mark")} className={`${props.content.mark !== 0.0 ? props.content.mark >= 2.5 ? props.content.mark >= 3.9 ? "text-[#00760C]" : "text-[#766300]" : "text-[#761500]" : "text-[#7c7c7c]"} cursor-pointer`}>{props.content.mark !== 0.0 ? props.content.mark.toFixed(1) : `Оценить`}</span>
 									<span>{props.content.watched >= 1000000 ? `${(props.content.watched / 1000000).toFixed(1)}M` : props.content.watched > 1000 ? `${(props.content.watched / 1000).toFixed(1)}K` : props.content.watched}</span>
@@ -428,7 +437,7 @@ export default function Home(props: {
 												<div className="flex flex-col items-center gap-1">
 													<Link href={"/subs"} className="px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold">Оформить подписку</Link>
 													<p className="text-white text-[12px] opacity-75">или</p>
-													<button id="buyButton" onClick={(e) => { buy(props.content.code, props.content.price , data.nickname as string, data.balance).catch((err) => { console.log(err) }); e.currentTarget.disabled = true }} className="text-white opacity-75 text-[14px] hover:underline">{props.content.price > 0 ? `Приобрести за ${props.content.price}АР` : `Бесплатный просмотр`}</button>
+													<button id="buyButton" onClick={(e) => { buy(props.content.code, props.content.price, data.nickname as string, data.balance).catch((err) => { console.log(err) }); e.currentTarget.disabled = true }} className="text-white opacity-75 text-[14px] hover:underline">{props.content.price > 0 ? `Приобрести за ${props.content.price}АР` : `Бесплатный просмотр`}</button>
 												</div>
 											:
 											<button onClick={() => startwatching(props.content.code, "TLR", data.nickname as string)} className="px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold">Смотреть трейлер</button>
@@ -436,7 +445,7 @@ export default function Home(props: {
 										<button onClick={() => window.open(props.content.youtube as string)} className="px-4 py-2 bg-[#ffb300] text-white hover:bg-white hover:text-[#ffb300] ease-out duration-300 rounded-full text-[14px] font-bold">Смотреть на YouTube</button>
 									}
 									<div className="flex">
-										<input type="checkbox" checked={data.fav.includes(props.content.code)}  className="peer hidden" id="saveButton" />
+										<input type="checkbox" checked={data.fav.includes(props.content.code)} className="peer hidden" id="saveButton" />
 										<label htmlFor="saveButton" onClick={() => save(props.content.code, data.nickname as string)}
 											className="bg-[#171717] peer-checked:bg-[#ffb300] w-[40px] shadow h-[40px] rounded-[20px] mr-2 flex items-center justify-center ease-out duration-300 cursor-pointer disabled:cursor-default">
 											<Image width={20} height={20} src="/buttons/saveICN.svg" alt="" className="absolute w-[20px] h-[20px]" />
@@ -511,7 +520,7 @@ export default function Home(props: {
 													<>
 
 														<Link href={`/content/${item.content.code}`} className="relative flex-none px-[12px] last:pr-6">
-															<Image width={395} height={180} src={`/preview/${item.content.imgID}.png`} className="tablet:h-[180px] tablet:w-[310px] h-[100px] w-[160px] object-cover rounded-[10px] bg-center" alt="" />
+															<Image width={395} height={180} src={`https://sptv-storage.storage.yandexcloud.net/images/preview/${item.content.imgID}.png`} className="tablet:h-[180px] tablet:w-[310px] h-[100px] w-[160px] object-cover rounded-[10px] bg-center" alt="" />
 														</Link>
 													</>
 												)
@@ -539,7 +548,7 @@ export default function Home(props: {
 							</div> : null}
 						</section>
 						{/* <video id="bgvideo" className="z-0 object-cover max-h-screen min-w-full" src={`/videos/${props.content.code}BG.mp4`} autoPlay muted loop playsInline></video> */}
-						<img src={`/preview/${props.content.id}.png`} className="z-0 object-cover absolute max-h-screen min-h-[630px] min-w-full" alt="" />
+						<img src={`https://sptv-storage.storage.yandexcloud.net/images/preview/${props.content.id}.png`} className="z-0 object-cover absolute max-h-screen min-h-[630px] min-w-full" alt="" />
 
 					</main>
 
@@ -610,7 +619,7 @@ function Render(idFilm: { idFilm: string; }) {
 			});
 			hls.loadSource(`/manifests/${id}/${id}.m3u8`); //`/manifests/${props.posts["res"][0] as string}/${props.posts["res"][0] as string}.m3u8`
 			hls.attachMedia(video);
-
+			console.log(hls.levels)
 			video.volume = volume;
 			video.onloadedmetadata = function () {
 				video.currentTime = time;
@@ -870,7 +879,7 @@ export const getServerSideProps: GetServerSideProps = async (
 						timeKey,
 					}
 				}
-			} else if(playKey.tag === "TLR") {
+			} else if (playKey.tag === "TLR") {
 				const encodedCode = btoa(playKey.tag + "::" + playKey.code)
 				return {
 					props: {
@@ -890,10 +899,10 @@ export const getServerSideProps: GetServerSideProps = async (
 			if (nickname?.fav && nickname?.acq) {
 				let isFav = false
 				let isAcq = false
-				if(nickname?.fav.includes(content.code)){
+				if (nickname?.fav.includes(content.code)) {
 					isFav = true
 				}
-				if(nickname?.acq.includes(content.code)){
+				if (nickname?.acq.includes(content.code)) {
 					isAcq = true
 				}
 				return {
