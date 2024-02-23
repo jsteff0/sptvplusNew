@@ -595,7 +595,6 @@ function Render(idFilm: { idFilm: string; }) {
 		if (video && !video.currentSrc) {
 			document.addEventListener("keypress", async (e) => {
 				if (e.key === " ") {
-					//console.log("sdasdas")
 					if (video.paused) {
 						await video.play()
 					} else {
@@ -619,7 +618,6 @@ function Render(idFilm: { idFilm: string; }) {
 			});
 			hls.loadSource(`/manifests/${id}/${id}.m3u8`); //`/manifests/${props.posts["res"][0] as string}/${props.posts["res"][0] as string}.m3u8`
 			hls.attachMedia(video);
-			console.log(hls.levels)
 			video.volume = volume;
 			video.onloadedmetadata = function () {
 				video.currentTime = time;
@@ -729,213 +727,276 @@ export const getServerSideProps: GetServerSideProps = async (
 	ctx: GetServerSidePropsContext
 ) => {
 	const session = await getServerAuthSession(ctx);
-
-	if (!session) {
-		return {
-			redirect: { destination: "/auth/signin" },
-			props: {}
-		}
-	}
-
 	const prisma = new PrismaClient()
-	const nickname = await prisma.user.findUnique({
-		where: {
-			id: session.user.id
-		},
-		select: {
-			nickname: true,
-			view: {
-				select: {
-					tag: true,
-					contentcode: true,
-					timeKey: true,
-					content: {
-						select: {
-							imgID: true,
-							code: true,
-							subscription: true,
-							show: true
-						}
-					},
-				}
-			},
-			fav: true,
-			acq: true,
-		}
-	})
 	const newContent = await prisma.film.findUnique({
 		where: {
 			code: ctx.query.id as string
 		},
 	})
-
-	if (newContent && nickname && nickname.view && typeof ctx.query.id === "string") {
-		const content: filmmakers = {
-			show: newContent.show,
-			id: newContent.id,
-			name: newContent.name,
-			imgID: newContent.imgID,
-			content: newContent.content,
-			describe: newContent.describe,
-			mark: newContent.mark,
-			watched: newContent.watched,
-			types: [],
-			timing: newContent.timing,
-			studio: newContent.studio,
-			subscription: newContent.subscription,
-			datePremiere: newContent.datePremiere.toDateString(),
-			price: newContent.price,
-			more: newContent.more,
-			code: newContent.code,
-			youtube: newContent.youtube,
-		};
-		const timeKeys = Array(newContent.timing.length - 1)
-		let lastwatched = -1
-		if (newContent.timing.length > 1) {
-			for (let i = 0; i < nickname.view.length; i++) {
-				const element = nickname.view[i];
-				if (element?.contentcode === newContent.code) {
-					timeKeys[newContent.id - 1] = element.timeKey
-					lastwatched = newContent.id
-				}
-			}
-		} else {
-			for (let i = 0; i < nickname.view.length; i++) {
-				const element = nickname.view[i];
-				if (element?.contentcode === newContent.code) {
-					timeKeys[0] = nickname.view[i]?.timeKey
-					break
-				}
-			}
-		}
-		const startedwatch = nickname.view
-
-		for (let i = 0; i < newContent.types.length; i++) {
-			switch (newContent.types[i]) {
-				case "comedy":
-					content.types.push("комедия")
-					break;
-				case "horror":
-					content.types.push("хорор")
-					break;
-				case "romance":
-					content.types.push("романс")
-					break;
-				case "action":
-					content.types.push("экшн")
-					break;
-				case "drama":
-					content.types.push("драма")
-					break;
-				case "thriler":
-					content.types.push("триллер")
-					break;
-				case "fantasy":
-					content.types.push("фэнтэзи")
-					break;
-				case "historical":
-					content.types.push("исторический")
-					break;
-				case "darkcomedy":
-					content.types.push("чёрная комедия")
-					break;
-				case "musicals":
-					content.types.push("мьюзикл")
-					break;
-				case "animated":
-					content.types.push("анимационный")
-					break;
-			}
-		}
-		const datenow = new Date();
-		const isBeforePremier = datenow < newContent.datePremiere
-		if (ctx.query.watch && typeof ctx.query.watch === "string" && ctx.query.timeKey && typeof ctx.query.timeKey === "string") {
-			const playKey = JSON.parse(atob(ctx.query.watch)) as { tag: string, code: string, nickname: string, key: string };
-			const timeKey = ctx.query.timeKey
-			const newUUID = randomUUID();
-			const oldKey = await prisma.view.findUnique({
-				where: {
-					id: btoa(playKey.nickname + playKey.code + playKey.tag),
+	if (session) {
+		const nickname = await prisma.user.findUnique({
+			where: {
+				id: session.user.id
+			},
+			select: {
+				nickname: true,
+				view: {
+					select: {
+						tag: true,
+						contentcode: true,
+						timeKey: true,
+						content: {
+							select: {
+								imgID: true,
+								code: true,
+								subscription: true,
+								show: true
+							}
+						},
+					}
 				},
-				select: {
-					key: true,
+				fav: true,
+				acq: true,
+			}
+		})
+
+		if (newContent && nickname && nickname.view && typeof ctx.query.id === "string") {
+			const content: filmmakers = {
+				show: newContent.show,
+				id: newContent.id,
+				name: newContent.name,
+				imgID: newContent.imgID,
+				content: newContent.content,
+				describe: newContent.describe,
+				mark: newContent.mark,
+				watched: newContent.watched,
+				types: [],
+				timing: newContent.timing,
+				studio: newContent.studio,
+				subscription: newContent.subscription,
+				datePremiere: newContent.datePremiere.toDateString(),
+				price: newContent.price,
+				more: newContent.more,
+				code: newContent.code,
+				youtube: newContent.youtube,
+			};
+			const timeKeys = Array(newContent.timing.length - 1)
+			let lastwatched = -1
+			if (newContent.timing.length > 1) {
+				for (let i = 0; i < nickname.view.length; i++) {
+					const element = nickname.view[i];
+					if (element?.contentcode === newContent.code) {
+						timeKeys[newContent.id - 1] = element.timeKey
+						lastwatched = newContent.id
+					}
 				}
-			})
-			if (oldKey?.key === playKey.key && playKey.tag !== "TLR") {
-				await prisma.view.update({
+			} else {
+				for (let i = 0; i < nickname.view.length; i++) {
+					const element = nickname.view[i];
+					if (element?.contentcode === newContent.code) {
+						timeKeys[0] = nickname.view[i]?.timeKey
+						break
+					}
+				}
+			}
+			const startedwatch = nickname.view
+
+			for (let i = 0; i < newContent.types.length; i++) {
+				switch (newContent.types[i]) {
+					case "comedy":
+						content.types.push("комедия")
+						break;
+					case "horror":
+						content.types.push("хорор")
+						break;
+					case "romance":
+						content.types.push("романс")
+						break;
+					case "action":
+						content.types.push("экшн")
+						break;
+					case "drama":
+						content.types.push("драма")
+						break;
+					case "thriler":
+						content.types.push("триллер")
+						break;
+					case "fantasy":
+						content.types.push("фэнтэзи")
+						break;
+					case "historical":
+						content.types.push("исторический")
+						break;
+					case "darkcomedy":
+						content.types.push("чёрная комедия")
+						break;
+					case "musicals":
+						content.types.push("мьюзикл")
+						break;
+					case "animated":
+						content.types.push("анимационный")
+						break;
+				}
+			}
+			const datenow = new Date();
+			const isBeforePremier = datenow < newContent.datePremiere
+			if (ctx.query.watch && typeof ctx.query.watch === "string" && ctx.query.timeKey && typeof ctx.query.timeKey === "string") {
+				const playKey = JSON.parse(atob(ctx.query.watch)) as { tag: string, code: string, nickname: string, key: string };
+				const timeKey = ctx.query.timeKey
+				const newUUID = randomUUID();
+				const oldKey = await prisma.view.findUnique({
 					where: {
 						id: btoa(playKey.nickname + playKey.code + playKey.tag),
 					},
-					data: {
-						key: newUUID,
+					select: {
+						key: true,
 					}
 				})
-				const encodedCode = btoa(playKey.tag + "::" + playKey.code)
-				return {
-					props: {
-						content,
-						isBeforePremier,
-						encodedCode,
-						timeKey,
+				if (oldKey?.key === playKey.key && playKey.tag !== "TLR") {
+					await prisma.view.update({
+						where: {
+							id: btoa(playKey.nickname + playKey.code + playKey.tag),
+						},
+						data: {
+							key: newUUID,
+						}
+					})
+					const encodedCode = btoa(playKey.tag + "::" + playKey.code)
+					return {
+						props: {
+							content,
+							isBeforePremier,
+							encodedCode,
+							timeKey,
+						}
 					}
-				}
-			} else if (playKey.tag === "TLR") {
-				const encodedCode = btoa(playKey.tag + "::" + playKey.code)
-				return {
-					props: {
-						content,
-						isBeforePremier,
-						encodedCode,
-						timeKey,
+				} else if (playKey.tag === "TLR") {
+					const encodedCode = btoa(playKey.tag + "::" + playKey.code)
+					return {
+						props: {
+							content,
+							isBeforePremier,
+							encodedCode,
+							timeKey,
+						}
+					}
+				} else {
+					return {
+						redirect: { destination: "/content/" + playKey.code },
+						props: {}
 					}
 				}
 			} else {
-				return {
-					redirect: { destination: "/content/" + playKey.code },
-					props: {}
+				if (nickname?.fav && nickname?.acq) {
+					let isFav = false
+					let isAcq = false
+					if (nickname?.fav.includes(content.code)) {
+						isFav = true
+					}
+					if (nickname?.acq.includes(content.code)) {
+						isAcq = true
+					}
+					return {
+						props: {
+							content,
+							isBeforePremier,
+							lastwatched,
+							timeKeys,
+							startedwatch,
+							isFav,
+							isAcq,
+						}
+					}
+				} else {
+					const isFav = false
+					const isAcq = false
+					return {
+						props: {
+							content,
+							isBeforePremier,
+							lastwatched,
+							timeKeys,
+							startedwatch,
+							isFav,
+							isAcq,
+						}
+					}
+				}
+			}
+
+		} else {
+			return {
+				props: {}
+			}
+		}
+	} else {
+		if (newContent) {
+			const content: filmmakers = {
+				show: newContent.show,
+				id: newContent.id,
+				name: newContent.name,
+				imgID: newContent.imgID,
+				content: newContent.content,
+				describe: newContent.describe,
+				mark: newContent.mark,
+				watched: newContent.watched,
+				types: [],
+				timing: newContent.timing,
+				studio: newContent.studio,
+				subscription: newContent.subscription,
+				datePremiere: newContent.datePremiere.toDateString(),
+				price: newContent.price,
+				more: newContent.more,
+				code: newContent.code,
+				youtube: newContent.youtube,
+			};
+			for (let i = 0; i < newContent.types.length; i++) {
+				switch (newContent.types[i]) {
+					case "comedy":
+						content.types.push("комедия")
+						break;
+					case "horror":
+						content.types.push("хорор")
+						break;
+					case "romance":
+						content.types.push("романс")
+						break;
+					case "action":
+						content.types.push("экшн")
+						break;
+					case "drama":
+						content.types.push("драма")
+						break;
+					case "thriler":
+						content.types.push("триллер")
+						break;
+					case "fantasy":
+						content.types.push("фэнтэзи")
+						break;
+					case "historical":
+						content.types.push("исторический")
+						break;
+					case "darkcomedy":
+						content.types.push("чёрная комедия")
+						break;
+					case "musicals":
+						content.types.push("мьюзикл")
+						break;
+					case "animated":
+						content.types.push("анимационный")
+						break;
+				}
+			}
+			return {
+				props: {
+					content
 				}
 			}
 		} else {
-			if (nickname?.fav && nickname?.acq) {
-				let isFav = false
-				let isAcq = false
-				if (nickname?.fav.includes(content.code)) {
-					isFav = true
-				}
-				if (nickname?.acq.includes(content.code)) {
-					isAcq = true
-				}
-				return {
-					props: {
-						content,
-						isBeforePremier,
-						lastwatched,
-						timeKeys,
-						startedwatch,
-						isFav,
-						isAcq,
-					}
-				}
-			} else {
-				const isFav = false
-				const isAcq = false
-				return {
-					props: {
-						content,
-						isBeforePremier,
-						lastwatched,
-						timeKeys,
-						startedwatch,
-						isFav,
-						isAcq,
-					}
-				}
+			return {
+				props: {}
 			}
 		}
-
-	} else {
-		return {
-			props: {}
-		}
+		
 	}
 }
