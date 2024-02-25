@@ -7,11 +7,13 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Главная</title>
-        <link rel="icon" href="/favicon.ico" />
-        <meta name="description" content="Добро пожаловать на сайт СПTV+" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-      </Head>
+				<title>СПtv+</title>
+				<link rel="icon" href="/favicon.ico" />
+				<meta name="description" content="Онлайн кинотеатр СПtv+" />
+				<meta name="og:image" content={"logoold.png"} />
+				<link rel="preconnect" href="https://fonts.googleapis.com" />
+				<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+			</Head>
       <div className="min-h-screen flex flex-col">
         <header className="fixed flex justify-between items-center px-8 z-30 w-full h-[55px] bg-[#0f0f0f]">
           <Link href="/" className="w-auto h-auto">

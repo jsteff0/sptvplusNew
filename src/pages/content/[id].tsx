@@ -61,7 +61,7 @@ export default function Home(props: {
 		return (
 			<>
 				<Head>
-					<title>{props.content.name}</title>
+					<title>СПtv+</title>
 					<link rel="icon" href="/favicon.ico" />
 					<meta name="description" content={props.content.describe} />
 					<meta name="og:image" content={`https://sptv-storage.storage.yandexcloud.net/images/preview/${props.content.imgID}_a.png`} />
@@ -482,7 +482,7 @@ export default function Home(props: {
 								</div>
 							</div>
 							{props.startedwatch.length > 0 ? <div className="smltp:max-w-full tablet:max-w-[345px] max-w-full w-full h-[201px] tablet:h-[282px] pl-5 my-6 flex-col justify-start items-start gap-[25px] inline-flex">
-								<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Продолжить просмотр</div>
+								<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold text-white">Продолжить просмотр</div>
 								<div className="relative flex w-full group">
 									<div
 										onScroll={(e) => {

@@ -3,10 +3,13 @@ const Home = () => {
 
 	return (
 		<>
-			<Head>
-				<title>Error404</title>
-				<meta name="description" content="Ошибка, не правильный url" />
-				<link rel="icon" href="/logo.png" />
+			 <Head>
+				<title>СПtv+</title>
+				<link rel="icon" href="/favicon.ico" />
+				<meta name="description" content="Онлайн кинотеатр СПtv+" />
+				<meta name="og:image" content={"logoold.png"} />
+				<link rel="preconnect" href="https://fonts.googleapis.com" />
+				<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
 			</Head>
 			<main className="w-full h-full min-h-screen bg-[#272727]">
 				<div className="container mx-auto relative top-[300px]">

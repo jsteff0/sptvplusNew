@@ -64,28 +64,37 @@ export default function Home() {
 	})
 	if (!data?.nickname || !session?.user.name) {
 		return (
-			<div className="flex flex-col justify-center items-center align-middle h-screen w-screen">
-				<svg className="animate-spin h-[50px] w-[50px] text-black dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-					<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-					<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-				</svg>
-				<button id="sighoutredirect" onClick={() => location.href = "/auth/signout"} className="hidden hover:cursor-pointer">Если долго грузит, нажми на текст</button>
-			</div>
+			<>
+				<Head>
+					<title>СПtv+</title>
+					<link rel="icon" href="/favicon.ico" />
+					<meta name="description" content="Онлайн кинотеатр СПtv+" />
+					<meta name="og:image" content={"logoold.png"} />
+					<link rel="preconnect" href="https://fonts.googleapis.com" />
+					<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+				</Head>
+				<div className="flex flex-col justify-center items-center align-middle h-screen w-screen">
+					<svg className="animate-spin h-[50px] w-[50px] text-black dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+						<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+						<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+					</svg>
+					<button id="sighoutredirect" onClick={() => location.href = "/auth/signout"} className="hidden hover:cursor-pointer">Если долго грузит, нажми на текст</button>
+				</div>
+			</>
 		);
 	} else {
 		return (
 			<>
 				<Head>
-					<title>{router}</title>
+					<title>СПtv+</title>
 					<link rel="icon" href="/favicon.ico" />
-					<meta name="description" content="Добро пожаловать на сайт СПTV+" />
+					<meta name="description" content={router as string} />
+					<meta name="og:image" content={"logoold.png"} />
 					<link rel="preconnect" href="https://fonts.googleapis.com" />
 					<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
 				</Head>
 				<div className="min-h-screen flex flex-col bg-[#E1E1E1] dark:bg-[#000000]">
 					<Header balance={data.balance} subscription={data.subscription} UUID={data.UUID ? `https://api.mineatar.io/face/${data.UUID}` : "/randomguy.png"} nickname={data.nickname} />
-
-
 					<section id="addPlayer" className="fixed inset-0 overflow-y-auto z-20 hidden">
 						<div className="flex min-h-full items-center justify-center p-4 text-center">
 							<div onClick={() => switchWind("addPlayer")} className="fixed inset-0 bg-black bg-opacity-25"></div>
@@ -272,7 +281,157 @@ export default function Home() {
 									</span>
 								</div>
 							</>
-							: <>Вы не имеете право смотреть чужие аккаунты</>}
+							:
+							<>
+								<div className=' laptop:p-[90px] tablet:p-[30px] p-[0px] pt-[50px]'>
+									<div className='flex tablet:flex-row flex-col tablet:items-start items-center gap-6'>
+										<Image width={256} height={256} src={`https://visage.surgeplay.com/front/512/${data.UUID}`} className='laptop:w-[256px] w-[192px] relative pt-[24px] px-[12px] bg-[#eeeeee] dark:bg-[#0f0f0f] rounded-[25px]' alt="" />
+										<div className='flex flex-col'>
+											<p className="dark:text-white text-black font-['Montserrat'] font-bold laptop:text-[32px] tablet:text-[18px] text-[16px] mt-[10px] ">{data.nickname}</p>
+											<p className="dark:text-white text-black font-['Montserrat'] font-medium laptop:text-[22px] tablet:text-[16px] text-[14px] mt-[10px] ">Баланс: <b>{data.balance} <span className='text-[#FAC301]'>AP</span></b> </p>
+											<div className="dark:text-white text-black font-['Montserrat'] font-medium laptop:text-[22px] tablet:text-[16px] text-[14px] mt-[10px]">
+												{data.subscription === "MAX" ? <>
+													Ваша подписка: <b>Max</b><br />
+													Добавленные игроки в подписку:<br />
+													<div className='flex flex-row gap-2 mt-[4px]'>
+														{data.noPlayersAddedYet.length > 0 ?
+															data.noPlayersAddedYet.map((item) => {
+																return (
+																	<>
+																		<div className="group cursor-pointer mb-5" onClick={() => cancelPlayer(item, data.nickname as string)}>
+																			<div className="opacity-30 peer peer-hover:opacity-100">{item}</div>
+																			<div className="text-[8px] text-white dark:text-black peer absolute py-1 px-2 bg-[#373737] z-10 opacity-0 peer-hover:opacity-75 ease-in-out duration-300 rounded-full">Данный игрок пока не принял запрос. При нажатии на ник, вы отклоните запрос</div>
+																		</div>
+																	</>
+																)
+															})
+															: null
+														}
+														{data.addedPlayers.length > 0 ?
+															data.addedPlayers.map((item) => {
+																return (
+																	<>
+																		<div className="group cursor-pointer mb-5" onClick={() => deletePlayer(item, data.nickname as string)}>
+																			<div className="peer">{item}</div>
+																			<div className="text-[8px] text-white dark:text-black peer absolute py-1 px-2 bg-[#373737] z-10 opacity-0 peer-hover:opacity-75 ease-in-out duration-300 rounded-full">Вы точно хотите удалить данного игрока из подписки?</div>
+																		</div>
+																	</>
+																)
+															})
+															: null
+														}
+														{
+															Array.from({ length: 3 - data.addedPlayers.length - data.noPlayersAddedYet.length }, (_, _i) => <><button onClick={() => switchWind("addPlayer")}><Image alt="" src={`/buttons/addPlayer.svg`} width={30} height={30} className="ease-out duration-200 opacity-50 hover:opacity-100 rounded" /></button></>)
+														}
+													</div>
+												</> : data.subscription === "MULTI" ? <>
+													Ваша подписка: <b>Multi</b><br />
+													<span className='text-[16px]'>Добавленые игроки в подписку:</span><br />
+													<div className='flex flex-row gap-2 mt-[4px]'>
+														{data.noPlayersAddedYet.length > 0 ?
+															data.noPlayersAddedYet.map((item) => {
+																return (
+																	<>
+																		<div className="group cursor-pointer mb-5" onClick={() => cancelPlayer(item, data.nickname as string)}>
+																			<div className="opacity-30 peer peer-hover:opacity-100">{item}</div>
+																			<div className="text-[8px] text-white dark:text-black peer absolute py-1 px-2 bg-[#373737] z-10 opacity-0 peer-hover:opacity-75 ease-in-out duration-300 rounded-full">Данный игрок пока не принял запрос. При нажатии на ник, вы отклоните запрос</div>
+																		</div>
+																	</>
+																)
+															})
+															: null
+														}
+														{data.addedPlayers.length > 0 ?
+															data.addedPlayers.map((item) => {
+																return (
+																	<>
+																		<div className="group cursor-pointer mb-5" onClick={() => deletePlayer(item, data.nickname as string)}>
+																			<div className="peer">{item}</div>
+																			<div className="text-[8px] text-white dark:text-black peer absolute py-1 px-2 bg-[#373737] z-10 opacity-0 peer-hover:opacity-75 ease-in-out duration-300 rounded-full">Вы точно хотите удалить данного игрока из подписки?</div>
+																		</div>
+																	</>
+																)
+															})
+															: null
+														}
+														{
+															Array.from({ length: 3 - data.addedPlayers.length - data.noPlayersAddedYet.length }, (_, _i) => <><button onClick={() => switchWind("addPlayer")}><Image alt="" src={`/buttons/addPlayer.svg`} width={30} height={30} className="ease-out duration-200 opacity-50 hover:opacity-100 rounded" /></button></>)
+														}
+													</div>
+												</> : data.subscription === "ONE" ? <>
+													Ваша подписка: <b>One</b><br />
+												</> : data.subscription === "fMAX" ? <>
+													С вами поделились подпиской: <b>Max</b><br /><button className=' text-red-900 opacity-30 hover:opacity-100' onClick={() => cancelSub(data.nickname as string, data.subscriptionOwner as string)}>Выйти из подписки</button><br />
+												</> : data.subscription === "fMULTI" ? <>
+													С вами поделились подпиской: <b>Multi</b><br /><button className=' text-red-900 opacity-30 hover:opacity-100' onClick={() => cancelSub(data.nickname as string, data.subscriptionOwner as string)}>Выйти из подписки</button><br />
+												</> : <>
+													У вас нет <Link className='text-[#FAC301] hover:underline' href={"/subs"}>подписки</Link> на СПTV+
+												</>
+												}
+											</div>
+										</div>
+									</div>
+
+									<span className="dark:text-white text-black font-['Montserrat'] font-normal text-[20px]">
+										<br />
+										{data.noSubscriptionOwnerYet && data.subscription === "NO" ?
+											<div>
+												<b className="dark:text-white text-black text-[24px] font-['Montserrat']">Вам пришло уведомление</b> <br />
+												<span className='mt-4 text-[18px] dark:text-white text-black'>Игрок {data.noSubscriptionOwnerYet}, хочет добавить вас в его подписку. Вам будет доступен весь контент, который доступен этой подписке</span>
+												<br />
+												<div className='mt-4 flex justify-start gap-3'>
+													<button onClick={() => decline(data.nickname as string, data.noSubscriptionOwnerYet as string)} className="px-4 py-2 bg-[#373737] rounded-[15px] text-[#ffe600d9] text-[14px] font-bold">Отклонить</button>
+													<button onClick={() =>
+														accept(data.nickname as string, data.noSubscriptionOwnerYet as string)
+													} className="px-4 py-2 dark:bg-[#ffe600d9] bg-[#ffd900] rounded-[15px] text-white text-[14px] font-bold">Принять</button>
+												</div>
+											</div>
+											:
+											null
+										}
+										<section >
+											{favdata ?
+												favdata.length > 0 ?
+													<Films items={favdata} sub={((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0)} name={"Избранное"} />
+													:
+													<div className="w-full  pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
+														<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Избранное</div>
+														<span className="tablet:text-[18px] text-[14px]">Вы не откладывали в избранное наши проекты</span>
+													</div>
+												:
+												<div className="w-full  pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
+													<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Избранное</div>
+													<svg className="animate-spin h-[50px] w-[50px] text-black dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+														<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+														<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+													</svg>
+												</div>
+
+											}
+											{acqdata ?
+												acqdata.length > 0 ?
+													<Films items={acqdata} sub={((data.subscription === "MAX" || data.subscription === "fMAX") ? 3 : (data.subscription === "MULTI" || data.subscription === "fMULTI") ? 2 : data.subscription === "ONE" ? 1 : 0)} name={"Приобретено"} />
+													:
+													<div className="w-full  pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
+														<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Приобретено</div>
+														<span className="tablet:text-[18px] text-[14px]">Вы не покупали наши проекты</span>
+													</div>
+												:
+												<div className="w-full  pl-5  py-2.5 flex-col justify-start items-start gap-[25px] inline-flex">
+													<div className="laptop:text-[32px] tablet:text-[24px] font-['Montserrat'] font-bold dark:text-white">Приобретено</div>
+													<svg className="animate-spin h-[50px] w-[50px] text-black dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+														<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+														<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+													</svg>
+												</div>
+
+											}
+										</section>
+
+									</span>
+								</div>
+							</>
+						}
 					</main>
 					<Footer />
 

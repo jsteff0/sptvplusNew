@@ -1,16 +1,24 @@
 import Link from "next/link";
 import Head from "next/head";
 import Footer from "../../app/components/footer"
+import { useEffect } from "react";
 
 export default function Home() {
-
+	useEffect(() => {
+		if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark');
+		} else {
+			document.documentElement.classList.remove('dark');
+		}
+	})
 	return (
 		<>
 			<div className="Home h-full">
-				<Head>
-					<title>СП Creators</title>
+			<Head>
+					<title>СПtv+</title>
 					<link rel="icon" href="/favicon.ico" />
-					<meta name="description" content="Добро пожаловать на сайт СПTV+" />
+					<meta name="description" content="Онлайн кинотеатр СПtv+" />
+					<meta name="og:image" content={"logoold.png"} />
 					<link rel="preconnect" href="https://fonts.googleapis.com" />
 					<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
 				</Head>

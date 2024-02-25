@@ -9,10 +9,13 @@ export default function SignIn({  }: InferGetServerSidePropsType<typeof getServe
   return (
     <>
       <Head>
-        <title>Error</title>
-        <meta name="description" content="Добро пожаловать на сайт СПTV+" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+				<title>СПtv+</title>
+				<link rel="icon" href="/favicon.ico" />
+				<meta name="description" content="Онлайн кинотеатр СПtv+" />
+				<meta name="og:image" content={"logoold.png"} />
+				<link rel="preconnect" href="https://fonts.googleapis.com" />
+				<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+			</Head>
       <main className="w-full h-full min-h-screen bg-[#272727]">
         <div className="container mx-auto relative top-[300px]">
           <div className="flex flex-col justify-center content-center align-bottom items-center relative w-auto gap-[10px]">

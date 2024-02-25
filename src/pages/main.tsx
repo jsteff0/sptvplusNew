@@ -73,7 +73,15 @@ export default function Home() {
 		}
 	})
 	if (!data?.nickname || !session?.user.name) {
-		return (
+		return (<>
+			<Head>
+				<title>СПtv+</title>
+				<link rel="icon" href="/favicon.ico" />
+				<meta name="description" content="Онлайн кинотеатр СПtv+" />
+				<meta name="og:image" content={"logoold.png"} />
+				<link rel="preconnect" href="https://fonts.googleapis.com" />
+				<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+			</Head>
 			<div className="flex flex-col justify-center items-center align-middle h-screen w-screen">
 				<svg className="animate-spin h-[50px] w-[50px] text-black dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
 					<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -81,6 +89,7 @@ export default function Home() {
 				</svg>
 				<button id="sighoutredirect" onClick={() => location.href = "/auth/signout"} className="hidden hover:cursor-pointer">Если долго грузит, нажми на текст</button>
 			</div>
+		</>
 		);
 	} else {
 
