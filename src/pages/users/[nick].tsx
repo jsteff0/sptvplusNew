@@ -288,7 +288,7 @@ export default function Home() {
 										<Image width={256} height={256} src={`https://visage.surgeplay.com/front/512/${data.UUID}`} className='laptop:w-[256px] w-[192px] relative pt-[24px] px-[12px] bg-[#eeeeee] dark:bg-[#0f0f0f] rounded-[25px]' alt="" />
 										<div className='flex flex-col'>
 											<p className="dark:text-white text-black font-['Montserrat'] font-bold laptop:text-[32px] tablet:text-[18px] text-[16px] mt-[10px] ">{data.nickname}</p>
-											<p className="dark:text-white text-black font-['Montserrat'] font-medium laptop:text-[22px] tablet:text-[16px] text-[14px] mt-[10px] ">Баланс: <b>{data.balance} <span className='text-[#FAC301]'>AP</span></b> </p>
+											
 											<div className="dark:text-white text-black font-['Montserrat'] font-medium laptop:text-[22px] tablet:text-[16px] text-[14px] mt-[10px]">
 												{data.subscription === "MAX" ? <>
 													Ваша подписка: <b>Max</b><br />
