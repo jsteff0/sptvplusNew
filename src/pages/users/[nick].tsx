@@ -69,7 +69,7 @@ export default function Home() {
 					<title>СПtv+</title>
 					<link rel="icon" href="/favicon.ico" />
 					<meta name="description" content="Онлайн кинотеатр СПtv+" />
-					<meta name="og:image" content={"logoold.png"} />
+					<meta name="og:image" content={"/logoold.png"} />
 					<link rel="preconnect" href="https://fonts.googleapis.com" />
 					<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
 				</Head>
@@ -89,7 +89,7 @@ export default function Home() {
 					<title>СПtv+</title>
 					<link rel="icon" href="/favicon.ico" />
 					<meta name="description" content={router as string} />
-					<meta name="og:image" content={"logoold.png"} />
+					<meta name="og:image" content={"/logoold.png"} />
 					<link rel="preconnect" href="https://fonts.googleapis.com" />
 					<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
 				</Head>
