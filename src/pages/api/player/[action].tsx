@@ -262,6 +262,20 @@ export default async function Page(req: NewApiRequest, res: NextApiResponse) {
 			
 			
 			res.status(200).json({ "fav": fav, "acq": acq });
+		} else if (req.query.action === "getplayerinfo") {
+			
+			const info = await prisma.user.findUnique({
+				where: {
+					nickname: req.body.nickname
+				},
+				select: {
+					UUID: true,
+					subscription: true,
+					subscriptionOwner: true,
+					noSubscriptionOwnerYet: true
+				}
+			}).catch((err) => {console.log(err); res.status(404).json(err)})
+			res.status(200).json({ "info": info });
 		}
 	}
 	catch (error) {
